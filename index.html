@@ -46,20 +46,33 @@ body {
     gap: 12px;
     text-decoration: none;
     color: white;
+    transition: 0.18s;
+}
+
+/* Эффект увеличения при нажатии */
+.mid-btn:active {
+    transform: scale(1.08);
 }
 
 /* БОНУСЫ — премиум золото */
 .bonus-btn {
-    background: linear-gradient(45deg, #ffc800, #161a1f);
-    border: 3px solid #ffd700;
+    background: linear-gradient(45deg, #ffc800, #000000);
+    border: 3px solid #ffe27a;
     box-shadow: 0 0 18px rgba(255, 211, 0, 0.65);
 }
 
 /* ПОДДЕРЖКА — Telegram премиум стиль */
 .support-btn {
-    background: linear-gradient(45deg, #007bff, #00a2ff);
+    background: linear-gradient(45deg, #007bff, #000000);
     border: 3px solid #4dc7ff;
     box-shadow: 0 0 18px rgba(0, 162, 255, 0.6);
+}
+
+/* ПРОФИЛЬ — зелёная премиум */
+.profile-btn {
+    background: linear-gradient(45deg, #00c853, #000000);
+    border: 3px solid #66ff99;
+    box-shadow: 0 0 18px rgba(0, 255, 140, 0.6);
 }
 
 /* Иконки кнопок */
@@ -104,13 +117,13 @@ body {
 
     <!-- ПОДДЕРЖКА -->
     <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" class="icon">
+        <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon">
         ПОДДЕРЖКА
     </a>
 
     <!-- ПРОФИЛЬ -->
-    <div class="mid-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="icon">
+    <div class="mid-btn profile-btn">
+        <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon">
         ПРОФИЛЬ
     </div>
 </div>
