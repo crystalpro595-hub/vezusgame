@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -13,12 +24,50 @@ body {
     color: white;
 }
 
-/* БАЛАНС — отдельная строка */
-.balance-line {
+/* ЛОГО СЛЕВА */
+.logo-container {
     display: flex;
     justify-content: left;
-    margin-top: 20px;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 20px;
 }
+.logo-img {
+    width: 95px;
+    height: auto;
+}
+
+/* БАЛАНС + КОШЕЛЁК СПРАВА */
+.balance-line {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    margin-top: -70px;
+    margin-right: 20px;
+}
+
+/* КНОПКА КОШЕЛЁК — премиум зелёное свечение */
+.wallet-btn {
+    background: linear-gradient(45deg, #00c853, #000000);
+    padding: 10px;
+    border-radius: 12px;
+    margin-right: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.18s;
+    border: 3px solid #66ff99;
+    box-shadow: 0 0 18px rgba(0, 255, 140, 0.55);
+}
+.wallet-btn:active {
+    transform: scale(1.08);
+}
+.wallet-icon {
+    width: 45px;
+    height: 45px;
+}
+
+/* БАЛАНС */
 .balance-btn {
     background: #3a3a3a;
     padding: 10px 40px;
@@ -27,15 +76,15 @@ body {
     font-weight: 900;
 }
 
-/* Три кнопки в ряд */
+/* Три кнопки */
 .mid-menu {
     display: flex;
     justify-content: left;
-    margin-top: 25px;
+    margin-top: 70px;
+    margin-left: 20px;
 }
 
 .mid-btn {
-    background: #3a3a3a;
     padding: 20px 25px;
     border-radius: 12px;
     font-size: 28px;
@@ -48,44 +97,36 @@ body {
     color: white;
     transition: 0.18s;
 }
+.mid-btn:active { transform: scale(1.08); }
 
-/* Эффект увеличения при нажатии */
-.mid-btn:active {
-    transform: scale(1.08);
-}
-
-/* БОНУСЫ — премиум золото */
+/* Стили кнопок */
 .bonus-btn {
     background: linear-gradient(45deg, #ffc800, #000000);
     border: 3px solid #ffe27a;
     box-shadow: 0 0 18px rgba(255, 211, 0, 0.65);
 }
-
-/* ПОДДЕРЖКА — Telegram премиум стиль */
+.profile-btn {
+    background: linear-gradient(45deg, #00c853, #000000);
+    border: 3px solid #66ff99;
+    box-shadow: 0 0 18px rgba(0, 255, 140, 0.6);
+}
 .support-btn {
     background: linear-gradient(45deg, #007bff, #000000);
     border: 3px solid #4dc7ff;
     box-shadow: 0 0 18px rgba(0, 162, 255, 0.6);
 }
 
-/* ПРОФИЛЬ — зелёная премиум */
-.profile-btn {
-    background: linear-gradient(45deg, #00c853, #000000);
-    border: 3px solid #66ff99;
-    box-shadow: 0 0 18px rgba(0, 255, 140, 0.6);
-}
-
-/* Иконки кнопок */
 .icon {
     width: 60px;
     height: 60px;
 }
 
-/* Два больших блока */
+/* Большие блоки */
 .big-blocks {
     display: flex;
     justify-content: left;
     margin-top: 60px;
+    margin-left: 20px;
 }
 .block {
     background: #3a3a3a;
@@ -103,29 +144,36 @@ body {
 </head>
 <body>
 
-<div class="balance-line">
-    <div class="balance-btn">БАЛАНС:</div>
+<!-- ЛОГО СЛЕВА -->
+<div class="logo-container">
+    <img class="logo-img" src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png">
 </div>
 
+<!-- КОШЕЛЁК + БАЛАНС СПРАВА -->
+<div class="balance-line">
+    <a href="wallet.html" class="wallet-btn">
+        <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png" class="wallet-icon">
+    </a>
+    <div class="balance-btn">БАЛАНС: 0 VC</div>
+</div>
+
+<!-- Меню -->
 <div class="mid-menu">
 
-    <!-- БОНУСЫ -->
     <div class="mid-btn bonus-btn">
         <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon">
         БОНУСЫ
     </div>
 
-    <!-- ПОДДЕРЖКА -->
-    <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
-        <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon">
-        ПОДДЕРЖКА
-    </a>
-
-    <!-- ПРОФИЛЬ -->
     <div class="mid-btn profile-btn">
         <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon">
         ПРОФИЛЬ
     </div>
+
+    <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
+        <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon">
+        ПОДДЕРЖКА
+    </a>
 </div>
 
 <div class="big-blocks">
@@ -134,4 +182,8 @@ body {
 </div>
 
 </body>
+</html>
+    
+  </body>
+  
 </html>
