@@ -1,23 +1,27 @@
 <!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
 <html lang="ru">
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
 <title>Vezus Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
 <style>
 body {
     margin: 0;
     background: linear-gradient(to right, #1a1a1a, #000000);
     font-family: 'Montserrat', sans-serif;
     color: white;
-}
-
-/* Убираем надпись index.html у Github Pages */
-h1 {
-    visibility: hidden;
-    height: 0;
-    margin: 0;
-    padding: 0;
 }
 
 /* БАЛАНС — отдельная строка */
@@ -32,8 +36,6 @@ h1 {
     border-radius: 12px;
     font-size: 30px;
     font-weight: 900;
-    text-decoration: none;
-    color: white;
 }
 
 /* Три кнопки в ряд */
@@ -42,6 +44,7 @@ h1 {
     justify-content: left;
     margin-top: 25px;
 }
+
 .mid-btn {
     background: #3a3a3a;
     padding: 20px 25px;
@@ -50,26 +53,30 @@ h1 {
     font-weight: 900;
     margin: 0 10px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 12px;
     text-decoration: none;
     color: white;
 }
 
-/* Кнопка поддержки — премиум Telegram */
+/* БОНУСЫ — премиум золото */
+.bonus-btn {
+    background: linear-gradient(45deg, #ffc800, #161a1f);
+    border: 3px solid #ffd700;
+    box-shadow: 0 0 18px rgba(255, 211, 0, 0.65);
+}
+
+/* ПОДДЕРЖКА — Telegram премиум стиль */
 .support-btn {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     background: linear-gradient(45deg, #007bff, #00a2ff);
     border: 3px solid #4dc7ff;
     box-shadow: 0 0 18px rgba(0, 162, 255, 0.6);
 }
 
-/* Логотип Telegram */
-.tg-icon {
-    width: 32px;
-    height: 32px;
+/* Иконки кнопок */
+.icon {
+    width: 60px;
+    height: 60px;
 }
 
 /* Два больших блока */
@@ -95,19 +102,28 @@ h1 {
 <body>
 
 <div class="balance-line">
-    <a href="balance.html" class="balance-btn">БАЛАНС:</a>
+    <div class="balance-btn">БАЛАНС:</div>
 </div>
 
 <div class="mid-menu">
-    <div class="mid-btn">БОНУСЫ</div>
 
-    <!-- Поддержка с логотипом Telegram -->
+    <!-- БОНУСЫ -->
+    <div class="mid-btn bonus-btn">
+        <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon">
+        БОНУСЫ
+    </div>
+
+    <!-- ПОДДЕРЖКА -->
     <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" class="icon">
         ПОДДЕРЖКА
     </a>
 
-    <div class="mid-btn">ПРОФИЛЬ</div>
+    <!-- ПРОФИЛЬ -->
+    <div class="mid-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="icon">
+        ПРОФИЛЬ
+    </div>
 </div>
 
 <div class="big-blocks">
@@ -116,4 +132,8 @@ h1 {
 </div>
 
 </body>
+</html>
+    
+  </body>
+  
 </html>
