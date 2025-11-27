@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
   <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -23,10 +34,9 @@ body {
 }
 .logo-img {
     width: 95px;
-    height: auto;
 }
 
-/* БАЛАНС + КОШЕЛЁК СПРАВА */
+/* КОШЕЛЁК + БАЛАНС СПРАВА */
 .balance-line {
     display: flex;
     justify-content: right;
@@ -35,7 +45,7 @@ body {
     margin-right: 20px;
 }
 
-/* КНОПКА КОШЕЛЁК — премиум зелёное свечение */
+/* КНОПКА КОШЕЛЁК */
 .wallet-btn {
     background: linear-gradient(45deg, #00c853, #000000);
     padding: 10px;
@@ -46,15 +56,9 @@ body {
     align-items: center;
     transition: 0.18s;
     border: 3px solid #66ff99;
-    box-shadow: 0 0 18px rgba(0, 255, 140, 0.55);
 }
-.wallet-btn:active {
-    transform: scale(1.08);
-}
-.wallet-icon {
-    width: 45px;
-    height: 45px;
-}
+.wallet-btn:active { transform: scale(1.08); }
+.wallet-icon { width: 45px; }
 
 /* БАЛАНС */
 .balance-btn {
@@ -72,7 +76,6 @@ body {
     margin-top: 70px;
     margin-left: 20px;
 }
-
 .mid-btn {
     padding: 20px 25px;
     border-radius: 12px;
@@ -92,23 +95,16 @@ body {
 .bonus-btn {
     background: linear-gradient(45deg, #ffc800, #000000);
     border: 3px solid #ffe27a;
-    box-shadow: 0 0 18px rgba(255, 211, 0, 0.65);
 }
 .profile-btn {
     background: linear-gradient(45deg, #00c853, #000000);
     border: 3px solid #66ff99;
-    box-shadow: 0 0 18px rgba(0, 255, 140, 0.6);
 }
 .support-btn {
     background: linear-gradient(45deg, #007bff, #000000);
     border: 3px solid #4dc7ff;
-    box-shadow: 0 0 18px rgba(0, 162, 255, 0.6);
 }
-
-.icon {
-    width: 60px;
-    height: 60px;
-}
+.icon { width: 60px; }
 
 /* Большие блоки */
 .big-blocks {
@@ -129,39 +125,92 @@ body {
     font-size: 70px;
     font-weight: 900;
 }
+
+/* ───────────── НОВОЕ МИНИМАЛИСТИЧНОЕ ОКНО КОШЕЛЬКА ───────────── */
+.wallet-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.wallet-box {
+    width: 85%;
+    padding: 45px;
+    border-radius: 22px;
+    background: #0f0f0f;
+    border: 2px solid #2b2b2b;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.75);
+}
+
+/* Заголовок */
+.wallet-title {
+    font-size: 42px;
+    font-weight: 900;
+    margin-bottom: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+}
+.wallet-title img {
+    width: 55px;
+}
+
+/* КНОПКИ ВНУТРИ */
+.wallet-btn-action {
+    width: 88%;
+    margin: 14px auto;
+    padding: 28px;
+    border-radius: 18px;
+    font-size: 35px;
+    font-weight: 900;
+    color: white;
+    display: block;
+    text-decoration: none;
+    background: #1b1b1b;
+    border: 2px solid #3a3a3a;
+    transition: 0.18s;
+}
+.wallet-btn-action:active {
+    transform: scale(1.05);
+    background: #222;
+}
+
+/* Кнопка закрытия */
+.close-btn {
+    margin-top: 25px;
+    font-size: 28px;
+    font-weight: 900;
+    cursor: pointer;
+    color: #b53c3c;
+}
 </style>
 </head>
 <body>
 
-<!-- ЛОГО СЛЕВА -->
 <div class="logo-container">
     <img class="logo-img" src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png">
 </div>
 
-<!-- КОШЕЛЁК + БАЛАНС СПРАВА -->
 <div class="balance-line">
-    <a href="wallet.html" class="wallet-btn">
+    <div onclick="openWallet()" class="wallet-btn">
         <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png" class="wallet-icon">
-    </a>
+    </div>
     <div class="balance-btn">БАЛАНС: 0 VC</div>
 </div>
 
-<!-- Меню -->
 <div class="mid-menu">
-
-    <div class="mid-btn bonus-btn">
-        <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon">
-        БОНУСЫ
-    </div>
-
-    <div class="mid-btn profile-btn">
-        <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon">
-        ПРОФИЛЬ
-    </div>
-
+    <div class="mid-btn bonus-btn"><img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon"> БОНУСЫ</div>
+    <div class="mid-btn profile-btn"><img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon"> ПРОФИЛЬ</div>
     <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
-        <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon">
-        ПОДДЕРЖКА
+        <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon"> ПОДДЕРЖКА
     </a>
 </div>
 
@@ -169,6 +218,29 @@ body {
     <div class="block">ИГРЫ</div>
     <div class="block">UC</div>
 </div>
+
+<!-- КОШЕЛЁК -->
+<div class="wallet-popup" id="wallet">
+    <div class="wallet-box">
+        <div class="wallet-title">
+            <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png">
+            КОШЕЛЁК
+        </div>
+        <a href="#" class="wallet-btn-action">💰 ПОПОЛНИТЬ</a>
+        <a href="#" class="wallet-btn-action">💸 ВЫВЕСТИ</a>
+        <a href="#" class="wallet-btn-action">📄 ИСТОРИЯ</a>
+        <div class="close-btn" onclick="closeWallet()">✖ ЗАКРЫТЬ</div>
+    </div>
+</div>
+
+<script>
+function openWallet() {
+    document.getElementById("wallet").style.display = "flex";
+}
+function closeWallet() {
+    document.getElementById("wallet").style.display = "none";
+}
+</script>
 
 </body>
 </html>
