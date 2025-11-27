@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Баланс — Vezus Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    background: linear-gradient(to right, #1a1a1a, #000000);
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+}
+
+/* Заголовок Баланс */
+.title {
+    text-align: center;
+    font-size: 45px;
+    font-weight: 900;
+    margin-top: 40px;
+}
+
+/* Цифра баланса */
+.balance-box {
+    background: #3a3a3a;
+    width: 70%;
+    margin: 30px auto;
+    text-align: center;
+    border-radius: 16px;
+    font-size: 50px;
+    font-weight: 900;
+    padding: 25px 0;
+}
+
+/* Кнопки */
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+.btn {
+    background: #3a3a3a;
+    width: 70%;
+    text-align: center;
+    border-radius: 14px;
+    font-size: 35px;
+    font-weight: 900;
+    padding: 20px 0;
+    margin: 18px 0;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+}
+
+/* Возврат */
+.back {
+    margin-top: 60px;
+}
+</style>
+</head>
+<body>
+
+<div class="title">ВАШ БАЛАНС</div>
+
+<div class="balance-box">0 VC</div>
+
+<div class="menu">
+    <a class="btn" href="deposit.html">ПОПОЛНИТЬ</a>
+    <a class="btn" href="withdraw.html">ВЫВЕСТИ</a>
+    <a class="btn back" href="index.html">⬅ НАЗАД</a>
+</div>
+
+</body>
+</html>
