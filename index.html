@@ -1,15 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
 <html lang="ru">
 <head>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -43,6 +32,8 @@ h1 {
     border-radius: 12px;
     font-size: 30px;
     font-weight: 900;
+    text-decoration: none;
+    color: white;
 }
 
 /* Три кнопки в ряд */
@@ -63,6 +54,22 @@ h1 {
     align-items: center;
     text-decoration: none;
     color: white;
+}
+
+/* Кнопка поддержки — премиум Telegram */
+.support-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(45deg, #007bff, #00a2ff);
+    border: 3px solid #4dc7ff;
+    box-shadow: 0 0 18px rgba(0, 162, 255, 0.6);
+}
+
+/* Логотип Telegram */
+.tg-icon {
+    width: 32px;
+    height: 32px;
 }
 
 /* Два больших блока */
@@ -88,12 +95,18 @@ h1 {
 <body>
 
 <div class="balance-line">
-    <a href="balance.html" class="balance-btn" style="text-decoration:none;color:white;">БАЛАНС:</a>
+    <a href="balance.html" class="balance-btn">БАЛАНС:</a>
 </div>
 
 <div class="mid-menu">
     <div class="mid-btn">БОНУСЫ</div>
-    <a href="https://t.me/vezusmanager" class="mid-btn" target="_blank">ПОДДЕРЖКА</a>
+
+    <!-- Поддержка с логотипом Telegram -->
+    <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">
+        ПОДДЕРЖКА
+    </a>
+
     <div class="mid-btn">ПРОФИЛЬ</div>
 </div>
 
@@ -103,8 +116,4 @@ h1 {
 </div>
 
 </body>
-</html>
-    
-  </body>
-  
 </html>
