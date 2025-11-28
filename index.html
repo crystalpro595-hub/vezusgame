@@ -3,27 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <title>Vezus Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
+    min-height: 100vh;
     background: linear-gradient(to right, #1a1a1a, #000000);
+    background-attachment: fixed;
     font-family: 'Montserrat', sans-serif;
     color: white;
 }
 
 /* Лого */
-.logo-container {
-    margin-top: 18px;
-    margin-left: 22px;
-}
-.logo-img {
-    width: 115px;
-    height: auto;
-}
+.logo-container { margin-top: 18px; margin-left: 22px; }
+.logo-img { width: 115px; }
 
-/* Баланс + кошелёк справа */
+/* Баланс + Кошелёк */
 .balance-line {
     display: flex;
     justify-content: flex-end;
@@ -40,15 +37,10 @@ body {
     border-radius: 14px;
     border: 3px solid #66ff99;
     box-shadow: 0 0 26px rgba(0, 255, 120, 0.55);
-    transition: 0.12s;
+    transition: .14s;
 }
-.wallet-btn:active {
-    transform: scale(1.12);
-}
-.wallet-icon {
-    width: 68px;
-    height: 68px;
-}
+.wallet-btn:active { transform: scale(1.12); }
+.wallet-icon { width: 68px; height: 68px; }
 
 /* Баланс */
 .balance-btn {
@@ -59,50 +51,44 @@ body {
     font-weight: 900;
 }
 
-/* Блок меню */
+/* Главное меню */
 .mid-menu {
     display: flex;
     margin-top: 90px;
     margin-left: 22px;
     gap: 14px;
 }
-
 .mid-btn {
     padding: 28px 30px;
     border-radius: 16px;
     font-size: 33px;
     font-weight: 900;
     display: flex;
-    align-items: center;
     gap: 16px;
+    align-items: center;
     text-decoration: none;
     color: white;
     transition: 0.14s;
 }
 .mid-btn:active { transform: scale(1.12); }
 
-/* Цвета кнопок */
 .bonus-btn {
-    background: linear-gradient(45deg, #ffc800, #000000);
+    background: linear-gradient(45deg,#ffc800,#000000);
     border: 4px solid #ffe27a;
-    box-shadow: 0 0 26px rgba(255, 211, 0, 0.65);
+    box-shadow: 0 0 26px rgba(255,211,0,.65);
 }
 .profile-btn {
-    background: linear-gradient(45deg, #00c853, #000000);
+    background: linear-gradient(45deg,#00c853,#000000);
     border: 4px solid #66ff99;
-    box-shadow: 0 0 26px rgba(0, 255, 140, 0.6);
+    box-shadow: 0 0 26px rgba(0,255,140,.6);
 }
 .support-btn {
-    background: linear-gradient(45deg, #007bff, #000000);
+    background: linear-gradient(45deg,#007bff,#000000);
     border: 4px solid #4dc7ff;
-    box-shadow: 0 0 26px rgba(0, 162, 255, 0.6);
+    box-shadow: 0 0 26px rgba(0,162,255,.6);
 }
 
-/* Иконки */
-.icon {
-    width: 78px;
-    height: 78px;
-}
+.icon { width: 78px; height: 78px; }
 
 /* Большие блоки */
 .big-blocks {
@@ -122,47 +108,135 @@ body {
     font-size: 84px;
     font-weight: 900;
 }
+
+/* ---------- POPUP депозит ---------- */
+.popup-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    backdrop-filter: blur(4px);
+    background: rgba(0,0,0,.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.popup {
+    background: linear-gradient(180deg, #121212, #000000);
+    border: 3px solid #00c853;
+    border-radius: 26px;
+    width: 86%;
+    max-width: 480px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 0 35px rgba(0,255,120,0.5);
+}
+
+/* Текст */
+.popup-title {
+    font-size: 42px;
+    font-weight: 900;
+    margin-bottom: 25px;
+}
+
+/* Поле ввода суммы */
+.input-amount {
+    width: 100%;
+    padding: 24px;
+    font-size: 34px;
+    text-align: center;
+    border-radius: 16px;
+    border: 3px solid #00c853;
+    background: #101010;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+/* Кнопки в попап */
+.popup-btn {
+    width: 100%;
+    padding: 26px;
+    border-radius: 16px;
+    font-size: 34px;
+    font-weight: 900;
+    color: white;
+    border: none;
+    margin-top: 14px;
+}
+.popup-green {
+    background: linear-gradient(45deg,#00c853,#002f19);
+    box-shadow: 0 0 24px rgba(0,255,120,.5);
+}
+.popup-red {
+    background: linear-gradient(45deg,#ff3d3d,#5f0000);
+    box-shadow: 0 0 24px rgba(255,0,0,.5);
+}
+.popup-btn:active { transform: scale(1.06); }
+
 </style>
 </head>
 <body>
 
-<!-- ЛОГО -->
+<!-- Лого -->
 <div class="logo-container">
     <img class="logo-img" src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png">
 </div>
 
-<!-- Баланс + кошелёк -->
+<!-- Баланс -->
 <div class="balance-line">
-    <a href="#" class="wallet-btn">
+    <div id="openWallet" class="wallet-btn">
         <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png" class="wallet-icon">
-    </a>
-    <div class="balance-btn">БАЛАНС: 0 VC</div>
+    </div>
+    <div class="balance-btn" id="balance">БАЛАНС: 0 VC</div>
 </div>
 
 <!-- Меню -->
 <div class="mid-menu">
-
     <div class="mid-btn bonus-btn">
-        <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon">
-        БОНУСЫ
+        <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon"> БОНУСЫ
     </div>
-
     <div class="mid-btn profile-btn">
-        <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon">
-        ПРОФИЛЬ
+        <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon"> ПРОФИЛЬ
     </div>
-
     <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
-        <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon">
-        ПОДДЕРЖКА
+        <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon"> ПОДДЕРЖКА
     </a>
 </div>
 
-<!-- Большие блоки -->
+<!-- Блоки -->
 <div class="big-blocks">
     <div class="block">ИГРЫ</div>
     <div class="block">UC</div>
 </div>
+
+<!-- ---------------- POPUP ДЕПОЗИТ ---------------- -->
+<div id="depositPopup" class="popup-bg">
+    <div class="popup">
+        <div class="popup-title">ПОПОЛНЕНИЕ</div>
+        <input type="number" id="depositAmount" class="input-amount" placeholder="Сумма ₽">
+        <button class="popup-btn popup-green" id="confirmDeposit">Продолжить</button>
+        <button class="popup-btn popup-red" id="closePopup">Отмена</button>
+    </div>
+</div>
+
+<script>
+// Открыть окно кошелька
+document.getElementById("openWallet").onclick = () => {
+    document.getElementById("depositPopup").style.display = "flex";
+};
+// Закрыть
+document.getElementById("closePopup").onclick = () => {
+    document.getElementById("depositPopup").style.display = "none";
+};
+// Переход к оплате
+document.getElementById("confirmDeposit").onclick = () => {
+    let amount = document.getElementById("depositAmount").value;
+    if (!amount || amount <= 0) return alert("Введите сумму");
+    window.location.href = `sbp.html?sum=${amount}`;
+};
+</script>
 
 </body>
 </html>
