@@ -6,86 +6,104 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-/* ===== АНИМИРОВАННЫЙ ФОН ===== */
-body {
+/* ---- ФОН + ГРАДИЕНТ ---- */
+html, body {
     margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
     font-family: 'Montserrat', sans-serif;
     color: white;
+    min-height: 100vh;
     background: linear-gradient(120deg, #1a1a1a, #000000, #111111, #141414);
     background-size: 300% 300%;
     animation: gradientFlow 9s ease infinite;
+    background-attachment: fixed;
 }
+
 @keyframes gradientFlow {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* ЛОГО */
+/* ---- ЛОГО ---- */
 .logo-container { display:flex; justify-content:left; align-items:center; margin-top:10px; margin-left:20px; }
 .logo-img { width:95px; }
 
-/* БАЛАНС/КОШЕЛЁК */
+/* ---- БАЛАНС + КОШЕЛЁК ---- */
 .balance-line {
-    display:flex; justify-content:flex-end; align-items:center; margin-top:-70px; margin-right:20px;
+    display:flex; justify-content:right; align-items:center; margin-top:-70px; margin-right:20px;
 }
 .wallet-btn {
     background: linear-gradient(45deg,#00c853,#000000);
     padding:14px; border-radius:14px; margin-right:14px; display:flex; justify-content:center; align-items:center;
-    transition:0.18s; border:3px solid #66ff99; box-shadow:0 0 18px rgba(0,255,140,.55);
+    transition:0.18s; border:3px solid #66ff99; box-shadow:0 0 20px rgba(0,255,144,0.55);
 }
 .wallet-btn:active { transform:scale(1.08); }
-.wallet-icon { width:50px; }
+.wallet-icon { width:55px; height:auto; }
 .balance-btn {
-    background:#3a3a3a; padding:16px 46px; border-radius:14px; font-size:33px; font-weight:900;
+    background:#3a3a3a; padding:14px 45px; border-radius:14px; font-size:34px; font-weight:900;
 }
 
-/* МЕНЮ */
-.mid-menu { display:flex; justify-content:left; margin-top:70px; margin-left:20px; }
+/* ---- МЕНЮ ---- */
+.mid-menu { display:flex; justify-content:left; margin-top:75px; margin-left:20px; }
 .mid-btn {
-    padding:26px 34px; border-radius:15px; font-size:32px; font-weight:900; margin:0 10px; display:flex; align-items:center;
-    gap:14px; text-decoration:none; color:white; transition:0.18s; cursor:pointer;
+    padding:26px 34px; border-radius:14px; font-size:30px; font-weight:900; margin:0 12px;
+    display:flex; align-items:center; gap:14px; text-decoration:none; color:white;
+    transition:0.18s; cursor:pointer; box-shadow:0 0 16px rgba(0,0,0,0.4);
 }
-.mid-btn:active { transform:scale(1.08); }
+.mid-btn:active { transform:scale(1.07); }
 .bonus-btn { background: linear-gradient(45deg,#ffc800,#000000); border:3px solid #ffe27a; }
 .profile-btn { background: linear-gradient(45deg,#00c853,#000000); border:3px solid #66ff99; }
 .support-btn { background: linear-gradient(45deg,#007bff,#000000); border:3px solid #4dc7ff; }
-.icon { width:70px; }
+.icon { width:65px; height:auto; }
 
-/* БОЛЬШИЕ БЛОКИ */
-.big-blocks { display:flex; justify-content:left; margin-top:60px; margin-left:20px; }
-.block { background:#3a3a3a; width:28%; height:320px; border-radius:20px; margin:0 14px; display:flex; justify-content:center; align-items:center; font-size:76px; font-weight:900; }
+/* ---- БОЛЬШИЕ БЛОКИ ---- */
+.big-blocks { display:flex; justify-content:left; margin-top:70px; margin-left:20px; }
+.block {
+    background:#3a3a3a; width:29%; height:320px; border-radius:20px; margin:0 16px;
+    display:flex; justify-content:center; align-items:center; font-size:75px; font-weight:900;
+}
 
-/* ===== ПОПАП ===== */
+/* ---- POPUP ---- */
 .popup-backdrop {
-    position:fixed; inset:0; background:rgba(0,0,0,0.55);
+    position:fixed; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.55);
     display:none; justify-content:center; align-items:center; z-index:2000;
 }
 .popup-box {
-    width:92%; max-width:760px; padding:34px; border-radius:20px;
-    background:#0f0f0f; border:2px solid #222; box-shadow:0 10px 40px rgba(0,0,0,.7);
+    width:92%; max-width:760px; padding:38px; border-radius:20px;
+    background:#0f0f0f; border:2px solid #222; box-shadow: 0 10px 40px rgba(0,0,0,0.7);
 }
-.popup-title { text-align:center; font-size:30px; font-weight:900; margin-bottom:20px; }
-
+.popup-title { text-align:center; font-size:30px; font-weight:900; margin-bottom:22px; }
 .popup-action {
-    display:block; width:86%; margin:14px auto; padding:22px; border-radius:14px; text-align:center;
-    font-size:25px; font-weight:900; color:white; text-decoration:none;
+    display:block; width:86%; margin:14px auto; padding:20px; border-radius:14px; text-align:center;
+    text-decoration:none; font-size:24px; font-weight:900; color:white; background:#1b1b1b; border:1px solid #333;
 }
-.deposit-action { background: linear-gradient(45deg,#0fae5f,#0a7a3d); border:2px solid rgba(102,255,153,.25); }
-.payment-action { background: linear-gradient(45deg,#222,#111); border:1px solid #333; }
-.cancel-action { background:#222; border:1px solid #444; color:#ccc; }
+.popup-action:active{ transform:scale(0.985); }
+.deposit-action { background: linear-gradient(45deg,#0fae5f,#0a7a3d); }
+.payment-action { background: linear-gradient(45deg,#222,#111); }
+.cancel-action { background:#222; color:#ddd; }
 
-.input-row { display:flex; justify-content:center; gap:14px; margin:18px 0; }
-.input-row input {
-    width:48%; padding:16px; border-radius:12px; border:1px solid #333; background:#0b0b0b; color:#fff; font-size:22px;
+/* ---- Поле суммы ---- */
+.input-row { display:flex; justify-content:center; gap:12px; align-items:center; margin:22px 0; }
+.input-row input[type="number"] {
+    width:52%; padding:16px; border-radius:12px; border:1px solid #333; background:#0b0b0b; color:#fff; font-size:22px;
 }
-.vc-note { background:#1b1b1b; padding:14px 20px; border-radius:12px; font-size:22px; font-weight:900; }
+.input-row .vc-note { background:#1b1b1b; padding:14px 20px; border-radius:12px; font-size:22px; font-weight:900; }
 
+/* ---- QR ---- */
+.payment-area { display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:16px; }
 .qr-img { width:220px; height:220px; background:#fff; padding:6px; border-radius:10px; }
-.pay-info { text-align:center; font-size:20px; color:#ccc; }
+.pay-info { color:#ddd; font-size:20px; }
 
-.requests-list { max-height:360px; overflow:auto; margin-top:12px; }
-.request-item { display:flex; justify-content:space-between; padding:12px; margin:10px 0; border-radius:10px; background:#0b0b0b; border:1px solid #191919; }
+/* ---- Заявки ---- */
+.requests-list { max-height:360px; overflow:auto; margin-top:12px; padding:6px; border-top:1px solid #222; }
+.request-item { display:flex; justify-content:space-between; padding:12px 10px; border-radius:10px; background:#0b0b0b; margin:10px 0; border:1px solid #191919; }
+.request-meta { color:#bbb; font-size:15px; }
+.request-actions button { margin-left:8px; padding:8px 10px; border-radius:8px; border:0; cursor:pointer; font-weight:700; }
 .status-pending { color:#ffd86b; font-weight:900; }
 .status-confirm { color:#66ff99; font-weight:900; }
 .status-reject { color:#ff7d7d; font-weight:900; }
@@ -93,181 +111,142 @@ body {
 </head>
 <body>
 
-<!-- ======= ШАПКА ======= -->
+<!-- ЛОГО -->
 <div class="logo-container">
     <img class="logo-img" src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png">
 </div>
 
+<!-- БАЛАНС + КОШЕЛЁК -->
 <div class="balance-line">
-    <div class="wallet-btn" onclick="openWallet()">
+    <div onclick="openWallet()" class="wallet-btn">
         <img class="wallet-icon" src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png">
     </div>
     <div class="balance-btn" id="top-balance">БАЛАНС: 0 VC</div>
 </div>
 
+<!-- МЕНЮ -->
 <div class="mid-menu">
-    <div class="mid-btn bonus-btn"><img class="icon" src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png">БОНУСЫ</div>
-    <div class="mid-btn profile-btn"><img class="icon" src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png">ПРОФИЛЬ</div>
-    <a class="mid-btn support-btn" href="https://t.me/vezusmanager" target="_blank">
-        <img class="icon" src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png">ПОДДЕРЖКА
-    </a>
+    <div class="mid-btn bonus-btn"><img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon"> БОНУСЫ</div>
+    <div class="mid-btn profile-btn"><img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon"> ПРОФИЛЬ</div>
+    <a class="mid-btn support-btn" href="https://t.me/vezusmanager" target="_blank"><img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon"> ПОДДЕРЖКА</a>
 </div>
 
+<!-- БОЛЬШИЕ БЛОКИ -->
 <div class="big-blocks">
     <div class="block">ИГРЫ</div>
     <div class="block">UC</div>
 </div>
 
-<!-- ====== POPUP: WALLET ====== -->
+<!-- POPUP КОШЕЛЁК -->
 <div id="wallet-popup" class="popup-backdrop">
     <div class="popup-box">
-        <div class="popup-title">💼 Кошелёк</div>
-        <a class="popup-action deposit-action" onclick="openDeposit(event)">💰 Пополнить баланс</a>
-        <a class="popup-action payment-action" onclick="openRequests(event)">📄 Просмотр заявок</a>
-        <a class="popup-action cancel-action" onclick="closeWallet()">Закрыть</a>
+        <div class="popup-title">💼 КОШЕЛЁК</div>
+        <a href="#" class="popup-action deposit-action" onclick="openDeposit(event)">💰 Пополнить баланс</a>
+        <a href="#" class="popup-action payment-action" onclick="openWithdraw(event)">💸 Вывести (заявка)</a>
+        <a href="#" class="popup-action payment-action" onclick="openRequests(event)">📄 Просмотр заявок</a>
+        <a href="#" class="popup-action cancel-action" onclick="closeWallet()">✖ Закрыть</a>
     </div>
 </div>
 
-<!-- ====== POPUP: DEPOSIT ====== -->
+<!-- POPUP ПОПОЛНЕНИЕ -->
 <div id="deposit-popup" class="popup-backdrop">
     <div class="popup-box">
-        <div class="popup-title">💰 Пополнение — СБП</div>
-        <div style="text-align:center; margin-bottom:4px; color:#ccc;">1 ₽ = 1 VC</div>
-
+        <div class="popup-title">💰 ПОПОЛНЕНИЕ — СБП</div>
+        <div style="text-align:center; margin-bottom:8px">Курс: <b>1₽ = 1 VC</b></div>
         <div class="input-row">
-            <input id="deposit-amount" type="number" min="1" placeholder="Сумма в ₽">
+            <input id="deposit-amount" type="number" placeholder="Сумма в ₽">
             <div class="vc-note" id="vc-estimate">0 VC</div>
         </div>
-
-        <div class="pay-info">Отправить перевод на номер:<br><b>+7 990 151 05 97</b></div>
-
-        <a class="popup-action deposit-action" onclick="toPayment(event)">Перейти к оплате</a>
-        <a class="popup-action cancel-action" onclick="closeDeposit()">Отмена</a>
+        <div style="text-align:center; margin-bottom:10px">Оплата СБП на номер: <b>+7 990 151 05 97</b></div>
+        <a href="#" class="popup-action deposit-action" onclick="toPayment(event)">→ Перейти к оплате</a>
+        <a href="#" class="popup-action cancel-action" onclick="closeDeposit()">Отмена</a>
     </div>
 </div>
 
-<!-- ====== POPUP: PAYMENT ====== -->
+<!-- POPUP ОПЛАТА -->
 <div id="payment-popup" class="popup-backdrop">
     <div class="popup-box" style="max-width:540px;">
         <div class="popup-title">Оплата — СБП</div>
-        <div style="text-align:center; margin-bottom:8px; color:#ccc;">
-            Переведите <b id="pay-amount-text">0 ₽</b> на номер
-        </div>
+        <div style="text-align:center;">Переведите <b id="pay-amount-text">0 ₽</b> на номер</div>
         <div class="pay-info"><b>+7 990 151 05 97</b></div>
-
         <div class="payment-area">
             <img id="qr-image" class="qr-img" src="">
+            <div class="pay-info" id="pay-note">Отсканируйте QR или переведите по номеру.</div>
         </div>
-
-        <a class="popup-action deposit-action" onclick="confirmPaid(event)">Я оплатил</a>
-        <a class="popup-action cancel-action" onclick="closePayment()">Отмена</a>
+        <a href="#" class="popup-action deposit-action" onclick="confirmPaid(event)">Я оплатил</a>
+        <a href="#" class="popup-action cancel-action" onclick="closePayment()">Отмена</a>
     </div>
 </div>
 
-<!-- ====== POPUP: REQUESTS ====== -->
+<!-- POPUP ЗАЯВКИ (АДМИН) -->
 <div id="requests-popup" class="popup-backdrop">
     <div class="popup-box">
         <div class="popup-title">📄 Заявки на пополнение</div>
         <div id="requests-list" class="requests-list"></div>
-        <a class="popup-action cancel-action" onclick="closeRequests()">Закрыть</a>
+        <a href="#" class="popup-action cancel-action" onclick="closeRequests()">Закрыть</a>
     </div>
 </div>
 
 <script>
-const STORAGE_KEY = 'vezus_requests';
-const SBP_PHONE = '+7 990 151 05 97';
+/* ===== Данные и хранилище ===== */
+const STORAGE_KEY='vezus_requests';
+const SBP='+7 990 151 05 97';
+function loadReq(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch(e){return[]}}
+function saveReq(a){localStorage.setItem(STORAGE_KEY,JSON.stringify(a))}
+function updateTopBalance(){document.getElementById('top-balance').textContent='БАЛАНС: '+(localStorage.getItem('vezus_balance')||'0')+' VC'}
 
-function loadRequests(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch{ return []; }}
-function saveRequests(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+/* ===== Popup control ===== */
+function openWallet(){wallet-popup.style.display='flex'}
+function closeWallet(){wallet-popup.style.display='none'}
+function openDeposit(e){e.preventDefault();deposit-popup.style.display='flex';wallet-popup.style.display='none'}
+function closeDeposit(){deposit-popup.style.display='none';updateTopBalance()}
+function openPayment(a){payment-popup.style.display='flex';deposit-popup.style.display='none';pay-amount-text.textContent=a+' ₽';qr-image.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+encodeURIComponent('SBP|'+SBP+'|'+a)}
+function closePayment(){payment-popup.style.display='none';updateTopBalance()}
+function openRequests(e){e.preventDefault();requests-popup.style.display='flex';wallet-popup.style.display='none';updReq()}
+function closeRequests(){requests-popup.style.display='none';updateTopBalance()}
 
-function updateTopBalance(){
-    document.getElementById('top-balance').textContent =
-        'БАЛАНС: ' + (localStorage.getItem('vezus_balance') || '0') + ' VC';
-}
+/* ===== Deposit amount input ===== */
+deposit-amount?.addEventListener('input',()=>{vc-estimate.textContent=(Number(deposit-amount.value)||0)+' VC'})
+function toPayment(e){e.preventDefault();const v=Number(deposit-amount.value);if(!v||v<=0)return alert('Введите сумму');openPayment(v)}
 
-function openWallet(){ document.getElementById('wallet-popup').style.display='flex'; }
-function closeWallet(){ document.getElementById('wallet-popup').style.display='none'; }
-
-function openDeposit(e){ e.preventDefault(); document.getElementById('deposit-popup').style.display='flex'; closeWallet(); }
-function closeDeposit(){ document.getElementById('deposit-popup').style.display='none'; updateTopBalance(); }
-
-function openPayment(amount){
-    document.getElementById('payment-popup').style.display='flex';
-    document.getElementById('pay-amount-text').textContent = amount + ' ₽';
-    document.getElementById('qr-image').src =
-        "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent("SBP|" + SBP_PHONE + "|" + amount);
-}
-function closePayment(){ document.getElementById('payment-popup').style.display='none'; }
-
-document.getElementById('deposit-amount').addEventListener('input', ()=>{
-    const v = Number(deposit-amount.value)||0;
-    document.getElementById('vc-estimate').textContent = v + " VC";
-});
-
-function toPayment(e){
-    e.preventDefault();
-    const amount = Number(document.getElementById('deposit-amount').value);
-    if(amount > 0) openPayment(amount);
-    else alert("Введите сумму");
-}
-
+/* ===== Create request ===== */
 function confirmPaid(e){
     e.preventDefault();
-    const amount = Number(document.getElementById('pay-amount-text').textContent.replace(/\D/g,'')) || 0;
-    if(!amount) return;
-    const list = loadRequests();
-    list.unshift({ id: 'req_' + Date.now(), amount, time: new Date().toISOString(), status: "pending" });
-    saveRequests(list);
-    closePayment();
-    alert("Заявка отправлена. Ожидайте подтверждения администратора.");
-    updateRequestsList();
+    const a=Number(pay-amount-text.textContent.replace(/\D/g,''))||0;
+    if(a<=0)return alert('Ошибка суммы');
+    const req={id:'req_'+Date.now(),amount:a,to:SBP,time:new Date().toISOString(),status:'pending'};
+    const all=loadReq();all.unshift(req);saveReq(all);
+    closePayment();alert('Заявка отправлена. Ожидайте подтверждения.');
+    updReq();
 }
 
-function openRequests(e){ e.preventDefault(); document.getElementById('requests-popup').style.display='flex'; closeWallet(); updateRequestsList(); }
-function closeRequests(){ document.getElementById('requests-popup').style.display='none'; updateTopBalance(); }
-
-function updateRequestsList(){
-    const list = loadRequests();
-    const c = document.getElementById('requests-list');
-    c.innerHTML = list.length? "" : "<div style='text-align:center;color:#aaa;padding:20px'>Заявок нет</div>";
-
+/* ===== Requests admin list ===== */
+function updReq(){
+    const list=loadReq(),box=requests-list;box.innerHTML='';
+    if(!list.length){box.innerHTML='<div style="text-align:center;color:#bbb;padding:18px">Заявок нет</div>';return}
     list.forEach(r=>{
-        const div = document.createElement("div");
-        div.className = "request-item";
-        div.innerHTML = `
-            <div><b>${r.amount} ₽ → ${r.amount} VC</b><br><span style='color:#777;font-size:13px'>${new Date(r.time).toLocaleString()}</span></div>
-            <div style="text-align:right;">
-                <div class="${r.status==='pending'?'status-pending':r.status==='confirmed'?'status-confirm':'status-reject'}">${r.status.toUpperCase()}</div>
-                ${r.status==='pending'
-                    ? `<button onclick="changeStatus('${r.id}','confirmed')" style="margin-top:6px;background:#10691a;color:white;border:0;padding:6px 10px;border-radius:6px;">CONFIRM</button>
-                       <button onclick="changeStatus('${r.id}','rejected')" style="margin-top:6px;background:#6b0000;color:white;border:0;padding:6px 10px;border-radius:6px;">REJECT</button>`
-                    : ""
-                }
-            </div>`;
-        c.appendChild(div);
-    });
+        const item=document.createElement('div');item.className='request-item';
+        const left=document.createElement('div');left.innerHTML=`<div><b>${r.amount} ₽ → ${r.amount} VC</b></div><div class="request-meta">${new Date(r.time).toLocaleString()}</div>`;
+        const right=document.createElement('div');right.className='request-actions';
+        const st=document.createElement('div');st.textContent=r.status.toUpperCase();st.className=r.status==='pending'?'status-pending':r.status==='confirmed'?'status-confirm':'status-reject';
+        const ok=document.createElement('button');ok.textContent='CONFIRM';ok.style.background='#1b5e20';ok.style.color='#fff';
+        const no=document.createElement('button');no.textContent='REJECT';no.style.background='#6b0000';no.style.color='#fff';
+        ok.onclick=()=>chStatus(r.id,'confirmed');no.onclick=()=>chStatus(r.id,'rejected');
+        right.appendChild(st);if(r.status==='pending'){right.appendChild(ok);right.appendChild(no)}
+        item.appendChild(left);item.appendChild(right);box.appendChild(item);
+    })
 }
 
-function changeStatus(id, status){
-    const list = loadRequests();
-    const i = list.findIndex(r=>r.id===id);
-    list[i].status = status;
-    saveRequests(list);
-
-    if(status === "confirmed"){
-        const cur = Number(localStorage.getItem("vezus_balance")||0);
-        localStorage.setItem("vezus_balance", cur + list[i].amount);
-        alert("Баланс игрока пополнен на " + list[i].amount + " VC");
-    }
-    updateRequestsList();
-    updateTopBalance();
+/* ===== Change status ===== */
+function chStatus(id,st){
+    const list=loadReq(),i=list.findIndex(x=>x.id===id);if(i<0)return;
+    list[i].status=st;saveReq(list);
+    if(st==='confirmed'){const c=Number(localStorage.getItem('vezus_balance')||0),a=list[i].amount;localStorage.setItem('vezus_balance',c+a);alert('Баланс игрока увеличен на '+a+' VC')}
+    updReq();updateTopBalance();
 }
 
-(function init(){
-    if(!localStorage.getItem(STORAGE_KEY)) saveRequests([]);
-    if(!localStorage.getItem("vezus_balance")) localStorage.setItem("vezus_balance","0");
-    updateTopBalance();
-})();
+/* ===== Init ===== */
+(function(){if(!localStorage.getItem(STORAGE_KEY))saveReq([]);if(!localStorage.getItem('vezus_balance'))localStorage.setItem('vezus_balance','0');updateTopBalance()})();
 </script>
 
 </body>
