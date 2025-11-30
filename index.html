@@ -115,13 +115,37 @@ body{
 .status-reject{color:#ff7d7d;font-weight:900}
 
 /* АДАПТИВ ДЛЯ ТЕЛЕФОНА */
-@media(max-width:520px){
-  .wallet-btn .wallet-icon{width:38px}
-  .balance-btn{font-size:22px;padding:10px 20px}
-  .mid-btn{font-size:18px;padding:16px 18px}
-  .icon{width:42px}
-  .block{width:46%;height:210px;font-size:46px}
-  .mid-menu{gap:8px}
+@media (max-width: 520px){
+
+  /* Лого и кошелёк */
+  .logo-img{width:85px}
+  .wallet-btn{padding:8px;margin-right:8px}
+  .wallet-icon{width:32px}
+  .balance-btn{font-size:18px;padding:8px 14px}
+
+  /* Главное меню */
+  .mid-btn{font-size:16px;padding:12px 12px;gap:8px}
+  .icon{width:34px}
+
+  .mid-menu{
+    gap:6px;
+    margin-top:45px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  /* Убираем налезание */
+  .balance-line{
+    margin-top:-45px;
+    margin-right:14px;
+  }
+
+  /* Большие блоки */
+  .block{
+    width:42%;
+    height:180px;
+    font-size:40px;
+  }
 }
 </style>
 </head>
