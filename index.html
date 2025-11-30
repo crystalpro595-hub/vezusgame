@@ -117,34 +117,57 @@ body{
 /* АДАПТИВ ДЛЯ ТЕЛЕФОНА */
 @media (max-width: 520px){
 
-  /* Лого и кошелёк */
-  .logo-img{width:85px}
-  .wallet-btn{padding:8px;margin-right:8px}
-  .wallet-icon{width:32px}
-  .balance-btn{font-size:18px;padding:8px 14px}
+  /* Лого и кошелёк сверху */
+  .logo-img{
+    width:75px;
+  }
+  .wallet-btn{
+    padding:8px;
+    border-radius:10px;
+  }
+  .wallet-icon{
+    width:30px;
+  }
+  .balance-btn{
+    font-size:18px;
+    padding:8px 14px;
+  }
+  .balance-line{
+    margin-top:-40px;
+    margin-right:12px;
+  }
 
-  /* Главное меню */
-  .mid-btn{font-size:16px;padding:12px 12px;gap:8px}
-  .icon{width:34px}
-
+  /* Меню — 3 кнопки строго в ряд */
   .mid-menu{
+    display:flex;
+    justify-content:center;
+    margin-top:45px;
+    margin-left:0;
+    width:100%;
+  }
+  .mid-menu .mid-btn{
+    flex: 1 1 30%;
+    font-size:16px;
+    padding:14px 6px;
+    margin:0 4px;
     gap:6px;
+    text-align:center;
+  }
+  .icon{
+    width:32px;
+  }
+
+  /* Большие блоки (чтоб влазили) */
+  .big-blocks{
     margin-top:45px;
     justify-content:center;
-    flex-wrap:wrap;
+    gap:10px;
+    margin-left:0;
   }
-
-  /* Убираем налезание */
-  .balance-line{
-    margin-top:-45px;
-    margin-right:14px;
-  }
-
-  /* Большие блоки */
   .block{
     width:42%;
-    height:180px;
-    font-size:40px;
+    height:170px;
+    font-size:38px;
   }
 }
 </style>
