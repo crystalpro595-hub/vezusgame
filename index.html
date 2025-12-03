@@ -133,7 +133,45 @@ body {
     font-weight: 900;
 }
 
-/* ===== МАСШТАБИРОВАНИЕ ДЛЯ ТЕЛЕФОНА ===== */
+/* POPUP стили (встроены аккуратно под дизайн) */
+.popup {
+    position: fixed;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+.popup .box {
+    width: 92%; max-width: 760px; padding: 28px; border-radius: 16px;
+    background: #0f0f0f; border: 2px solid #222; color: #fff;
+}
+.popup .title { text-align:center; font-size:26px; font-weight:900; margin-bottom:14px; }
+.popup .action {
+    display:block; width:86%; margin:10px auto; padding:14px; border-radius:12px; text-align:center;
+    text-decoration:none; color:#fff; font-weight:900; font-size:18px; background:#1b1b1b; border:1px solid #333;
+}
+.popup .action:active{ transform: scale(.995); }
+.btn-deposit { background: linear-gradient(45deg,#0fae5f,#0a7a3d); border:2px solid rgba(102,255,153,0.25); }
+.btn-cancel { background:#222; color:#ddd; }
+
+.input-row { display:flex; gap:12px; justify-content:center; align-items:center; margin:12px 0; }
+.input-row input[type="number"], .input-row input[type="text"], .input-row select {
+    padding:12px; border-radius:10px; border:1px solid #333; background:#0b0b0b; color:#fff; font-size:16px;
+}
+.vc-note { background:#1b1b1b; padding:10px 14px; border-radius:8px; font-weight:900; }
+
+/* request list / history */
+.list { max-height:380px; overflow:auto; margin-top:10px; padding:6px; border-top:1px solid #222; }
+.item { display:flex; justify-content:space-between; gap:12px; padding:10px; border-radius:8px; background:#0b0b0b; margin:8px 0; border:1px solid #191919; }
+.meta { color:#bbb; font-size:13px; }
+.status-p { color:#ffd86b; font-weight:900; }
+.status-c { color:#66ff99; font-weight:900; }
+.status-r { color:#ff7d7d; font-weight:900; }
+
+/* ===== МАСШТАБИРОВАНИЕ ДЛЯ ТЕЛЕФОНА (твой вариант) ===== */
 @media (max-width: 480px) {
     body {
         transform: scale(0.40);
@@ -160,17 +198,17 @@ body {
 
 <!-- Меню -->
 <div class="mid-menu">
-    <div class="mid-btn bonus-btn">
+    <div class="mid-btn bonus-btn" id="btn-bonus">
         <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon" alt="bonus">
         БОНУСЫ
     </div>
 
-    <div class="mid-btn profile-btn">
+    <div class="mid-btn profile-btn" id="btn-profile">
         <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon" alt="profile">
         ПРОФИЛЬ
     </div>
 
-    <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
+    <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank" id="btn-support">
         <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon" alt="tg">
         ПОДДЕРЖКА
     </a>
@@ -181,6 +219,300 @@ body {
     <div class="block">ИГРЫ</div>
     <div class="block">UC</div>
 </div>
+
+<!-- POPUP: кошелёк -->
+<div class="popup" id="popup-wallet" aria-hidden="true">
+  <div class="box">
+    <div class="title">💼 Кошелёк</div>
+    <a class="action btn-deposit" href="#" id="open-deposit">💰 Пополнить</a>
+    <a class="action" href="#" id="open-withdraw" style="background:linear-gradient(45deg,#ff9f43,#000);border:2px solid #ffbf7a">💸 Вывести</a>
+    <a class="action" href="#" id="open-requests" style="background:#444;border:1px solid #666">📄 Заявки</a>
+    <a class="action btn-cancel" href="#" id="close-wallet">✖ Закрыть</a>
+  </div>
+</div>
+
+<!-- POPUP: ПОПОЛНЕНИЕ -->
+<div class="popup" id="popup-deposit" aria-hidden="true">
+  <div class="box">
+    <div class="title">💰 Пополнение — СБП</div>
+    <div style="text-align:center;color:#ccc;margin-bottom:8px">Курс: <strong>1₽ = 1 VC</strong></div>
+    <div class="input-row">
+      <input id="deposit-amount" type="number" min="1" placeholder="Сумма в ₽">
+      <div class="vc-note" id="vc-estimate">0 VC</div>
+    </div>
+    <div style="text-align:center;color:#bbb;font-size:15px;margin-bottom:8px">Оплата через СБП на номер: <b>+7 990 151 05 97</b></div>
+    <a class="action btn-deposit" href="#" id="to-payment">→ Перейти к оплате</a>
+    <a class="action btn-cancel" href="#" id="close-deposit">Отмена</a>
+  </div>
+</div>
+
+<!-- POPUP: ОПЛАТА (QR + инструкция) -->
+<div class="popup" id="popup-payment" aria-hidden="true">
+  <div class="box" style="max-width:540px;margin:0 auto;">
+    <div class="title">Оплата — СБП</div>
+    <div style="text-align:center;margin-bottom:6px;color:#ddd">Переведите <strong id="pay-amount-text">0 ₽</strong> на номер</div>
+    <div style="text-align:center;color:#ddd;margin-bottom:8px"><strong>+7 990 151 05 97</strong></div>
+    <div style="text-align:center;margin-bottom:10px">
+      <img id="qr-image" src="" alt="QR" style="width:220px;height:220px;border-radius:10px;background:#fff;padding:6px">
+    </div>
+    <a class="action btn-deposit" href="#" id="confirm-paid">Я оплатил</a>
+    <a class="action btn-cancel" href="#" id="close-payment">Отмена</a>
+  </div>
+</div>
+
+<!-- POPUP: ВЫВОД -->
+<div class="popup" id="popup-withdraw" aria-hidden="true">
+  <div class="box">
+    <div class="title">💸 Вывод — заявка</div>
+    <div style="text-align:center;color:#ccc;margin-bottom:8px">Минимум вывода: <b id="min-withdraw-text">500 VC</b></div>
+    <div class="input-row">
+      <input id="withdraw-amount" type="number" min="1" placeholder="Сумма в VC">
+      <select id="withdraw-bank" style="padding:12px;border-radius:10px;background:#0b0b0b;color:#fff;">
+        <option>СБП (по номеру)</option><option>Сбер</option><option>Тинькофф</option>
+        <option>ВТБ</option><option>Альфа-Банк</option><option>Райффайзен</option>
+      </select>
+    </div>
+    <div class="input-row" style="margin-top:8px">
+      <input id="withdraw-phone" type="text" placeholder="Номер телефона (для СБП) или карты" style="width:70%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff;">
+    </div>
+    <a class="action" href="#" id="submit-withdraw" style="background:linear-gradient(45deg,#222,#111)">→ Отправить заявку на вывод</a>
+    <a class="action btn-cancel" href="#" id="close-withdraw">Отмена</a>
+  </div>
+</div>
+
+<!-- POPUP: ЗАЯВКИ (админ) -->
+<div class="popup" id="popup-requests" aria-hidden="true">
+  <div class="box">
+    <div class="title">📄 Заявки на обработку</div>
+    <div id="requests-list" class="list"></div>
+    <a class="action btn-cancel" href="#" id="close-requests">Закрыть</a>
+  </div>
+</div>
+
+<!-- POPUP: ПРОФИЛЬ -->
+<div class="popup" id="popup-profile" aria-hidden="true">
+  <div class="box">
+    <div class="title">👤 Профиль</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div>
+        <div style="font-weight:900" id="profile-name">Vezus</div>
+        <div class="meta" id="profile-id">ID: 1</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:900" id="profile-balance">Баланс: 0 VC</div>
+      </div>
+    </div>
+
+    <div style="font-weight:900;margin-top:8px">История операций</div>
+    <div id="history-list" class="list"></div>
+
+    <a class="action btn-cancel" href="#" id="close-profile">Закрыть</a>
+  </div>
+</div>
+
+<script>
+/* ==========================
+   Функционал (localStorage)
+   ========================== */
+
+/* Ключи, параметры */
+const KEY_REQ = 'vezus_requests_v1';
+const KEY_HIS = 'vezus_history_v1';
+const KEY_BAL = 'vezus_balance_v1';
+const SBP_PHONE = '+7 990 151 05 97';
+const MIN_DEPOSIT = 100; // ₽
+const MIN_WITHDRAW = 500; // VC
+
+/* Инициализация хранения */
+if(!localStorage.getItem(KEY_REQ)) localStorage.setItem(KEY_REQ, JSON.stringify([]));
+if(!localStorage.getItem(KEY_HIS)) localStorage.setItem(KEY_HIS, JSON.stringify([]));
+if(!localStorage.getItem(KEY_BAL)) localStorage.setItem(KEY_BAL, '0');
+
+/* Утилиты */
+const getBalance = () => Number(localStorage.getItem(KEY_BAL) || 0);
+const setBalance = (v) => { localStorage.setItem(KEY_BAL, String(v)); refreshBalanceUI(); };
+const loadReq = () => JSON.parse(localStorage.getItem(KEY_REQ) || '[]');
+const saveReq = (a) => localStorage.setItem(KEY_REQ, JSON.stringify(a));
+const loadHis = () => JSON.parse(localStorage.getItem(KEY_HIS) || '[]');
+const saveHis = (a) => localStorage.setItem(KEY_HIS, JSON.stringify(a));
+const pushHistory = (entry) => { const h = loadHis(); h.unshift(entry); saveHis(h); };
+
+/* Обновление баланса на странице */
+function refreshBalanceUI(){
+  const el = document.getElementById('top-balance');
+  const pb = document.getElementById('profile-balance');
+  if(el) el.textContent = 'БАЛАНС: ' + getBalance() + ' VC';
+  if(pb) pb.textContent = 'Баланс: ' + getBalance() + ' VC';
+}
+refreshBalanceUI();
+
+/* === ОТКРЫТИЕ / ЗАКРЫТИЕ POPUP === */
+function show(id){ const p = document.getElementById(id); if(p) p.style.display = 'flex'; }
+function hide(id){ const p = document.getElementById(id); if(p) p.style.display = 'none'; }
+function closeAll(){ document.querySelectorAll('.popup').forEach(p => p.style.display = 'none'); }
+
+/* Привязка кнопок (UI) */
+document.getElementById('wallet-open').addEventListener('click', ()=> { closeAll(); show('popup-wallet'); });
+document.getElementById('close-wallet').addEventListener('click', (e)=>{ e.preventDefault(); closeAll(); });
+
+document.getElementById('open-deposit').addEventListener('click', (e)=>{ e.preventDefault(); closeAll(); show('popup-deposit'); });
+document.getElementById('close-deposit').addEventListener('click', (e)=>{ e.preventDefault(); closeAll(); });
+
+document.getElementById('open-withdraw').addEventListener('click', (e)=>{ e.preventDefault(); closeAll(); show('popup-withdraw'); });
+document.getElementById('close-withdraw').addEventListener('click', (e)=>{ e.preventDefault(); closeAll(); });
+
+document.getElementById('open-requests').addEventListener('click', (e)=>{ e.preventDefault(); renderRequests(); closeAll(); show('popup-requests'); });
+document.getElementById('close-requests').addEventListener('click', (e)=>{ e.preventDefault(); closeAll(); });
+
+document.getElementById('btn-profile').addEventListener('click', ()=>{ closeAll(); renderHistory(); show('popup-profile'); });
+document.getElementById('close-profile').addEventListener('click', (e)=>{ e.preventDefault(); closeAll(); });
+
+/* Обновление estimate VC при вводе суммы */
+const depositAmount = document.getElementById('deposit-amount');
+const vcEstimate = document.getElementById('vc-estimate');
+if(depositAmount){
+  depositAmount.addEventListener('input', ()=> {
+    const v = Number(depositAmount.value) || 0;
+    vcEstimate.textContent = v + ' VC';
+  });
+}
+
+/* ===== Переход к оплате / генерация QR ===== */
+document.getElementById('to-payment').addEventListener('click', function(e){
+  e.preventDefault();
+  const val = Number(depositAmount.value) || 0;
+  if(val < MIN_DEPOSIT){ alert('Минимальная сумма пополнения — ' + MIN_DEPOSIT + ' ₽'); return; }
+  // открыть оплату
+  closeAll();
+  show('popup-payment');
+  document.getElementById('pay-amount-text').textContent = val + ' ₽';
+  // формируем QR через qrserver
+  const data = encodeURIComponent('SBP|' + SBP_PHONE + '|' + val);
+  document.getElementById('qr-image').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + data;
+});
+
+/* Подтверждение оплаты — создаём заявку */
+document.getElementById('confirm-paid').addEventListener('click', function(e){
+  e.preventDefault();
+  const amount = Number(document.getElementById('pay-amount-text').textContent.replace(/\D/g,'')) || 0;
+  if(amount <= 0){ alert('Ошибка суммы.'); return; }
+  const requests = loadReq();
+  const id = 'r' + Date.now();
+  requests.unshift({ id, type: 'deposit', amount, time: Date.now(), status: 'pending' });
+  saveReq(requests);
+  alert('Заявка на пополнение отправлена. Ожидайте подтверждения администратора.');
+  closeAll();
+});
+
+/* Закрытие окна оплаты */
+document.getElementById('close-payment').addEventListener('click', function(e){ e.preventDefault(); closeAll(); });
+
+/* ===== Вывод — создание заявки (заморозка суммы) ===== */
+document.getElementById('submit-withdraw').addEventListener('click', function(e){
+  e.preventDefault();
+  const amount = Number(document.getElementById('withdraw-amount').value) || 0;
+  const bank = document.getElementById('withdraw-bank').value || '';
+  const phone = String(document.getElementById('withdraw-phone').value || '').trim();
+  if(amount <= 0){ alert('Введите корректную сумму'); return; }
+  if(amount < MIN_WITHDRAW){ alert('Минимальная сумма вывода: ' + MIN_WITHDRAW + ' VC'); return; }
+  const cur = getBalance();
+  if(cur < amount){ alert('Недостаточно средств на балансе'); return; }
+  // списываем (заморозка) — сумма списывается сразу
+  setBalance(cur - amount);
+  const requests = loadReq();
+  const id = 'r' + Date.now();
+  requests.unshift({ id, type: 'withdraw', amount, bank, phone, time: Date.now(), status: 'pending' });
+  saveReq(requests);
+  pushHistory({ type:'withdraw_request_created', amount, time: Date.now(), note: 'Заявка на вывод создана' });
+  alert('Заявка на вывод создана. Ожидайте подтверждения администратора.');
+  closeAll();
+  renderHistory();
+});
+
+/* ===== Рендер заявок (админ локальный) ===== */
+function renderRequests(){
+  const list = loadReq();
+  const box = document.getElementById('requests-list');
+  box.innerHTML = '';
+  if(!list.length){ box.innerHTML = '<div style="text-align:center;color:#bbb;padding:12px">Заявок нет</div>'; return; }
+  list.forEach(req => {
+    const it = document.createElement('div'); it.className = 'item';
+    const left = document.createElement('div');
+    left.innerHTML = `<div style="font-weight:900">${req.type==='deposit' ? (req.amount + ' ₽ → ' + req.amount + ' VC') : (req.amount + ' VC')}</div>
+                      <div class="meta">${req.id} • ${new Date(req.time).toLocaleString()}</div>
+                      ${req.type==='withdraw' ? `<div class="meta">${req.bank} • ${req.phone}</div>` : `<div class="meta">Пополнение — СБП</div>`}`;
+    const right = document.createElement('div'); right.style.textAlign='right';
+    const status = document.createElement('div');
+    status.textContent = (req.status || 'pending').toUpperCase();
+    status.className = req.status==='pending' ? 'status-p' : req.status==='confirmed' ? 'status-c' : 'status-r';
+    right.appendChild(status);
+    if(req.status === 'pending'){
+      const btnC = document.createElement('button'); btnC.textContent = 'CONFIRM'; btnC.style.marginLeft='8px'; btnC.style.background='#1b5e20'; btnC.style.color='#fff'; btnC.style.padding='6px 8px'; btnC.style.border='0'; btnC.style.borderRadius='6px';
+      btnC.onclick = ()=> changeRequestStatus(req.id, 'confirmed');
+      const btnR = document.createElement('button'); btnR.textContent = 'REJECT'; btnR.style.marginLeft='8px'; btnR.style.background='#6b0000'; btnR.style.color='#fff'; btnR.style.padding='6px 8px'; btnR.style.border='0'; btnR.style.borderRadius='6px';
+      btnR.onclick = ()=> changeRequestStatus(req.id, 'rejected');
+      right.appendChild(btnC); right.appendChild(btnR);
+    }
+    it.appendChild(left); it.appendChild(right);
+    box.appendChild(it);
+  });
+}
+
+/* ===== Меняем статус заявки (подтвердить/отклонить) ===== */
+function changeRequestStatus(id, newStatus){
+  const arr = loadReq();
+  const idx = arr.findIndex(x=>x.id===id);
+  if(idx === -1){ alert('Заявка не найдена'); return; }
+  const r = arr[idx];
+  arr[idx].status = newStatus === 'confirmed' ? 'confirmed' : 'rejected';
+  saveReq(arr);
+  if(newStatus === 'confirmed'){
+    if(r.type === 'deposit'){
+      setBalance(getBalance() + Number(r.amount || 0));
+      pushHistory({ type:'deposit', amount: Number(r.amount||0), time: Date.now(), note:'Пополнение подтверждено' });
+      alert('Пополнение подтверждено — баланс увеличен на ' + r.amount + ' VC');
+    } else if(r.type === 'withdraw'){
+      // при подтверждении вывода — сумма уже списана при создании заявки (заморозка)
+      pushHistory({ type:'withdraw', amount: Number(r.amount||0), time: Date.now(), note:'Вывод подтверждён' });
+      alert('Вывод подтверждён.');
+    }
+  } else {
+    // отклонение — если это был вывод — вернуть сумму
+    if(r.type === 'withdraw'){
+      setBalance(getBalance() + Number(r.amount || 0));
+    }
+    pushHistory({ type:'request_rejected', amount: Number(r.amount||0), time: Date.now(), note:'Заявка отклонена' });
+    alert('Заявка отклонена.');
+  }
+  renderRequests();
+  renderHistory();
+  refreshBalanceUI();
+}
+
+/* ===== История операций ===== */
+function renderHistory(){
+  const hist = loadHis();
+  const box = document.getElementById('history-list');
+  box.innerHTML = '';
+  if(!hist.length){ box.innerHTML = '<div style="color:#bbb;padding:12px;text-align:center">История пуста</div>'; return; }
+  hist.forEach(h=>{
+    const el = document.createElement('div'); el.className = 'item';
+    const left = document.createElement('div'); left.innerHTML = `<div style="font-weight:800">${h.type==='deposit'?'Пополнение':h.type==='withdraw'?'Вывод':'Прочее'}</div><div class="meta">${new Date(h.time).toLocaleString()}</div>`;
+    const right = document.createElement('div'); right.innerHTML = (h.type==='deposit'?`<div class="status-c">+${h.amount} VC</div>`:`<div class="status-r">-${h.amount} VC</div>`);
+    el.appendChild(left); el.appendChild(right); box.appendChild(el);
+  });
+}
+
+/* Обрабатываем начальную загрузку данных в UI */
+(function initUI(){
+  refreshBalanceUI();
+  // установить надпись ID/Name (можно расширить позже)
+  document.getElementById('profile-name').textContent = 'Vezus';
+  document.getElementById('profile-id').textContent = 'ID: 1';
+  // обновить тексты минимальной суммы
+  document.getElementById('min-withdraw-text').textContent = MIN_WITHDRAW + ' VC';
+})();
+</script>
 
 </body>
 </html>
