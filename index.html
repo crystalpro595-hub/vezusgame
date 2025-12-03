@@ -202,42 +202,64 @@ function updateUI(){
 }
 updateUI();
 
-/* POPUP CONTROL */
+/* === BUTTON BINDING === */
+const btnWalletOpen = document.getElementById("wallet-open");
+const btnCloseWallet = document.getElementById("close-wallet");
+const btnOpenDeposit = document.getElementById("open-deposit");
+const btnCloseDeposit = document.getElementById("close-deposit");
+const btnOpenWithdraw = document.getElementById("open-withdraw");
+const btnCloseWithdraw = document.getElementById("close-withdraw");
+const btnProfile = document.getElementById("btn-profile");
+const btnCloseProfile = document.getElementById("close-profile");
+const btnOpenRequests = document.getElementById("open-requests");
+const btnCloseRequests = document.getElementById("close-requests");
+const btnToPayment = document.getElementById("to-payment");
+const btnConfirmPaid = document.getElementById("confirm-paid");
+const btnClosePayment = document.getElementById("close-payment");
+const btnSubmitWithdraw = document.getElementById("submit-withdraw");
+
+const inputDepositAmount = document.getElementById("deposit-amount");
+const textVCEst = document.getElementById("vc-estimate");
+const payAmountText = document.getElementById("pay-amount-text");
+const qrImg = document.getElementById("qr-image");
+
 function show(id){document.getElementById(id).style.display='flex'}
 function hide(id){document.getElementById(id).style.display='none'}
 function hideAll(){document.querySelectorAll('.popup').forEach(p=>p.style.display='none')}
 
 /* OPEN */
-wallet-open.onclick=()=>{hideAll();show('popup-wallet')}
-close-wallet.onclick=e=>{e.preventDefault();hideAll()}
+btnWalletOpen.onclick=()=>{hideAll();show('popup-wallet')}
+btnCloseWallet.onclick=e=>{e.preventDefault();hideAll()}
 
-open-deposit.onclick=e=>{e.preventDefault();hideAll();show('popup-deposit')}
-close-deposit.onclick=e=>{e.preventDefault();hideAll()}
+btnOpenDeposit.onclick=e=>{e.preventDefault();hideAll();show('popup-deposit')}
+btnCloseDeposit.onclick=e=>{e.preventDefault();hideAll()}
 
-open-withdraw.onclick=e=>{e.preventDefault();hideAll();show('popup-withdraw')}
-close-withdraw.onclick=e=>{e.preventDefault();hideAll()}
+btnOpenWithdraw.onclick=e=>{e.preventDefault();hideAll();show('popup-withdraw')}
+btnCloseWithdraw.onclick=e=>{e.preventDefault();hideAll()}
 
-btn-profile.onclick=()=>{renderHis();hideAll();show('popup-profile')}
-close-profile.onclick=e=>{e.preventDefault();hideAll()}
+btnProfile.onclick=()=>{renderHis();hideAll();show('popup-profile')}
+btnCloseProfile.onclick=e=>{e.preventDefault();hideAll()}
 
-open-requests.onclick=e=>{e.preventDefault();renderReq();hideAll();show('popup-requests')}
-close-requests.onclick=e=>{e.preventDefault();hideAll()}
+btnOpenRequests.onclick=e=>{e.preventDefault();renderReq();hideAll();show('popup-requests')}
+btnCloseRequests.onclick=e=>{e.preventDefault();hideAll()}
 
 /* DEPOSIT */
-deposit-amount.oninput=()=>vc-estimate.textContent=(Number(deposit-amount.value)||0)+' VC';
-to-payment.onclick=e=>{
- e.preventDefault();
- let sum=Number(deposit-amount.value)||0;
- if(sum<100)return alert('Минимум 100 ₽');
- hideAll();show('popup-payment');
- pay-amount-text.textContent=sum+' ₽';
- qr-image.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+encodeURIComponent('SBP|+79901510597|'+sum);
-}
-close-payment.onclick=e=>{e.preventDefault();hideAll()}
+inputDepositAmount.oninput=()=>textVCEst.textContent=(Number(inputDepositAmount.value)||0)+' VC';
 
-confirm-paid.onclick=e=>{
+btnToPayment.onclick=e=>{
  e.preventDefault();
- let sum=Number(pay-amount-text.textContent.replace(/\D/g,''))||0;
+ let sum=Number(inputDepositAmount.value)||0;
+ if(sum<100) return alert('Минимум 100 ₽');
+
+ hideAll();show('popup-payment');
+ payAmountText.textContent=sum+' ₽';
+ qrImg.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+encodeURIComponent('SBP|+79901510597|'+sum);
+}
+btnClosePayment.onclick=e=>{e.preventDefault();hideAll()}
+
+btnConfirmPaid.onclick=e=>{
+ e.preventDefault();
+ let sum=Number(payAmountText.textContent.replace(/\D/g,''))||0;
  let r=getReq();
  r.unshift({id:'r'+Date.now(),type:'dep',sum,status:'pending',time:Date.now()});
  setReq(r);
@@ -246,16 +268,23 @@ confirm-paid.onclick=e=>{
 }
 
 /* WITHDRAW */
-submit-withdraw.onclick=e=>{
+btnSubmitWithdraw.onclick=e=>{
  e.preventDefault();
- let sum=Number(withdraw-amount.value)||0;
+ let sum=Number(document.getElementById('withdraw-amount').value)||0;
+ let bank=document.getElementById('withdraw-bank').value;
+ let phone=document.getElementById('withdraw-phone').value.trim();
+
  if(sum<500)return alert('Минимум 500 VC');
  if(getBal()<sum)return alert('Недостаточно средств');
+
  setBal(getBal()-sum);
+
  let r=getReq();
- r.unshift({id:'r'+Date.now(),type:'wd',sum,bank:withdraw-bank.value,phone:withdraw-phone.value,status:'pending',time:Date.now()});
+ r.unshift({id:'r'+Date.now(),type:'wd',sum,bank,phone,status:'pending',time:Date.now()});
  setReq(r);
+
  addHis({type:'wd_req',sum,time:Date.now()});
+
  alert('Заявка отправлена');
  hideAll();
  renderHis();
@@ -263,26 +292,42 @@ submit-withdraw.onclick=e=>{
 
 /* ADMIN REQUEST PANEL */
 function renderReq(){
- let r=getReq(),box=requests-list; box.innerHTML='';
+ let r=getReq(),box=document.getElementById('requests-list');
+ box.innerHTML='';
  if(!r.length)return box.innerHTML='<div style="color:#bbb;padding:12px">Пусто</div>';
+
  r.forEach(v=>{
   let d=document.createElement('div');d.className='item';
   let L=document.createElement('div');
-  L.innerHTML=`<div style="font-weight:900">${v.type==='dep'?v.sum+' ₽ → '+v.sum+' VC':v.sum+' VC'}</div>
-               <div class="meta">${new Date(v.time).toLocaleString()}</div>`;
-  if(v.type==='wd')L.innerHTML+=`<div class="meta">${v.bank} • ${v.phone}</div>`;
-  let R=document.createElement('div'),st=document.createElement('div');
+  L.innerHTML=`
+    <div style="font-weight:900">
+      ${v.type==='dep'?v.sum+' ₽ → '+v.sum+' VC':v.sum+' VC'}
+    </div>
+    <div class="meta">${new Date(v.time).toLocaleString()}</div>
+    ${v.type==='wd'?'<div class="meta">'+v.bank+' • '+v.phone+'</div>':''}
+  `;
+  let R=document.createElement('div');
+  let st=document.createElement('div');
   st.textContent=(v.status||'pending').toUpperCase();
   st.className=v.status==='pending'?'status-p':v.status==='confirmed'?'status-c':'status-r';
   R.appendChild(st);
+
   if(v.status==='pending'){
-   let c=document.createElement('button'),rj=document.createElement('button');
-   c.textContent='CONFIRM';c.style.cssText='background:#1b5e20;color:#fff;margin-left:6px';
-   rj.textContent='REJECT';rj.style.cssText='background:#6b0000;color:#fff;margin-left:6px';
-   c.onclick=()=>confirmReq(v.id); rj.onclick=()=>rejectReq(v.id);
-   R.appendChild(c);R.appendChild(rj);
+    let c=document.createElement('button'),
+        rj=document.createElement('button');
+    c.textContent='CONFIRM';
+    c.style.cssText='background:#1b5e20;color:#fff;margin-left:6px';
+    rj.textContent='REJECT';
+    rj.style.cssText='background:#6b0000;color:#fff;margin-left:6px';
+
+    c.onclick=()=>confirmReq(v.id);
+    rj.onclick=()=>rejectReq(v.id);
+
+    R.appendChild(c);R.appendChild(rj);
   }
-  d.appendChild(L);d.appendChild(R);
+
+  d.appendChild(L);
+  d.appendChild(R);
   box.appendChild(d);
  });
 }
@@ -291,32 +336,47 @@ function confirmReq(id){
  let r=getReq(),i=r.findIndex(x=>x.id===id);if(i<0)return;
  let v=r[i];
  r[i].status='confirmed'; setReq(r);
+
  if(v.type==='dep'){setBal(getBal()+v.sum);addHis({type:'dep',sum:v.sum,time:Date.now()})}
  if(v.type==='wd'){addHis({type:'wd',sum:v.sum,time:Date.now()})}
- alert('Подтверждено');renderReq();renderHis();updateUI()
+
+ alert('Подтверждено');
+ renderReq();renderHis();updateUI();
 }
 
 function rejectReq(id){
  let r=getReq(),i=r.findIndex(x=>x.id===id);if(i<0)return;
  let v=r[i];
  r[i].status='rejected'; setReq(r);
- if(v.type==='wd')setBal(getBal()+v.sum);
+
+ if(v.type==='wd') setBal(getBal()+v.sum);
+
  addHis({type:'rej',sum:v.sum,time:Date.now()});
- alert('Отклонено');renderReq();renderHis();updateUI()
+
+ alert('Отклонено');
+ renderReq();renderHis();updateUI();
 }
 
 /* HISTORY */
 function renderHis(){
- let h=getHis(),box=history-list; box.innerHTML='';
+ let h=getHis(),box=document.getElementById('history-list');
+ box.innerHTML='';
  if(!h.length)return box.innerHTML='<div style="color:#bbb;padding:12px">Пусто</div>';
+
  h.forEach(v=>{
   let d=document.createElement('div');d.className='item';
   let L=document.createElement('div');
-  L.innerHTML=`<div style="font-weight:800">${v.type}</div>
-               <div class="meta">${new Date(v.time).toLocaleString()}</div>`;
+  L.innerHTML=`
+    <div style="font-weight:800">${v.type}</div>
+    <div class="meta">${new Date(v.time).toLocaleString()}</div>
+  `;
   let R=document.createElement('div');
-  R.innerHTML=v.type==='dep'?`<div class="status-c">+${v.sum}</div>`:`<div class="status-r">-${v.sum}</div>`;
-  d.appendChild(L);d.appendChild(R);box.appendChild(d);
+  R.innerHTML=v.type==='dep'
+    ? `<div class="status-c">+${v.sum}</div>`
+    : `<div class="status-r">-${v.sum}</div>`;
+  d.appendChild(L);
+  d.appendChild(R);
+  box.appendChild(d);
  });
 }
 </script>
