@@ -7,7 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Montserrat',sans-serif;color:#fff}
+/* === СТИЛИ (ДИЗАЙН НЕ ИЗМЕНЯЛСЯ) === */
+body{
+    margin:0;
+    background:linear-gradient(to right,#1a1a1a,#000);
+    font-family:'Montserrat',sans-serif;
+    color:#fff;
+    transform-origin: top left;
+}
 
 /* ЛОГО */
 .logo-container{display:flex;justify-content:left;align-items:center;margin:10px 0 0 20px}
@@ -33,9 +40,37 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
 .big-blocks{display:flex;justify-content:left;margin:60px 0 0 20px}
 .block{background:#3a3a3a;width:28%;height:300px;border-radius:18px;margin:0 14px;display:flex;align-items:center;justify-content:center;font-size:70px;font-weight:900}
 
-/* POPUP — ФИКС: центрируется даже при scale */
-.popup{position:fixed;left:0;top:0;width:100vw;height:100vh;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.55);z-index:99999;transform:translateZ(0)}
-.popup .box{width:92%;max-width:760px;padding:28px;border-radius:16px;background:#0f0f0f;border:2px solid #222;color:#fff;text-align:center}
+/* === НОВОЕ — ОБЁРТКА ДЛЯ ПОПАПОВ === */
+#popup-root{
+    position:fixed;
+    left:0;top:0;
+    width:100vw;height:100vh;
+    pointer-events:none;
+    z-index:999999;
+}
+
+/* POPUP — ВСЕГДА ПО ЦЕНТРУ */
+.popup{
+    position:fixed;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:100vw;height:100vh;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,.55);
+    pointer-events:auto;
+}
+.popup .box{
+    width:92%;
+    max-width:760px;
+    padding:28px;
+    border-radius:16px;
+    background:#0f0f0f;
+    border:2px solid #222;
+    color:#fff;
+    text-align:center;
+}
 .popup .title{font-size:26px;font-weight:900;margin-bottom:14px}
 .action{display:block;width:86%;margin:10px auto;padding:14px;border-radius:12px;text-align:center;text-decoration:none;color:#fff;font-weight:900;font-size:18px;background:#1b1b1b;border:1px solid #333}
 .action:active{transform:scale(.98)}
@@ -59,16 +94,12 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
 @media (max-width:480px){
     body{
         transform:scale(0.40);
-        transform-origin:top left;
         width:190%;
-    }
-    /* Попап НЕ сжимается — фикс */
-    .popup{
-        transform:none !important;
     }
 }
 </style>
 </head>
+
 <body>
 
 <!-- ЛОГО -->
@@ -84,28 +115,27 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
     <div class="balance-btn" id="top-balance">БАЛАНС: 0 VC</div>
 </div>
 
-<!-- МЕНЮ -->
 <div class="mid-menu">
     <div class="mid-btn bonus-btn" id="btn-bonus">
         <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon"> БОНУСЫ
     </div>
-
     <div class="mid-btn profile-btn" id="btn-profile">
         <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon"> ПРОФИЛЬ
     </div>
-
     <a href="https://t.me/vezusmanager" target="_blank" class="mid-btn support-btn">
         <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon"> ПОДДЕРЖКА
     </a>
 </div>
 
-<!-- БЛОКИ -->
 <div class="big-blocks">
     <div class="block">ИГРЫ</div>
     <div class="block">UC</div>
 </div>
 
-<!-- POPUP: КОШЕЛЁК -->
+<!-- POPUP ROOT — ВСЕ ПОПАПЫ ЗДЕСЬ -->
+<div id="popup-root">
+
+<!-- --- КОШЕЛЁК --- -->
 <div class="popup" id="popup-wallet">
   <div class="box">
     <div class="title">💼 Кошелёк</div>
@@ -116,7 +146,7 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
   </div>
 </div>
 
-<!-- POPUP: ПОПОЛНЕНИЕ -->
+<!-- --- ПОПОЛНЕНИЕ --- -->
 <div class="popup" id="popup-deposit">
   <div class="box">
     <div class="title">💰 Пополнение — СБП</div>
@@ -131,7 +161,7 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
   </div>
 </div>
 
-<!-- POPUP: ОПЛАТА -->
+<!-- --- ОПЛАТА --- -->
 <div class="popup" id="popup-payment">
   <div class="box" style="max-width:540px">
     <div class="title">Оплата — СБП</div>
@@ -143,7 +173,7 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
   </div>
 </div>
 
-<!-- POPUP: ВЫВОД -->
+<!-- --- ВЫВОД --- -->
 <div class="popup" id="popup-withdraw">
   <div class="box">
     <div class="title">💸 Вывод</div>
@@ -161,7 +191,7 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
   </div>
 </div>
 
-<!-- POPUP: ЗАЯВКИ -->
+<!-- --- ЗАЯВКИ --- -->
 <div class="popup" id="popup-requests">
   <div class="box">
     <div class="title">📄 Заявки</div>
@@ -170,7 +200,7 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
   </div>
 </div>
 
-<!-- POPUP: ПРОФИЛЬ -->
+<!-- --- ПРОФИЛЬ --- -->
 <div class="popup" id="popup-profile">
   <div class="box">
     <div class="title">👤 Профиль</div>
@@ -181,9 +211,14 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
   </div>
 </div>
 
+</div> <!-- END popup-root -->
+
 <script>
 /* === LOCALSTORAGE === */
-const KEY_REQ='requests_v1',KEY_HIS='history_v1',KEY_BAL='balance_v1';
+const KEY_REQ='requests_v1',
+      KEY_HIS='history_v1',
+      KEY_BAL='balance_v1';
+
 if(!localStorage.getItem(KEY_REQ))localStorage.setItem(KEY_REQ,'[]');
 if(!localStorage.getItem(KEY_HIS))localStorage.setItem(KEY_HIS,'[]');
 if(!localStorage.getItem(KEY_BAL))localStorage.setItem(KEY_BAL,'0');
@@ -202,64 +237,44 @@ function updateUI(){
 }
 updateUI();
 
-/* === BUTTON BINDING === */
-const btnWalletOpen = document.getElementById("wallet-open");
-const btnCloseWallet = document.getElementById("close-wallet");
-const btnOpenDeposit = document.getElementById("open-deposit");
-const btnCloseDeposit = document.getElementById("close-deposit");
-const btnOpenWithdraw = document.getElementById("open-withdraw");
-const btnCloseWithdraw = document.getElementById("close-withdraw");
-const btnProfile = document.getElementById("btn-profile");
-const btnCloseProfile = document.getElementById("close-profile");
-const btnOpenRequests = document.getElementById("open-requests");
-const btnCloseRequests = document.getElementById("close-requests");
-const btnToPayment = document.getElementById("to-payment");
-const btnConfirmPaid = document.getElementById("confirm-paid");
-const btnClosePayment = document.getElementById("close-payment");
-const btnSubmitWithdraw = document.getElementById("submit-withdraw");
-
-const inputDepositAmount = document.getElementById("deposit-amount");
-const textVCEst = document.getElementById("vc-estimate");
-const payAmountText = document.getElementById("pay-amount-text");
-const qrImg = document.getElementById("qr-image");
-
+/* POPUP CONTROL */
 function show(id){document.getElementById(id).style.display='flex'}
 function hide(id){document.getElementById(id).style.display='none'}
 function hideAll(){document.querySelectorAll('.popup').forEach(p=>p.style.display='none')}
 
 /* OPEN */
-btnWalletOpen.onclick=()=>{hideAll();show('popup-wallet')}
-btnCloseWallet.onclick=e=>{e.preventDefault();hideAll()}
+wallet-open.onclick=()=>{hideAll();show('popup-wallet')}
+close-wallet.onclick=e=>{e.preventDefault();hideAll()}
 
-btnOpenDeposit.onclick=e=>{e.preventDefault();hideAll();show('popup-deposit')}
-btnCloseDeposit.onclick=e=>{e.preventDefault();hideAll()}
+open-deposit.onclick=e=>{e.preventDefault();hideAll();show('popup-deposit')}
+close-deposit.onclick=e=>{e.preventDefault();hideAll()}
 
-btnOpenWithdraw.onclick=e=>{e.preventDefault();hideAll();show('popup-withdraw')}
-btnCloseWithdraw.onclick=e=>{e.preventDefault();hideAll()}
+open-withdraw.onclick=e=>{e.preventDefault();hideAll();show('popup-withdraw')}
+close-withdraw.onclick=e=>{e.preventDefault();hideAll()}
 
-btnProfile.onclick=()=>{renderHis();hideAll();show('popup-profile')}
-btnCloseProfile.onclick=e=>{e.preventDefault();hideAll()}
+btn-profile.onclick=()=>{renderHis();hideAll();show('popup-profile')}
+close-profile.onclick=e=>{e.preventDefault();hideAll()}
 
-btnOpenRequests.onclick=e=>{e.preventDefault();renderReq();hideAll();show('popup-requests')}
-btnCloseRequests.onclick=e=>{e.preventDefault();hideAll()}
+open-requests.onclick=e=>{e.preventDefault();renderReq();hideAll();show('popup-requests')}
+close-requests.onclick=e=>{e.preventDefault();hideAll()}
 
 /* DEPOSIT */
-inputDepositAmount.oninput=()=>textVCEst.textContent=(Number(inputDepositAmount.value)||0)+' VC';
+deposit-amount.oninput=()=>vc-estimate.textContent=(Number(deposit-amount.value)||0)+' VC';
 
-btnToPayment.onclick=e=>{
+to-payment.onclick=e=>{
  e.preventDefault();
- let sum=Number(inputDepositAmount.value)||0;
- if(sum<100) return alert('Минимум 100 ₽');
-
+ let sum=Number(deposit-amount.value)||0;
+ if(sum<100)return alert('Минимум 100 ₽');
  hideAll();show('popup-payment');
- payAmountText.textContent=sum+' ₽';
- qrImg.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+encodeURIComponent('SBP|+79901510597|'+sum);
+ pay-amount-text.textContent=sum+' ₽';
+ qr-image.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+encodeURIComponent('SBP|+79901510597|'+sum);
 }
-btnClosePayment.onclick=e=>{e.preventDefault();hideAll()}
 
-btnConfirmPaid.onclick=e=>{
+close-payment.onclick=e=>{e.preventDefault();hideAll()}
+
+confirm-paid.onclick=e=>{
  e.preventDefault();
- let sum=Number(payAmountText.textContent.replace(/\D/g,''))||0;
+ let sum=Number(pay-amount-text.textContent.replace(/\D/g,''))||0;
  let r=getReq();
  r.unshift({id:'r'+Date.now(),type:'dep',sum,status:'pending',time:Date.now()});
  setReq(r);
@@ -268,23 +283,16 @@ btnConfirmPaid.onclick=e=>{
 }
 
 /* WITHDRAW */
-btnSubmitWithdraw.onclick=e=>{
+submit-withdraw.onclick=e=>{
  e.preventDefault();
- let sum=Number(document.getElementById('withdraw-amount').value)||0;
- let bank=document.getElementById('withdraw-bank').value;
- let phone=document.getElementById('withdraw-phone').value.trim();
-
+ let sum=Number(withdraw-amount.value)||0;
  if(sum<500)return alert('Минимум 500 VC');
  if(getBal()<sum)return alert('Недостаточно средств');
-
  setBal(getBal()-sum);
-
  let r=getReq();
- r.unshift({id:'r'+Date.now(),type:'wd',sum,bank,phone,status:'pending',time:Date.now()});
+ r.unshift({id:'r'+Date.now(),type:'wd',sum,bank:withdraw-bank.value,phone:withdraw-phone.value,status:'pending',time:Date.now()});
  setReq(r);
-
  addHis({type:'wd_req',sum,time:Date.now()});
-
  alert('Заявка отправлена');
  hideAll();
  renderHis();
@@ -292,42 +300,26 @@ btnSubmitWithdraw.onclick=e=>{
 
 /* ADMIN REQUEST PANEL */
 function renderReq(){
- let r=getReq(),box=document.getElementById('requests-list');
- box.innerHTML='';
+ let r=getReq(),box=requests-list; box.innerHTML='';
  if(!r.length)return box.innerHTML='<div style="color:#bbb;padding:12px">Пусто</div>';
-
  r.forEach(v=>{
   let d=document.createElement('div');d.className='item';
   let L=document.createElement('div');
-  L.innerHTML=`
-    <div style="font-weight:900">
-      ${v.type==='dep'?v.sum+' ₽ → '+v.sum+' VC':v.sum+' VC'}
-    </div>
-    <div class="meta">${new Date(v.time).toLocaleString()}</div>
-    ${v.type==='wd'?'<div class="meta">'+v.bank+' • '+v.phone+'</div>':''}
-  `;
-  let R=document.createElement('div');
-  let st=document.createElement('div');
+  L.innerHTML=`<div style="font-weight:900">${v.type==='dep'?v.sum+' ₽ → '+v.sum+' VC':v.sum+' VC'}</div>
+               <div class="meta">${new Date(v.time).toLocaleString()}</div>`;
+  if(v.type==='wd')L.innerHTML+=`<div class="meta">${v.bank} • ${v.phone}</div>`;
+  let R=document.createElement('div'),st=document.createElement('div');
   st.textContent=(v.status||'pending').toUpperCase();
   st.className=v.status==='pending'?'status-p':v.status==='confirmed'?'status-c':'status-r';
   R.appendChild(st);
-
   if(v.status==='pending'){
-    let c=document.createElement('button'),
-        rj=document.createElement('button');
-    c.textContent='CONFIRM';
-    c.style.cssText='background:#1b5e20;color:#fff;margin-left:6px';
-    rj.textContent='REJECT';
-    rj.style.cssText='background:#6b0000;color:#fff;margin-left:6px';
-
-    c.onclick=()=>confirmReq(v.id);
-    rj.onclick=()=>rejectReq(v.id);
-
-    R.appendChild(c);R.appendChild(rj);
+   let c=document.createElement('button'),rj=document.createElement('button');
+   c.textContent='CONFIRM';c.style.cssText='background:#1b5e20;color:#fff;margin-left:6px';
+   rj.textContent='REJECT';rj.style.cssText='background:#6b0000;color:#fff;margin-left:6px';
+   c.onclick=()=>confirmReq(v.id); rj.onclick=()=>rejectReq(v.id);
+   R.appendChild(c);R.appendChild(rj);
   }
-
-  d.appendChild(L);
-  d.appendChild(R);
+  d.appendChild(L);d.appendChild(R);
   box.appendChild(d);
  });
 }
@@ -336,49 +328,35 @@ function confirmReq(id){
  let r=getReq(),i=r.findIndex(x=>x.id===id);if(i<0)return;
  let v=r[i];
  r[i].status='confirmed'; setReq(r);
-
  if(v.type==='dep'){setBal(getBal()+v.sum);addHis({type:'dep',sum:v.sum,time:Date.now()})}
  if(v.type==='wd'){addHis({type:'wd',sum:v.sum,time:Date.now()})}
-
- alert('Подтверждено');
- renderReq();renderHis();updateUI();
+ alert('Подтверждено');renderReq();renderHis();updateUI()
 }
 
 function rejectReq(id){
  let r=getReq(),i=r.findIndex(x=>x.id===id);if(i<0)return;
  let v=r[i];
  r[i].status='rejected'; setReq(r);
-
- if(v.type==='wd') setBal(getBal()+v.sum);
-
+ if(v.type==='wd')setBal(getBal()+v.sum);
  addHis({type:'rej',sum:v.sum,time:Date.now()});
-
- alert('Отклонено');
- renderReq();renderHis();updateUI();
+ alert('Отклонено');renderReq();renderHis();updateUI()
 }
 
 /* HISTORY */
 function renderHis(){
- let h=getHis(),box=document.getElementById('history-list');
- box.innerHTML='';
+ let h=getHis(),box=history-list; box.innerHTML='';
  if(!h.length)return box.innerHTML='<div style="color:#bbb;padding:12px">Пусто</div>';
-
  h.forEach(v=>{
   let d=document.createElement('div');d.className='item';
   let L=document.createElement('div');
-  L.innerHTML=`
-    <div style="font-weight:800">${v.type}</div>
-    <div class="meta">${new Date(v.time).toLocaleString()}</div>
-  `;
+  L.innerHTML=`<div style="font-weight:800">${v.type}</div>
+               <div class="meta">${new Date(v.time).toLocaleString()}</div>`;
   let R=document.createElement('div');
-  R.innerHTML=v.type==='dep'
-    ? `<div class="status-c">+${v.sum}</div>`
-    : `<div class="status-r">-${v.sum}</div>`;
-  d.appendChild(L);
-  d.appendChild(R);
-  box.appendChild(d);
+  R.innerHTML=v.type==='dep'?`<div class="status-c">+${v.sum}</div>`:`<div class="status-r">-${v.sum}</div>`;
+  d.appendChild(L);d.appendChild(R);box.appendChild(d);
  });
 }
+
 </script>
 
 </body>
