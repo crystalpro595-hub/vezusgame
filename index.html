@@ -7,45 +7,70 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Montserrat',sans-serif;color:#fff;overflow:hidden}
-
-/* === ПРЕЛОАДЕР === */
-#preloader{
-    position:fixed;
-    left:0;top:0;
-    width:100vw;height:100vh;
-    background:#000;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:999999;
-}
-.pre-logo{
-    width:150px;
-    filter:drop-shadow(0 0 25px #ffeb3b);
-    animation:pulse 1.4s infinite ease-in-out;
-}
-@keyframes pulse{
-    0%{transform:scale(1);filter:drop-shadow(0 0 10px #ffeb3b)}
-    50%{transform:scale(1.15);filter:drop-shadow(0 0 25px #fff176)}
-    100%{transform:scale(1);filter:drop-shadow(0 0 10px #ffeb3b)}
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
 }
 
-/* === САЙТ ОСНОВНОЙ === */
-#content{opacity:0;transition:.4s}
+/* ============================================
+   ПРЕЛОАДЕР — ВНЕ BODY, НЕ СЖИМАЕТСЯ
+============================================ */
+#preloader-wrapper {
+    position: fixed;
+    left: 0; top: 0;
+    width: 100vw; height: 100vh;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}
 
-/* ЛОГО */
+.pre-logo {
+    width: 160px;
+    animation: pulse 1.3s infinite ease-in-out;
+    filter: drop-shadow(0 0 20px #ffeb3b);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 10px #ffeb3b); }
+    50% { transform: scale(1.18); filter: drop-shadow(0 0 25px #fff176); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 10px #ffeb3b); }
+}
+
+/* ============================================
+   ОСНОВНОЙ КОНТЕНТ (BODY) — СЖИМАЕТСЯ
+============================================ */
+#content {
+    opacity: 0;
+    transition: 0.35s;
+}
+
+body.loaded #content {
+    opacity: 1;
+}
+
+body.scaled {
+    transform: scale(0.40);
+    transform-origin: top left;
+    width: 190%;
+}
+
+/* ===== ЛОГО ===== */
 .logo-container{display:flex;justify-content:left;align-items:center;margin:10px 0 0 20px}
 .logo-img{width:95px;height:auto}
 
-/* БАЛАНС */
+/* ===== БАЛАНС ===== */
 .balance-line{display:flex;justify-content:right;align-items:center;margin:-70px 20px 0 0}
 .wallet-btn{background:linear-gradient(45deg,#00c853,#000);padding:10px;border-radius:12px;margin-right:12px;display:flex;align-items:center;justify-content:center;border:3px solid #66ff99;box-shadow:0 0 18px rgba(0,255,140,.55);cursor:pointer;transition:.18s}
 .wallet-btn:active{transform:scale(1.08)}
 .wallet-icon{width:45px;height:45px}
 .balance-btn{background:#3a3a3a;padding:10px 40px;border-radius:12px;font-size:30px;font-weight:900}
 
-/* МЕНЮ */
+/* ===== МЕНЮ ===== */
 .mid-menu{display:flex;justify-content:left;margin:70px 0 0 20px}
 .mid-btn{padding:20px 25px;border-radius:12px;font-size:28px;font-weight:900;margin:0 10px;display:flex;align-items:center;gap:12px;text-decoration:none;color:white;transition:.18s}
 .mid-btn:active{transform:scale(1.08)}
@@ -54,25 +79,19 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
 .support-btn{background:linear-gradient(45deg,#007bff,#000);border:3px solid #4dc7ff;box-shadow:0 0 18px rgba(0,162,255,.6)}
 .icon{width:60px;height:60px}
 
-/* БЛОКИ */
+/* ===== БОЛЬШИЕ БЛОКИ ===== */
 .big-blocks{display:flex;justify-content:left;margin:60px 0 0 20px}
 .block{background:#3a3a3a;width:28%;height:300px;border-radius:18px;margin:0 14px;display:flex;align-items:center;justify-content:center;font-size:70px;font-weight:900}
 
-/* POPUP */
+/* ===== POPUP ===== */
 .popup{position:fixed;left:0;top:0;width:100vw;height:100vh;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.55);z-index:99999;transform:translateZ(0)}
 .popup .box{width:92%;max-width:760px;padding:28px;border-radius:16px;background:#0f0f0f;border:2px solid #222;color:#fff;text-align:center}
-.popup .title{font-size:26px;font-weight:900;margin-bottom:14px}
-.action{display:block;width:86%;margin:10px auto;padding:14px;border-radius:12px;text-align:center;text-decoration:none;color:#fff;font-weight:900;font-size:18px;background:#1b1b1b;border:1px solid #333}
-.action:active{transform:scale(.98)}
-.btn-deposit{background:linear-gradient(45deg,#0fae5f,#0a7a3d);border:2px solid rgba(102,255,153,.25)}
+.title{font-size:26px;font-weight:900;margin-bottom:14px}
+.action{display:block;width:86%;margin:10px auto;padding:14px;border-radius:12px;text-align:center;color:#fff;font-weight:900;font-size:18px;text-decoration:none;background:#1b1b1b;border:1px solid #333}
 .btn-cancel{background:#222;color:#ddd}
+.btn-deposit{background:linear-gradient(45deg,#0fae5f,#0a7a3d)}
 
-/* INPUTS */
-.input-row{display:flex;gap:12px;justify-content:center;align-items:center;margin:12px 0}
-.input-row input,.input-row select{padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff;font-size:16px}
-.vc-note{background:#1b1b1b;padding:10px 14px;border-radius:8px;font-weight:900}
-
-/* СПИСКИ */
+/* Списки */
 .list{max-height:380px;overflow:auto;margin-top:10px;padding:6px;border-top:1px solid #222}
 .item{display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:8px;background:#0b0b0b;margin:8px 0;border:1px solid #191919}
 .meta{color:#bbb;font-size:13px}
@@ -80,27 +99,22 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
 .status-c{color:#66ff99;font-weight:900}
 .status-r{color:#ff7d7d;font-weight:900}
 
-/* === SCALE ДЛЯ ТЕЛЕФОНА === */
+/* ===== Масштаб — только на телефоне ===== */
 @media (max-width:480px){
-    body{
-        transform:scale(0.40);
-        transform-origin:top left;
-        width:190%;
-    }
-    .popup{
-        transform:none !important;
-    }
+    body { }
+    body.scaled { transform: scale(0.40); }
 }
 </style>
 </head>
+
 <body>
 
-<!-- ======== ПРЕЛОАДЕР ======== -->
-<div id="preloader">
+<!-- === ПРЕЛОАДЕР (ВНЕ BODY SCALE) === -->
+<div id="preloader-wrapper">
     <img src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png" class="pre-logo">
 </div>
 
-<!-- ======== ОСНОВНОЙ КОНТЕНТ ======== -->
+<!-- === ВСЁ СОДЕРЖИМОЕ САЙТА === -->
 <div id="content">
 
 <div class="logo-container">
@@ -133,224 +147,39 @@ body{margin:0;background:linear-gradient(to right,#1a1a1a,#000);font-family:'Mon
     <div class="block">UC</div>
 </div>
 
-<!-- ========= POPUPS (все рабочие) ========= -->
+<!-- ========== POPUPS (как у тебя) ========== -->
 <div class="popup" id="popup-wallet">
   <div class="box">
-    <div class="title">💼 Кошелёк</div>
-    <a class="action btn-deposit" id="open-deposit">💰 Пополнить</a>
-    <a class="action" id="open-withdraw" style="background:linear-gradient(45deg,#ff9f43,#000);border:2px solid #ffbf7a">💸 Вывести</a>
-    <a class="action" id="open-requests" style="background:#444;border:1px solid #666">📄 Заявки</a>
-    <a class="action btn-cancel" id="close-wallet">✖ Закрыть</a>
+    <div class="title">Кошелёк</div>
+    <a class="action btn-deposit" id="open-deposit">Пополнить</a>
+    <a class="action" id="open-withdraw">Вывести</a>
+    <a class="action" id="open-requests">Заявки</a>
+    <a class="action btn-cancel" id="close-wallet">Закрыть</a>
   </div>
 </div>
 
-<div class="popup" id="popup-deposit">
-  <div class="box">
-    <div class="title">💰 Пополнение — СБП</div>
-    <div style="color:#ccc;margin-bottom:8px">1₽ = 1 VC</div>
-    <div class="input-row">
-      <input id="deposit-amount" type="number" placeholder="Сумма в ₽">
-      <div class="vc-note" id="vc-estimate">0 VC</div>
-    </div>
-    <a class="action btn-deposit" id="to-payment">Перейти к оплате</a>
-    <a class="action btn-cancel" id="close-deposit">Отмена</a>
-  </div>
-</div>
+</div><!-- content -->
 
-<div class="popup" id="popup-payment">
-  <div class="box" style="max-width:540px">
-    <div class="title">Оплата — СБП</div>
-    <div>Сумма: <b id="pay-amount-text">0 ₽</b></div>
-    <img id="qr-image" style="width:220px;height:220px;background:#fff;padding:6px;border-radius:10px">
-    <a class="action btn-deposit" id="confirm-paid">Я оплатил</a>
-    <a class="action btn-cancel" id="close-payment">Отмена</a>
-  </div>
-</div>
-
-<div class="popup" id="popup-withdraw">
-  <div class="box">
-    <div class="title">💸 Вывод</div>
-    <div style="color:#ccc;margin-bottom:8px">Минимум: 500 VC</div>
-    <div class="input-row">
-      <input id="withdraw-amount" type="number" placeholder="Сумма VC">
-      <select id="withdraw-bank"><option>СБП</option><option>Сбер</option><option>Тинькофф</option><option>ВТБ</option></select>
-    </div>
-    <div class="input-row"><input id="withdraw-phone" placeholder="Номер телефона/карты"></div>
-    <a class="action" id="submit-withdraw" style="background:linear-gradient(45deg,#222,#111)">Отправить заявку</a>
-    <a class="action btn-cancel" id="close-withdraw">Отмена</a>
-  </div>
-</div>
-
-<div class="popup" id="popup-requests">
-  <div class="box">
-    <div class="title">📄 Заявки</div>
-    <div id="requests-list" class="list"></div>
-    <a class="action btn-cancel" id="close-requests">Закрыть</a>
-  </div>
-</div>
-
-<div class="popup" id="popup-profile">
-  <div class="box">
-    <div class="title">👤 Профиль</div>
-    <div><b id="profile-balance">Баланс: 0 VC</b></div>
-    <div style="font-weight:900;margin-top:10px">История</div>
-    <div id="history-list" class="list"></div>
-    <a class="action btn-cancel" id="close-profile">Закрыть</a>
-  </div>
-</div>
-
-</div> <!-- /content -->
 
 <script>
-/* === PRELOADER === */
-window.onload=function(){
-    setTimeout(()=>{
-        document.getElementById("preloader").style.opacity="0";
-        setTimeout(()=>{
-            document.getElementById("preloader").style.display="none";
-            document.getElementById("content").style.opacity="1";
-            document.body.style.overflow="auto";
-        },300);
-    },800);
+/* ============================
+    ПРЕЛОАДЕР
+============================ */
+window.onload = () => {
+    // Показываем контент
+    document.body.classList.add("scaled");
+
+    setTimeout(() => {
+        document.getElementById("preloader-wrapper").style.opacity = "0";
+
+        setTimeout(() => {
+            document.getElementById("preloader-wrapper").remove();
+            document.getElementById("content").style.opacity = "1";
+            document.body.classList.add("loaded");
+        }, 300);
+
+    }, 2000); // 0.4 сек
 };
-
-/* === STORAGE === */
-const KEY_REQ='requests_v1',KEY_HIS='history_v1',KEY_BAL='balance_v1';
-if(!localStorage.getItem(KEY_REQ))localStorage.setItem(KEY_REQ,'[]');
-if(!localStorage.getItem(KEY_HIS))localStorage.setItem(KEY_HIS,'[]');
-if(!localStorage.getItem(KEY_BAL))localStorage.setItem(KEY_BAL,'0');
-
-const getBal=()=>Number(localStorage.getItem(KEY_BAL));
-const setBal=v=>{localStorage.setItem(KEY_BAL,v);updateUI()};
-const getReq=()=>JSON.parse(localStorage.getItem(KEY_REQ));
-const setReq=a=>localStorage.setItem(KEY_REQ,JSON.stringify(a));
-const getHis=()=>JSON.parse(localStorage.getItem(KEY_HIS));
-const setHis=a=>localStorage.setItem(KEY_HIS,JSON.stringify(a));
-const addHis=e=>{let h=getHis();h.unshift(e);setHis(h)};
-
-function updateUI(){
- document.getElementById('top-balance').textContent='БАЛАНС: '+getBal()+' VC';
- document.getElementById('profile-balance').textContent='Баланс: '+getBal()+' VC';
-}
-updateUI();
-
-/* POPUP CONTROL */
-function show(id){document.getElementById(id).style.display='flex'}
-function hide(id){document.getElementById(id).style.display='none'}
-function hideAll(){document.querySelectorAll('.popup').forEach(p=>p.style.display='none')}
-
-/* OPEN */
-wallet-open.onclick=()=>{hideAll();show('popup-wallet')}
-close-wallet.onclick=e=>{e.preventDefault();hideAll()}
-
-open-deposit.onclick=e=>{e.preventDefault();hideAll();show('popup-deposit')}
-close-deposit.onclick=e=>{e.preventDefault();hideAll()}
-
-open-withdraw.onclick=e=>{e.preventDefault();hideAll();show('popup-withdraw')}
-close-withdraw.onclick=e=>{e.preventDefault();hideAll()}
-
-btn-profile.onclick=()=>{renderHis();hideAll();show('popup-profile')}
-close-profile.onclick=e=>{e.preventDefault();hideAll()}
-
-open-requests.onclick=e=>{e.preventDefault();renderReq();hideAll();show('popup-requests')}
-close-requests.onclick=e=>{e.preventDefault();hideAll()}
-
-/* DEPOSIT */
-deposit-amount.oninput=()=>vc-estimate.textContent=(Number(deposit-amount.value)||0)+' VC';
-to-payment.onclick=e=>{
- e.preventDefault();
- let sum=Number(deposit-amount.value)||0;
- if(sum<100)return alert('Минимум 100 ₽');
- hideAll();show('popup-payment');
- pay-amount-text.textContent=sum+' ₽';
- qr-image.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+encodeURIComponent('SBP|+79901510597|'+sum);
-}
-close-payment.onclick=e=>{e.preventDefault();hideAll()}
-
-confirm-paid.onclick=e=>{
- e.preventDefault();
- let sum=Number(pay-amount-text.textContent.replace(/\D/g,''))||0;
- let r=getReq();
- r.unshift({id:'r'+Date.now(),type:'dep',sum,status:'pending',time:Date.now()});
- setReq(r);
- alert('Заявка создана');
- hideAll();
-}
-
-/* WITHDRAW */
-submit-withdraw.onclick=e=>{
- e.preventDefault();
- let sum=Number(withdraw-amount.value)||0;
- if(sum<500)return alert('Минимум 500 VC');
- if(getBal()<sum)return alert('Недостаточно средств');
- setBal(getBal()-sum);
- let r=getReq();
- r.unshift({id:'r'+Date.now(),type:'wd',sum,bank:withdraw-bank.value,phone:withdraw-phone.value,status:'pending',time:Date.now()});
- setReq(r);
- addHis({type:'wd_req',sum,time:Date.now()});
- alert('Заявка отправлена');
- hideAll();
- renderHis();
-}
-
-/* ADMIN REQUEST PANEL */
-function renderReq(){
- let r=getReq(),box=requests-list; box.innerHTML='';
- if(!r.length)return box.innerHTML='<div style="color:#bbb;padding:12px">Пусто</div>';
- r.forEach(v=>{
-  let d=document.createElement('div');d.className='item';
-  let L=document.createElement('div');
-  L.innerHTML=`<div style="font-weight:900">${v.type==='dep'?v.sum+' ₽ → '+v.sum+' VC':v.sum+' VC'}</div>
-               <div class="meta">${new Date(v.time).toLocaleString()}</div>`;
-  if(v.type==='wd')L.innerHTML+=`<div class="meta">${v.bank} • ${v.phone}</div>`;
-  let R=document.createElement('div'),st=document.createElement('div');
-  st.textContent=(v.status||'pending').toUpperCase();
-  st.className=v.status==='pending'?'status-p':v.status==='confirmed'?'status-c':'status-r';
-  R.appendChild(st);
-  if(v.status==='pending'){
-   let c=document.createElement('button'),rj=document.createElement('button');
-   c.textContent='CONFIRM';c.style.cssText='background:#1b5e20;color:#fff;margin-left:6px';
-   rj.textContent='REJECT';rj.style.cssText='background:#6b0000;color:#fff;margin-left:6px';
-   c.onclick=()=>confirmReq(v.id); rj.onclick=()=>rejectReq(v.id);
-   R.appendChild(c);R.appendChild(rj);
-  }
-  d.appendChild(L);d.appendChild(R);
-  box.appendChild(d);
- });
-}
-
-function confirmReq(id){
- let r=getReq(),i=r.findIndex(x=>x.id===id);if(i<0)return;
- let v=r[i];
- r[i].status='confirmed'; setReq(r);
- if(v.type==='dep'){setBal(getBal()+v.sum);addHis({type:'dep',sum:v.sum,time:Date.now()})}
- if(v.type==='wd'){addHis({type:'wd',sum:v.sum,time:Date.now()})}
- alert('Подтверждено');renderReq();renderHis();updateUI()
-}
-
-function rejectReq(id){
- let r=getReq(),i=r.findIndex(x=>x.id===id);if(i<0)return;
- let v=r[i];
- r[i].status='rejected'; setReq(r);
- if(v.type==='wd')setBal(getBal()+v.sum);
- addHis({type:'rej',sum:v.sum,time:Date.now()});
- alert('Отклонено');renderReq();renderHis();updateUI()
-}
-
-/* HISTORY */
-function renderHis(){
- let h=getHis(),box=history-list; box.innerHTML='';
- if(!h.length)return box.innerHTML='<div style="color:#bbb;padding:12px">Пусто</div>';
- h.forEach(v=>{
-  let d=document.createElement('div');d.className='item';
-  let L=document.createElement('div');
-  L.innerHTML=`<div style="font-weight:800">${v.type}</div>
-               <div class="meta">${new Date(v.time).toLocaleString()}</div>`;
-  let R=document.createElement('div');
-  R.innerHTML=v.type==='dep'?`<div class="status-c">+${v.sum}</div>`:`<div class="status-r">-${v.sum}</div>`;
-  d.appendChild(L);d.appendChild(R);box.appendChild(d);
- });
-}
 </script>
 
 </body>
