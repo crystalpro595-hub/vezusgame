@@ -3,60 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <title>Vezus Game</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    background: #000;
-    font-family: 'Montserrat', sans-serif;
-    color: #fff;
+html,body{
+    margin:0;padding:0;
+    background:#000;
+    font-family:'Montserrat',sans-serif;
+    color:#fff;
 }
 
-/* ============================================
-   ПРЕЛОАДЕР — ВНЕ BODY, НЕ СЖИМАЕТСЯ
-============================================ */
-#preloader-wrapper {
-    position: fixed;
-    left: 0; top: 0;
-    width: 100vw; height: 100vh;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999999;
+/* ============= ПРЕЛОАДЕР ============= */
+#preloader{
+    position:fixed;
+    left:0; top:0;
+    width:100vw; height:100vh;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999999999;
 }
 
-.pre-logo {
-    width: 160px;
-    animation: pulse 1.3s infinite ease-in-out;
-    filter: drop-shadow(0 0 20px #ffeb3b);
+#preloader img{
+    width:160px;
+    animation:pulse 1.2s infinite ease-in-out;
+    filter:drop-shadow(0 0 20px #ffeb3b);
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); filter: drop-shadow(0 0 10px #ffeb3b); }
-    50% { transform: scale(1.18); filter: drop-shadow(0 0 25px #fff176); }
-    100% { transform: scale(1); filter: drop-shadow(0 0 10px #ffeb3b); }
+@keyframes pulse{
+    0%{transform:scale(1); filter:drop-shadow(0 0 12px #ffeb3b);}
+    50%{transform:scale(1.18); filter:drop-shadow(0 0 26px #fff176);}
+    100%{transform:scale(1); filter:drop-shadow(0 0 12px #ffeb3b);}
 }
 
-/* ============================================
-   ОСНОВНОЙ КОНТЕНТ (BODY) — СЖИМАЕТСЯ
-============================================ */
-#content {
-    opacity: 0;
-    transition: 0.35s;
-}
-
-body.loaded #content {
-    opacity: 1;
-}
-
-body.scaled {
-    transform: scale(0.40);
-    transform-origin: top left;
-    width: 190%;
+/* ============ ОСНОВНОЙ КОНТЕНТ ============ */
+#site{
+    opacity:0;
+    transition:0.35s;
 }
 
 /* ===== ЛОГО ===== */
@@ -83,61 +68,56 @@ body.scaled {
 .big-blocks{display:flex;justify-content:left;margin:60px 0 0 20px}
 .block{background:#3a3a3a;width:28%;height:300px;border-radius:18px;margin:0 14px;display:flex;align-items:center;justify-content:center;font-size:70px;font-weight:900}
 
-/* ===== POPUP ===== */
-.popup{position:fixed;left:0;top:0;width:100vw;height:100vh;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.55);z-index:99999;transform:translateZ(0)}
+/* ===== POPUPS ===== */
+.popup{position:fixed;left:0;top:0;width:100vw;height:100vh;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.55);z-index:99999}
 .popup .box{width:92%;max-width:760px;padding:28px;border-radius:16px;background:#0f0f0f;border:2px solid #222;color:#fff;text-align:center}
 .title{font-size:26px;font-weight:900;margin-bottom:14px}
 .action{display:block;width:86%;margin:10px auto;padding:14px;border-radius:12px;text-align:center;color:#fff;font-weight:900;font-size:18px;text-decoration:none;background:#1b1b1b;border:1px solid #333}
 .btn-cancel{background:#222;color:#ddd}
 .btn-deposit{background:linear-gradient(45deg,#0fae5f,#0a7a3d)}
 
-/* Списки */
-.list{max-height:380px;overflow:auto;margin-top:10px;padding:6px;border-top:1px solid #222}
-.item{display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:8px;background:#0b0b0b;margin:8px 0;border:1px solid #191919}
-.meta{color:#bbb;font-size:13px}
-.status-p{color:#ffd86b;font-weight:900}
-.status-c{color:#66ff99;font-weight:900}
-.status-r{color:#ff7d7d;font-weight:900}
-
-/* ===== Масштаб — только на телефоне ===== */
-@media (max-width:480px){
-    body { }
-    body.scaled { transform: scale(0.40); }
+/* ===== ТОЛЬКО ДЛЯ ТЕЛЕФОНОВ ===== */
+@media(max-width:480px){
+    #site{
+        transform:scale(0.40);
+        transform-origin:top left;
+        width:190%;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- === ПРЕЛОАДЕР (ВНЕ BODY SCALE) === -->
-<div id="preloader-wrapper">
-    <img src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png" class="pre-logo">
+<!-- ПРЕЛОАДЕР — НЕ ПОД scale -->
+<div id="preloader">
+    <img src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png">
 </div>
 
-<!-- === ВСЁ СОДЕРЖИМОЕ САЙТА === -->
-<div id="content">
+<!-- ВСЕ СОДЕРЖИМОЕ -->
+<div id="site">
 
 <div class="logo-container">
     <img class="logo-img" src="https://s.iimg.su/s/27/th_gUGAYHNxzvdL0q4z4RtJ3MTczQgABWbj3CiQzDbg.png">
 </div>
 
 <div class="balance-line">
-    <div class="wallet-btn" id="wallet-open">
+    <div class="wallet-btn">
         <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png" class="wallet-icon">
     </div>
-    <div class="balance-btn" id="top-balance">БАЛАНС: 0 VC</div>
+    <div class="balance-btn">БАЛАНС: 0 VC</div>
 </div>
 
 <div class="mid-menu">
-    <div class="mid-btn bonus-btn" id="btn-bonus">
+    <div class="mid-btn bonus-btn">
         <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon"> БОНУСЫ
     </div>
 
-    <div class="mid-btn profile-btn" id="btn-profile">
+    <div class="mid-btn profile-btn">
         <img src="https://i.postimg.cc/j29ZmdbT/Picsart-25-11-27-23-26-25-371.png" class="icon"> ПРОФИЛЬ
     </div>
 
-    <a href="https://t.me/vezusmanager" target="_blank" class="mid-btn support-btn">
+    <a href="https://t.me/vezusmanager" class="mid-btn support-btn" target="_blank">
         <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon"> ПОДДЕРЖКА
     </a>
 </div>
@@ -147,39 +127,19 @@ body.scaled {
     <div class="block">UC</div>
 </div>
 
-<!-- ========== POPUPS (как у тебя) ========== -->
-<div class="popup" id="popup-wallet">
-  <div class="box">
-    <div class="title">Кошелёк</div>
-    <a class="action btn-deposit" id="open-deposit">Пополнить</a>
-    <a class="action" id="open-withdraw">Вывести</a>
-    <a class="action" id="open-requests">Заявки</a>
-    <a class="action btn-cancel" id="close-wallet">Закрыть</a>
-  </div>
-</div>
-
-</div><!-- content -->
-
+</div><!-- /site -->
 
 <script>
-/* ============================
-    ПРЕЛОАДЕР
-============================ */
-window.onload = () => {
-    // Показываем контент
-    document.body.classList.add("scaled");
-
-    setTimeout(() => {
-        document.getElementById("preloader-wrapper").style.opacity = "0";
-
-        setTimeout(() => {
-            document.getElementById("preloader-wrapper").remove();
-            document.getElementById("content").style.opacity = "1";
-            document.body.classList.add("loaded");
-        }, 300);
-
-    }, 2000); // 0.4 сек
-};
+/* ===== ЗАГРУЗКА ===== */
+window.addEventListener("load", () => {
+    setTimeout(()=>{
+        document.getElementById("preloader").style.opacity="0";
+        setTimeout(()=>{
+            document.getElementById("preloader").remove();
+            document.getElementById("site").style.opacity="1";
+        },300);
+    },2500);
+});
 </script>
 
 </body>
