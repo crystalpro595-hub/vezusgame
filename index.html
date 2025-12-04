@@ -68,10 +68,30 @@ body {
   .status-r{color:#ff7d7d;font-weight:900}
 
   /* SCALE для телефонов — добавляется динамически */
-  @media (max-width:480px){
-    body.site-scaled { transform:scale(0.40); transform-origin:top left; width:190%; }
-    .popup{ transform:none!important; }
-  }
+@media (max-width:480px){
+
+    /* Масштаб применяется только к сайту, НЕ к прелоадеру */
+    #site {
+        transform: scale(0.40);
+        transform-origin: top left;
+        width: 190%;
+    }
+
+    /* Прелоадер всегда по центру и не масштабируется */
+    #preloader {
+        transform: none !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        left: 0 !important;
+        top: 0 !important;
+        position: fixed !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    .popup { transform:none!important; }
+}
 </style>
 </head>
 <body>
