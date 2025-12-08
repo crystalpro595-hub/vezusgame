@@ -112,8 +112,35 @@ body.show #site{visibility:visible; opacity:1;}
 }
 
 /* небольшой safeguard для very small screens */
-@media (max-width:360px){
-  .popup .box{max-width:460px}
+/* === ПОПАПЫ ВСЕГДА ТОЧНО ПО ЦЕНТРУ ЭКРАНА === */
+.popup {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,.55);
+    z-index: 999999;
+}
+
+/* Контейнер попапа НЕ масштабируется */
+.popup .box {
+    width: 92%;
+    max-width: 760px;
+    padding: 28px;
+    border-radius: 16px;
+    background: #0f0f0f;
+    border: 2px solid #222;
+    text-align: center;
+    transform: none !important;
+}
+
+/* === АДАПТАЦИЯ ТОЛЬКО ПОПАПОВ ДЛЯ ТЕЛЕФОНА === */
+@media (max-width: 480px) {
+    .popup .box {
+        max-width: 92%;
+        transform: scale(0.92);       /* ← уменьшили чуть-чуть */
+    }
 }
 </style>
 </head>
