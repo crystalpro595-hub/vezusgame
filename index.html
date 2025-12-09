@@ -568,34 +568,67 @@ function renderHis(){
     100% { transform: translateY(110vh); }
 }
 </style>
+    
+</script>
+    <!-- === SNOW BACKGROUND === -->
+<style>
+#snow-container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0; /* снег — под всем контентом */
+    pointer-events: none;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    color: #ffffff;
+    opacity: 0.9;
+    font-size: 10px;
+    pointer-events: none;
+    animation-name: fall;
+    animation-timing-function: linear;
+}
+
+@keyframes fall {
+    0%   { transform: translateY(-10px); }
+    100% { transform: translateY(110vh); }
+}
+
+/* поднимаем весь сайт над снегом */
+#site {
+    position: relative;
+    z-index: 10;
+}
+</style>
+
+<div id="snow-container"></div>
 
 <script>
-// --- МЕДЛЕННЫЕ СНЕЖИНКИ ---
 function createSnowflake() {
     const snow = document.createElement("div");
     snow.classList.add("snowflake");
     snow.textContent = "❄";
 
-    // случайный размер
+    // размер
     let size = Math.random() * 10 + 8;
     snow.style.fontSize = size + "px";
 
-    // случайная позиция по X
+    // позиция
     snow.style.left = Math.random() * 100 + "vw";
 
-    // случайная длительность падения (медленно)
+    // медленная анимация
     let duration = Math.random() * 10 + 10; // 10–20 сек
     snow.style.animationDuration = duration + "s";
 
-    document.body.appendChild(snow);
+    document.getElementById("snow-container").appendChild(snow);
 
-    // удаление после падения
-    setTimeout(() => {
-        snow.remove();
-    }, duration * 1000);
+    // удалить после падения
+    setTimeout(() => snow.remove(), duration * 1000);
 }
 
-// создаём снежинку каждые 350 мс (не слишком много)
+// новая снежинка каждые 350 ms
 setInterval(createSnowflake, 350);
 </script>
     
