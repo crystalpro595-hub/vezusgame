@@ -550,6 +550,54 @@ function renderHis(){
 }
 
 </script>
+<!-- === SNOWFLAKES === -->
+<style>
+.snowflake {
+    position: fixed;
+    top: -10px;
+    color: #ffffff;
+    font-size: 8px;
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 1; /* снежинки под всем контентом */
+    animation-name: fall;
+    animation-timing-function: linear;
+}
+@keyframes fall {
+    0% { transform: translateY(-10px); }
+    100% { transform: translateY(110vh); }
+}
+</style>
+
+<script>
+// --- МЕДЛЕННЫЕ СНЕЖИНКИ ---
+function createSnowflake() {
+    const snow = document.createElement("div");
+    snow.classList.add("snowflake");
+    snow.textContent = "❄";
+
+    // случайный размер
+    let size = Math.random() * 10 + 8;
+    snow.style.fontSize = size + "px";
+
+    // случайная позиция по X
+    snow.style.left = Math.random() * 100 + "vw";
+
+    // случайная длительность падения (медленно)
+    let duration = Math.random() * 10 + 10; // 10–20 сек
+    snow.style.animationDuration = duration + "s";
+
+    document.body.appendChild(snow);
+
+    // удаление после падения
+    setTimeout(() => {
+        snow.remove();
+    }, duration * 1000);
+}
+
+// создаём снежинку каждые 350 мс (не слишком много)
+setInterval(createSnowflake, 350);
+</script>
     
 </body>
 </html>
