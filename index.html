@@ -68,11 +68,11 @@ body.show #site {
     margin: 10px 0 0 20px;
 }
 .logo-img {
-    width: 450px;     /* ← твоя ширина */
+    width: 450px;     
     height: auto;
 }
 
-/* === ДИЗАЙН (НЕ МЕНЯЛ) === */
+/* === ДИЗАЙН === */
 .balance-line{display:flex;justify-content:right;align-items:center;margin:-70px 20px 0 0}
 .wallet-btn{background:linear-gradient(45deg,#0080ff,#000);padding:10px;border-radius:12px;margin-right:12px;display:flex;align-items:center;justify-content:center;border:3px solid #0080ff;box-shadow:0 0 18px rgba(0,162,255,.6);cursor:pointer;transition:.18s}
 .wallet-btn:active{transform:scale(1.08)}
@@ -195,23 +195,18 @@ body.show #site {
 <!-- === ПОПАП: ПОПОЛНЕНИЕ === -->
 <div class="popup" id="popup-deposit">
   <div class="box">
-
     <div class="title">💰 Пополнение — СБП</div>
-
     <div style="color:#ccc;margin-bottom:10px;">
         Минимальная сумма: <b>100 ₽</b><br>
         Курс: <b>1₽ → 1 VC</b><br>
         Номер для перевода: <b>+7 990 151 05 97</b>
     </div>
-
     <div class="input-row">
         <input id="deposit-amount" type="number" placeholder="Сумма в ₽">
         <div class="vc-note" id="vc-estimate">0 VC</div>
     </div>
-
     <a class="action btn-deposit" id="to-payment">Перейти к оплате</a>
     <a class="action btn-cancel" id="close-deposit">Отмена</a>
-
   </div>
 </div>
 
@@ -219,17 +214,13 @@ body.show #site {
 <div class="popup" id="popup-payment">
   <div class="box">
     <div class="title">Оплата — СБП</div>
-
     <div style="margin-bottom:5px;">
         Переведите: <b id="pay-amount-text">0 ₽</b>
     </div>
-
     <div style="margin-bottom:5px;">
         На номер: <b>+7 990 151 05 97</b>
     </div>
-
     <img id="qr-image" style="width:220px;height:220px;background:#fff;border-radius:10px;padding:6px;margin-bottom:10px">
-
     <a class="action btn-deposit" id="confirm-paid">Я оплатил</a>
     <a class="action btn-cancel" id="close-payment">Отмена</a>
   </div>
@@ -238,13 +229,10 @@ body.show #site {
 <!-- === ПОПАП: ВЫВОД === -->
 <div class="popup" id="popup-withdraw">
   <div class="box">
-
     <div class="title">💸 Вывод</div>
-
     <div style="color:#ccc;margin-bottom:10px;">
         Минимальный вывод: <b>500 VC</b>
     </div>
-
     <div class="input-row">
         <input id="withdraw-amount" type="number" placeholder="Сумма VC">
         <select id="withdraw-bank">
@@ -255,14 +243,11 @@ body.show #site {
             <option>Альфа</option>
         </select>
     </div>
-
     <div class="input-row">
         <input id="withdraw-phone" placeholder="Номер телефона / карты">
     </div>
-
     <a class="action" id="submit-withdraw">Отправить</a>
     <a class="action btn-cancel" id="close-withdraw">Отмена</a>
-
   </div>
 </div>
 
@@ -270,9 +255,7 @@ body.show #site {
 <div class="popup" id="popup-requests">
   <div class="box">
     <div class="title">📄 Заявки</div>
-
     <div id="requests-list" class="list"></div>
-
     <a class="action btn-cancel" id="close-requests">Закрыть</a>
   </div>
 </div>
@@ -281,18 +264,53 @@ body.show #site {
 <div class="popup" id="popup-profile">
   <div class="box">
     <div class="title">Профиль</div>
-
     <div id="profile-balance" style="margin-bottom:10px;">Баланс: 0 VC</div>
-
     <div style="font-weight:900;margin-top:10px">История операций</div>
-
     <div id="history-list" class="list"></div>
-
     <a class="action btn-cancel" id="close-profile">Закрыть</a>
   </div>
 </div>
 
-<!-- ================== JAVASCRIPT ================== -->
+<!-- === ПОПАП: БОНУСЫ === -->
+<div class="popup" id="popup-bonus">
+  <div class="box">
+    <div class="title">🎁 Бонусы</div>
+
+    <a class="action btn-deposit" id="bonus-promocode">🎟 Ввести промокод</a>
+    <a class="action btn-deposit" id="bonus-referral">👥 Пригласить друга</a>
+
+    <a class="action btn-cancel" id="close-bonus">Закрыть</a>
+  </div>
+</div>
+
+<!-- === ПОПАП: ПРОМОКОД === -->
+<div class="popup" id="popup-promocode">
+  <div class="box">
+    <div class="title">🎟 Промокод</div>
+
+    <input id="promo-input" placeholder="Введите промокод" style="width:85%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff">
+
+    <a class="action btn-deposit" id="activate-promo">Активировать</a>
+    <a class="action btn-cancel" id="close-promocode">Закрыть</a>
+  </div>
+</div>
+
+<!-- === ПОПАП: РЕФЕРАЛКА === -->
+<div class="popup" id="popup-referral">
+  <div class="box">
+    <div class="title">👥 Пригласить друга</div>
+
+    <div style="margin-bottom:10px;">Ваш код:</div>
+    <div id="ref-code" style="font-size:26px;font-weight:900;margin-bottom:14px;"></div>
+
+    <a class="action btn-deposit" id="copy-ref">Скопировать ссылку</a>
+
+    <div style="margin-top:20px;font-weight:900">Статистика</div>
+    <div id="ref-stats" class="meta" style="margin-top:6px;"></div>
+
+    <a class="action btn-cancel" id="close-referral">Закрыть</a>
+  </div>
+</div>
 <script>
 /* === ПОКАЗ САЙТА ПОСЛЕ ПРЕЛОАДЕРА === */
 window.addEventListener("load", () => {
@@ -302,7 +320,6 @@ window.addEventListener("load", () => {
         document.body.classList.add("show");
     }, 1600);
 });
-
 
 /* ===== ХРАНИЛИЩЕ ===== */
 const B='bal', R='req', H='his';
@@ -318,7 +335,6 @@ const getHis=()=>JSON.parse(localStorage.getItem(H));
 const setHis=a=>localStorage.setItem(H,JSON.stringify(a));
 const addHis=e=>{let a=getHis();a.unshift(e);setHis(a)};
 
-
 /* ===== ОБНОВЛЕНИЕ UI ===== */
 function updateUI() {
     document.getElementById("top-balance").textContent = "БАЛАНС: " + getBal() + " VC";
@@ -326,17 +342,14 @@ function updateUI() {
 }
 updateUI();
 
-
 /* ===== ПОМОЩНИКИ ПОПОПОВ ===== */
 const show=id=>document.getElementById(id).style.display="flex";
 const hide=id=>document.getElementById(id).style.display="none";
 const hideAll=()=>document.querySelectorAll(".popup").forEach(p=>p.style.display="none");
 
-
 /* ====== WALLET ====== */
 document.getElementById("wallet-open").onclick=()=>{hideAll();show("popup-wallet")};
 document.getElementById("close-wallet").onclick=e=>{e.preventDefault();hideAll()};
-
 
 /* ====== DEPOSIT ====== */
 document.getElementById("open-deposit").onclick=e=>{e.preventDefault();hideAll();show("popup-deposit")};
@@ -350,12 +363,9 @@ document.getElementById("deposit-amount").oninput=()=>{
 document.getElementById("to-payment").onclick=e=>{
     e.preventDefault();
     let sum = +document.getElementById("deposit-amount").value || 0;
-
     if(sum < 100) return alert("Минимальная сумма пополнения: 100 ₽");
-
     hideAll();
     show("popup-payment");
-
     document.getElementById("pay-amount-text").textContent = sum + " ₽";
     document.getElementById("qr-image").src =
         "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
@@ -367,21 +377,12 @@ document.getElementById("close-payment").onclick=e=>{e.preventDefault();hideAll(
 document.getElementById("confirm-paid").onclick=e=>{
     e.preventDefault();
     let sum = +document.getElementById("pay-amount-text").textContent.replace(/\D/g,"") || 0;
-
     let r = getReq();
-    r.unshift({
-        id:"r"+Date.now(),
-        type:"dep",
-        sum,
-        status:"pending",
-        time:Date.now()
-    });
+    r.unshift({id:"r"+Date.now(),type:"dep",sum,status:"pending",time:Date.now()});
     setReq(r);
-
     alert("Заявка создана. Ожидайте подтверждения.");
     hideAll();
 };
-
 
 /* ====== WITHDRAW ====== */
 document.getElementById("open-withdraw").onclick=e=>{e.preventDefault();hideAll();show("popup-withdraw")};
@@ -389,13 +390,10 @@ document.getElementById("close-withdraw").onclick=e=>{e.preventDefault();hideAll
 
 document.getElementById("submit-withdraw").onclick=e=>{
     e.preventDefault();
-
     let s = +document.getElementById("withdraw-amount").value || 0;
     if(s < 500) return alert("Минимальный вывод: 500 VC");
     if(getBal() < s) return alert("Недостаточно средств");
-
     setBal(getBal() - s);
-
     let r=getReq();
     r.unshift({
         id:"r"+Date.now(),
@@ -407,13 +405,10 @@ document.getElementById("submit-withdraw").onclick=e=>{
         time:Date.now()
     });
     setReq(r);
-
     addHis({type:"withdraw_request",sum:s,time:Date.now()});
-
     alert("Заявка отправлена");
     hideAll();
 };
-
 
 /* ====== REQUESTS ====== */
 document.getElementById("open-requests").onclick=e=>{
@@ -422,133 +417,114 @@ document.getElementById("open-requests").onclick=e=>{
     renderReq();
     show("popup-requests");
 };
-
 document.getElementById("close-requests").onclick=e=>{e.preventDefault();hideAll()};
 
 function renderReq(){
     let r=getReq();
     let box=document.getElementById("requests-list");
     box.innerHTML="";
-
-    if(!r.length){
-        box.innerHTML="<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>";
-        return;
-    }
-
+    if(!r.length){box.innerHTML="<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>"; return;}
     r.forEach(v=>{
-        let d=document.createElement("div");
-        d.className="item";
-
+        let d=document.createElement("div"); d.className="item";
         let L=document.createElement("div");
-        L.innerHTML = `
-            <div style="font-weight:900">
-                ${v.type==="dep" ? v.sum+" ₽ → "+v.sum+" VC" : v.sum+" VC"}
-            </div>
-            <div class="meta">${new Date(v.time).toLocaleString()}</div>
-        `;
-        if(v.type==="wd"){
-            L.innerHTML += `<div class="meta">${v.bank} • ${v.phone}</div>`;
-        }
-
+        L.innerHTML = `<div style="font-weight:900">${v.type==="dep" ? v.sum+" ₽ → "+v.sum+" VC" : v.sum+" VC"}</div><div class="meta">${new Date(v.time).toLocaleString()}</div>`;
+        if(v.type==="wd") L.innerHTML += `<div class="meta">${v.bank} • ${v.phone}</div>`;
         let R=document.createElement("div");
         let s=document.createElement("div");
         s.textContent=v.status.toUpperCase();
         s.className = v.status==="pending"?"status-p":v.status==="confirmed"?"status-c":"status-r";
         R.appendChild(s);
-
         if(v.status==="pending"){
-            let c=document.createElement("button"),
-                rj=document.createElement("button");
-
-            c.textContent="CONFIRM";
-            rj.textContent="REJECT";
-
-            c.style.cssText=rj.style.cssText=
-                "padding:6px 8px;border-radius:6px;color:#fff;margin-left:6px;border:0";
-            c.style.background="#1b5e20";
-            rj.style.background="#790000";
-
+            let c=document.createElement("button"), rj=document.createElement("button");
+            c.textContent="CONFIRM"; rj.textContent="REJECT";
+            c.style.cssText=rj.style.cssText="padding:6px 8px;border-radius:6px;color:#fff;margin-left:6px;border:0";
+            c.style.background="#1b5e20"; rj.style.background="#790000";
             c.onclick=()=>reqSet(v.id,"confirmed");
             rj.onclick=()=>reqSet(v.id,"rejected");
-
-            R.appendChild(c);
-            R.appendChild(rj);
+            R.appendChild(c); R.appendChild(rj);
         }
-
-        d.appendChild(L);
-        d.appendChild(R);
-        box.appendChild(d);
+        d.appendChild(L); d.appendChild(R); box.appendChild(d);
     });
 }
 
 function reqSet(id, st){
-    let r=getReq();
-    let i=r.findIndex(x=>x.id===id);
-    if(i<0)return;
-
-    let v=r[i];
-    r[i].status = st;
-    setReq(r);
-
+    let r=getReq(); let i=r.findIndex(x=>x.id===id); if(i<0)return;
+    let v=r[i]; r[i].status = st; setReq(r);
     if(st==="confirmed"){
-        if(v.type==="dep"){
-            setBal(getBal()+v.sum);
-            addHis({type:"deposit",sum:v.sum,time:Date.now()});
-        }
-        if(v.type==="wd"){
-            addHis({type:"withdraw",sum:v.sum,time:Date.now()});
-        }
+        if(v.type==="dep"){ setBal(getBal()+v.sum); addHis({type:"deposit",sum:v.sum,time:Date.now()}); }
+        if(v.type==="wd"){ addHis({type:"withdraw",sum:v.sum,time:Date.now()}); }
     } else {
         if(v.type==="wd") setBal(getBal()+v.sum);
         addHis({type:"rejected",sum:v.sum,time:Date.now()});
     }
-
-    renderReq();
-    renderHis();
-    updateUI();
+    renderReq(); renderHis(); updateUI();
 }
-
 
 /* ====== PROFILE ====== */
 document.getElementById("btn-profile").onclick=()=>{
-    hideAll();
-    renderHis();
-    show("popup-profile");
+    hideAll(); renderHis(); show("popup-profile");
 };
-
 document.getElementById("close-profile").onclick=e=>{e.preventDefault();hideAll()};
 
 function renderHis(){
-    let h=getHis();
-    let box=document.getElementById("history-list");
-    box.innerHTML="";
-
-    if(!h.length){
-        box.innerHTML="<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>";
-        return;
-    }
-
+    let h=getHis(); let box=document.getElementById("history-list"); box.innerHTML="";
+    if(!h.length){box.innerHTML="<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>"; return;}
     h.forEach(v=>{
-        let d=document.createElement("div");
-        d.className="item";
-
+        let d=document.createElement("div"); d.className="item";
         let L=document.createElement("div");
-        L.innerHTML=`
-            <div style="font-weight:800">${v.type}</div>
-            <div class="meta">${new Date(v.time).toLocaleString()}</div>
-        `;
-
+        L.innerHTML=`<div style="font-weight:800">${v.type}</div><div class="meta">${new Date(v.time).toLocaleString()}</div>`;
         let R=document.createElement("div");
-        R.innerHTML = v.type==="deposit"
-            ? `<div class="status-c">+${v.sum}</div>`
-            : `<div class="status-r">-${v.sum}</div>`;
-
-        d.appendChild(L);
-        d.appendChild(R);
-        box.appendChild(d);
+        R.innerHTML = v.type==="deposit"||v.type==="promo"? `<div class="status-c">+${v.sum}</div>` : `<div class="status-r">-${v.sum}</div>`;
+        d.appendChild(L); d.appendChild(R); box.appendChild(d);
     });
 }
 
+/* ===================== БОНУСЫ ===================== */
+document.getElementById("btn-bonus").onclick = () => { hideAll(); show("popup-bonus"); };
+document.getElementById("close-bonus").onclick = () => hideAll();
+
+/* ============ ПРОМОКОДЫ ============ */
+const PROMO_LIST = { "START50":50, "WELCOME100":100, "VEZUS2025":25 };
+if(!localStorage.getItem("usedPromos")) localStorage.setItem("usedPromos","[]");
+let getUsedPromos = () => JSON.parse(localStorage.getItem("usedPromos"));
+let setUsedPromos = (arr) => localStorage.setItem("usedPromos", JSON.stringify(arr));
+
+document.getElementById("bonus-promocode").onclick = () => { hideAll(); show("popup-promocode"); };
+document.getElementById("close-promocode").onclick = () => hideAll();
+document.getElementById("activate-promo").onclick = () => {
+    let code = document.getElementById("promo-input").value.trim().toUpperCase();
+    let used = getUsedPromos();
+    if(!code) return alert("Введите промокод!");
+    if(!(code in PROMO_LIST)) return alert("❌ Неверный промокод");
+    if(used.includes(code)) return alert("⚠ Этот промокод уже активирован");
+    let bonus = PROMO_LIST[code];
+    setBal(getBal()+bonus);
+    used.push(code); setUsedPromos(used);
+    addHis({type:"promo", sum:bonus, time:Date.now()});
+    alert("🎉 Промокод активирован! +" + bonus + " VC");
+    hideAll();
+};
+
+/* ============ РЕФЕРАЛЬНАЯ СИСТЕМА ============ */
+if(!localStorage.getItem("refCode")) localStorage.setItem("refCode","VZ"+Math.floor(100000+Math.random()*900000));
+if(!localStorage.getItem("refFriends")) localStorage.setItem("refFriends","0");
+if(!localStorage.getItem("refEarned")) localStorage.setItem("refEarned","0");
+
+document.getElementById("bonus-referral").onclick = () => { hideAll(); show("popup-referral"); updateReferralUI(); };
+document.getElementById("close-referral").onclick = () => hideAll();
+
+function updateReferralUI() {
+    document.getElementById("ref-code").textContent = localStorage.getItem("refCode");
+    document.getElementById("ref-stats").innerHTML =
+        "Приглашено друзей: <b>" + localStorage.getItem("refFriends") + "</b><br>Заработано: <b>" + localStorage.getItem("refEarned") + " VC</b>";
+}
+
+document.getElementById("copy-ref").onclick = () => {
+    let code = localStorage.getItem("refCode");
+    let link = "https://vezus.com/?ref=" + code;
+    navigator.clipboard.writeText(link);
+    alert("Ссылка скопирована!");
+};
 </script>
 <!-- === SNOWFLAKES === -->
 <style>
@@ -568,9 +544,8 @@ function renderHis(){
     100% { transform: translateY(110vh); }
 }
 </style>
-    
-</script>
-    <!-- === SNOW BACKGROUND === -->
+
+<!-- === SNOW BACKGROUND === -->
 <style>
 #snow-container {
     position: fixed;
