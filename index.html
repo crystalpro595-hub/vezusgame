@@ -484,7 +484,7 @@ document.getElementById("btn-bonus").onclick = () => { hideAll(); show("popup-bo
 document.getElementById("close-bonus").onclick = () => hideAll();
 
 /* ============ ПРОМОКОДЫ ============ */
-const PROMO_LIST = { "START50":50, "WELCOME100":100, "VEZUS2025":25 };
+const PROMO_LIST = { "Vezus50":50, "VezusJ2026":100, "VEZUS2025":25 };
 if(!localStorage.getItem("usedPromos")) localStorage.setItem("usedPromos","[]");
 let getUsedPromos = () => JSON.parse(localStorage.getItem("usedPromos"));
 let setUsedPromos = (arr) => localStorage.setItem("usedPromos", JSON.stringify(arr));
