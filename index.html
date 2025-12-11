@@ -311,6 +311,7 @@ body.show #site {
     <a class="action btn-cancel" id="close-referral">Закрыть</a>
   </div>
 </div>
+
 <script>
 /* === ПОКАЗ САЙТА ПОСЛЕ ПРЕЛОАДЕРА === */
 window.addEventListener("load", () => {
@@ -323,39 +324,140 @@ window.addEventListener("load", () => {
 </script>
 
 <!-- ================= SUPABASE & GAME LOGIC ================= -->
-<!-- Подключаем supabase -->
+<!-- CDN Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
-/*
-  Supabase setup:
-  - URL и ANON KEY вставлены (anon public key).
-  - Предполагается, что в базе есть таблицы players, balances, transactions, progress
-    и функция adjust_balance (как мы обсуждали ранее).
-*/
-
+/* ========== SUPABASE CONFIG ========== */
 const SUPABASE_URL = 'https://ciqyzrgiuvxmhxgladxu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro';
-
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ==================== Локальное хранилище (как раньше) ====================
+/* ===== ХРАНИЛИЩЕ (локальное) ===== */
 const B='bal', R='req', H='his';
 if(!localStorage.getItem(B))localStorage.setItem(B,'0');
 if(!localStorage.getItem(R))localStorage.setItem(R,'[]');
 if(!localStorage.getItem(H))localStorage.setItem(H,'[]');
 
-const getBalLocal=()=>+localStorage.getItem(B);
-const setBalLocal=v=>{localStorage.setItem(B,String(v));updateUI()};
-const getReqLocal=()=>JSON.parse(localStorage.getItem(R));
-const setReqLocal=a=>localStorage.setItem(R,JSON.stringify(a));
-const getHisLocal=()=>JSON.parse(localStorage.getItem(H));
-const setHisLocal=a=>localStorage.setItem(H,JSON.stringify(a));
-const addHisLocal=e=>{let a=getHisLocal();a.unshift(e);setHisLocal(a)};
+const getBal=()=>+localStorage.getItem(B);
+const setBal=v=>{localStorage.setItem(B,String(v)); updateUI();}
+const getReq=()=>JSON.parse(localStorage.getItem(R));
+const setReq=a=>localStorage.setItem(R,JSON.stringify(a));
+const getHis=()=>JSON.parse(localStorage.getItem(H));
+const setHis=a=>localStorage.setItem(H,JSON.stringify(a));
+const addHis=e=>{let a=getHis(); a.unshift(e); setHis(a)};
 
-// ==================== Игрок: ID и создание в Supabase ====================
+/* ===== UI обновление ===== */
+function updateUI() {
+    const top = document.getElementById("top-balance");
+    const prof = document.getElementById("profile-balance");
+    if(top) top.textContent = "БАЛАНС: " + getBal() + " VC";
+    if(prof) prof.textContent = "Баланс: " + getBal() + " VC";
+}
+updateUI();
+
+/* ===== POPUP HELPERS (глобальные) ===== */
+const show=id=>{ const el=document.getElementById(id); if(el) el.style.display="flex"; }
+const hide=id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; }
+const hideAll=()=>document.querySelectorAll(".popup").forEach(p=>p.style.display="none");
+
+/* ====== WALLET BUTTONS (назначаем события) ====== */
+document.addEventListener("DOMContentLoaded", () => {
+    // Wallet
+    const walletOpen = document.getElementById("wallet-open");
+    if (walletOpen) walletOpen.addEventListener("click", ()=>{ hideAll(); show("popup-wallet"); });
+
+    const closeWallet = document.getElementById("close-wallet");
+    if (closeWallet) closeWallet.addEventListener("click", (e) => { e.preventDefault(); hideAll(); });
+
+    // Deposit open/close
+    const openDeposit = document.getElementById("open-deposit");
+    if (openDeposit) openDeposit.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); show("popup-deposit"); });
+
+    const closeDeposit = document.getElementById("close-deposit");
+    if (closeDeposit) closeDeposit.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
+
+    // Payment
+    const toPayment = document.getElementById("to-payment");
+    if (toPayment) toPayment.addEventListener("click", onToPayment);
+
+    const closePayment = document.getElementById("close-payment");
+    if (closePayment) closePayment.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
+
+    const confirmPaid = document.getElementById("confirm-paid");
+    if (confirmPaid) confirmPaid.addEventListener("click", onConfirmPaid);
+
+    // Withdraw
+    const openWithdraw = document.getElementById("open-withdraw");
+    if (openWithdraw) openWithdraw.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); show("popup-withdraw"); });
+
+    const closeWithdraw = document.getElementById("close-withdraw");
+    if (closeWithdraw) closeWithdraw.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
+
+    const submitWithdraw = document.getElementById("submit-withdraw");
+    if (submitWithdraw) submitWithdraw.addEventListener("click", onSubmitWithdraw);
+
+    // Requests
+    const openRequests = document.getElementById("open-requests");
+    if (openRequests) openRequests.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); renderReq(); show("popup-requests"); });
+
+    const closeRequests = document.getElementById("close-requests");
+    if (closeRequests) closeRequests.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
+
+    // Profile
+    const btnProfile = document.getElementById("btn-profile");
+    if (btnProfile) btnProfile.addEventListener("click", async ()=>{
+        hideAll();
+        await fetchBalanceFromServer();
+        await renderHis();
+        show("popup-profile");
+    });
+
+    const closeProfile = document.getElementById("close-profile");
+    if (closeProfile) closeProfile.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
+
+    // Bonus / promocode / referral
+    const btnBonus = document.getElementById("btn-bonus");
+    if (btnBonus) btnBonus.addEventListener("click", ()=>{ hideAll(); show("popup-bonus"); });
+
+    const closeBonus = document.getElementById("close-bonus");
+    if (closeBonus) closeBonus.addEventListener("click", ()=>hideAll());
+
+    const bonusPromocode = document.getElementById("bonus-promocode");
+    if (bonusPromocode) bonusPromocode.addEventListener("click", ()=>{ hideAll(); show("popup-promocode"); });
+
+    const closePromocode = document.getElementById("close-promocode");
+    if (closePromocode) closePromocode.addEventListener("click", ()=>hideAll());
+
+    const activatePromo = document.getElementById("activate-promo");
+    if (activatePromo) activatePromo.addEventListener("click", onActivatePromo);
+
+    const bonusReferral = document.getElementById("bonus-referral");
+    if (bonusReferral) bonusReferral.addEventListener("click", ()=>{ hideAll(); show("popup-referral"); updateReferralUI(); });
+
+    const closeReferral = document.getElementById("close-referral");
+    if (closeReferral) closeReferral.addEventListener("click", ()=>hideAll());
+
+    const copyRef = document.getElementById("copy-ref");
+    if (copyRef) copyRef.addEventListener("click", ()=>{
+        let code = localStorage.getItem("refCode");
+        let link = "https://vezus.com/?ref=" + code;
+        navigator.clipboard.writeText(link);
+        alert("Ссылка скопирована!");
+    });
+
+    // deposit amount input
+    const depositAmount = document.getElementById("deposit-amount");
+    if (depositAmount) depositAmount.addEventListener("input", ()=>{
+        document.getElementById("vc-estimate").textContent =
+            (+document.getElementById("deposit-amount").value || 0) + " VC";
+    });
+});
+
+/* ========== SUPABASE: player + balance sync ========== */
+
+// Player ID stored locally
 let playerId = localStorage.getItem("player_id");
-
 if (!playerId) {
   playerId = "player_" + Math.floor(Math.random() * 999999999);
   localStorage.setItem("player_id", playerId);
@@ -364,8 +466,8 @@ if (!playerId) {
   console.log("ID игрока найден:", playerId);
 }
 
+// Create/upsert player row on server
 async function createPlayerOnServer() {
-  // upsert player row (id, username)
   const { data, error } = await supabase
     .from('players')
     .upsert([{ id: playerId, username: playerId }])
@@ -378,7 +480,7 @@ async function createPlayerOnServer() {
   }
 }
 
-// Fetch balance from Supabase and sync local
+// Fetch balance from server and update local
 async function fetchBalanceFromServer() {
   try {
     const { data, error } = await supabase
@@ -387,29 +489,21 @@ async function fetchBalanceFromServer() {
       .eq('player_id', playerId)
       .single();
 
-    if (error) {
-      // если записи нет — баланс 0
-      setBalLocal(0);
+    if (error || !data) {
+      setBal(0);
       return 0;
     }
     const b = Number(data.balance || 0);
-    setBalLocal(b);
+    setBal(b);
     return b;
   } catch (e) {
     console.error('fetchBalanceFromServer', e);
-    setBalLocal(0);
+    setBal(0);
     return 0;
   }
 }
 
-// Вызвать создание игрока и подтянуть баланс при старте
-(async () => {
-  await createPlayerOnServer();
-  await fetchBalanceFromServer();
-})();
-
-
-// ==================== Баланс: RPC adjust_balance ====================
+// RPC adjust_balance wrapper
 async function changeBalanceOnServer(amount, note='') {
   const { data, error } = await supabase
     .rpc('adjust_balance', { p_player_id: playerId, p_amount: amount, p_note: note });
@@ -418,20 +512,12 @@ async function changeBalanceOnServer(amount, note='') {
     console.error('changeBalanceOnServer error:', error);
     throw error;
   }
-  // после успешного изменения подтянем баланс заново
+  // refresh local balance
   await fetchBalanceFromServer();
   return data;
 }
 
-// Для отображения баланса в UI
-function updateUI() {
-    document.getElementById("top-balance").textContent = "БАЛАНС: " + getBalLocal() + " VC";
-    document.getElementById("profile-balance").textContent = "Баланс: " + getBalLocal() + " VC";
-}
-updateUI();
-
-
-// ==================== История: загрузка из сервера ====================
+/* ========== HISTORY from server ========== */
 async function fetchHistoryFromServer() {
   try {
     const { data, error } = await supabase
@@ -451,30 +537,35 @@ async function fetchHistoryFromServer() {
   }
 }
 
+// Render history combining server + local (server first)
 async function renderHis() {
-    // сначала возьмём историю с сервера
     const serverHistory = await fetchHistoryFromServer();
-
-    // отрисуем серверную историю (приоритет)
     let box = document.getElementById("history-list");
     box.innerHTML = "";
-    if ((!serverHistory || serverHistory.length === 0) && getHisLocal().length === 0) {
+
+    if ((serverHistory.length === 0) && getHis().length === 0) {
         box.innerHTML = "<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>";
         return;
     }
 
-    // сначала серверные транзакции
     serverHistory.forEach(v => {
         let d=document.createElement("div"); d.className="item";
         let L=document.createElement("div");
         L.innerHTML=`<div style="font-weight:800">${v.type}</div><div class="meta">${new Date(v.created_at).toLocaleString()}</div>`;
         let R=document.createElement("div");
-        R.innerHTML = v.type==="deposit"||v.type==="promo"? `<div class="status-c">+${v.amount}</div>` : `<div class="status-r">${v.amount < 0 ? '-' + Math.abs(v.amount) : v.amount}</div>`;
+        if (v.type === "deposit" || v.type === "promo") {
+          R.innerHTML = `<div class="status-c">+${v.amount}</div>`;
+        } else {
+          // server may store negative amounts for withdraw
+          let amt = v.amount;
+          if (amt < 0) amt = '-' + Math.abs(amt);
+          R.innerHTML = `<div class="status-r">${amt}</div>`;
+        }
         d.appendChild(L); d.appendChild(R); box.appendChild(d);
     });
 
-    // затем локальные (например промо и прочие)
-    getHisLocal().forEach(v=>{
+    // local history items
+    getHis().forEach(v=>{
         let d=document.createElement("div"); d.className="item";
         let L=document.createElement("div");
         L.innerHTML=`<div style="font-weight:800">${v.type}</div><div class="meta">${new Date(v.time).toLocaleString()}</div>`;
@@ -484,110 +575,9 @@ async function renderHis() {
     });
 }
 
-
-// ==================== UI / Попапы / Кнопки (как раньше) ====================
-const show=id=>document.getElementById(id).style.display="flex";
-const hide=id=>document.getElementById(id).style.display="none";
-const hideAll=()=>document.querySelectorAll(".popup").forEach(p=>p.style.display="none");
-
-/* WALLET */
-document.getElementById("wallet-open").onclick=()=>{hideAll();show("popup-wallet")};
-document.getElementById("close-wallet").onclick=e=>{e.preventDefault();hideAll()};
-
-/* DEPOSIT */
-document.getElementById("open-deposit").onclick=e=>{e.preventDefault();hideAll();show("popup-deposit")};
-document.getElementById("close-deposit").onclick=e=>{e.preventDefault();hideAll()};
-
-document.getElementById("deposit-amount").oninput=()=>{
-    document.getElementById("vc-estimate").textContent =
-        (+document.getElementById("deposit-amount").value || 0) + " VC";
-};
-
-document.getElementById("to-payment").onclick=e=>{
-    e.preventDefault();
-    let sum = +document.getElementById("deposit-amount").value || 0;
-    if(sum < 100) return alert("Минимальная сумма пополнения: 100 ₽");
-    hideAll();
-    show("popup-payment");
-    document.getElementById("pay-amount-text").textContent = sum + " ₽";
-    document.getElementById("qr-image").src =
-        "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
-        encodeURIComponent("SBP|+79901510597|" + sum);
-};
-
-document.getElementById("close-payment").onclick=e=>{e.preventDefault();hideAll()};
-
-document.getElementById("confirm-paid").onclick=async e=>{
-    e.preventDefault();
-    let sum = +document.getElementById("pay-amount-text").textContent.replace(/\D/g,"") || 0;
-
-    // Из прежней UX: сохраняем локальную заявку (чтобы пользователь видел)
-    let r = getReqLocal();
-    r.unshift({id:"r"+Date.now(),type:"dep",sum:sum,status:"confirmed",time:Date.now()});
-    setReqLocal(r);
-
-    try {
-      // Сразу применяем пополнение на сервере через RPC adjust_balance
-      await changeBalanceOnServer(sum, 'SBP deposit');
-      addHisLocal({type:"deposit",sum:sum,time:Date.now()});
-      alert("Пополнение подтверждено и зачислено!");
-      hideAll();
-      renderReq();
-      updateUI();
-      renderHis();
-    } catch (err) {
-      alert("Ошибка при зачислении: " + (err.message || err));
-    }
-};
-
-/* WITHDRAW */
-document.getElementById("open-withdraw").onclick=e=>{e.preventDefault();hideAll();show("popup-withdraw")};
-document.getElementById("close-withdraw").onclick=e=>{e.preventDefault();hideAll()};
-
-document.getElementById("submit-withdraw").onclick=async e=>{
-    e.preventDefault();
-    let s = +document.getElementById("withdraw-amount").value || 0;
-    if(s < 500) return alert("Минимальный вывод: 500 VC");
-    if(getBalLocal() < s) return alert("Недостаточно средств");
-
-    // Создаём локальную заявку (pending)
-    let r=getReqLocal();
-    r.unshift({
-        id:"r"+Date.now(),
-        type:"wd",
-        sum:s,
-        bank:document.getElementById("withdraw-bank").value,
-        phone:document.getElementById("withdraw-phone").value,
-        status:"pending",
-        time:Date.now()
-    });
-    setReqLocal(r);
-
-    // Для упрощения: сразу списываем на сервере (чтобы баланс уменьшился и история сохранилась)
-    try {
-      await changeBalanceOnServer(-s, 'Withdraw request');
-      addHisLocal({type:"withdraw_request",sum:s,time:Date.now()});
-      alert("Заявка на вывод создана. Баланс списан.");
-      hideAll();
-      renderReq();
-      updateUI();
-      renderHis();
-    } catch (err) {
-      alert("Ошибка при создании заявки: " + (err.message || err));
-    }
-};
-
-/* REQUESTS */
-document.getElementById("open-requests").onclick=e=>{
-    e.preventDefault();
-    hideAll();
-    renderReq();
-    show("popup-requests");
-};
-document.getElementById("close-requests").onclick=e=>{e.preventDefault();hideAll()};
-
+/* ========== REQUESTS rendering (local) ========== */
 function renderReq(){
-    let r=getReqLocal();
+    let r=getReq();
     let box=document.getElementById("requests-list");
     box.innerHTML="";
     if(!r.length){box.innerHTML="<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>"; return;}
@@ -615,66 +605,54 @@ function renderReq(){
 }
 
 function reqSet(id, st){
-    let r=getReqLocal(); let i=r.findIndex(x=>x.id===id); if(i<0)return;
-    let v=r[i]; r[i].status = st; setReqLocal(r);
+    let r=getReq(); let i=r.findIndex(x=>x.id===id); if(i<0)return;
+    let v=r[i]; r[i].status = st; setReq(r);
     if(st==="confirmed"){
-        if(v.type==="dep"){ setBalLocal(getBalLocal()+v.sum); addHisLocal({type:"deposit",sum:v.sum,time:Date.now()}); }
-        if(v.type==="wd"){ addHisLocal({type:"withdraw",sum:v.sum,time:Date.now()}); }
+        if(v.type==="dep"){ setBal(getBal()+v.sum); addHis({type:"deposit",sum:v.sum,time:Date.now()}); }
+        if(v.type==="wd"){ addHis({type:"withdraw",sum:v.sum,time:Date.now()}); }
     } else {
-        if(v.type==="wd") setBalLocal(getBalLocal()+v.sum);
-        addHisLocal({type:"rejected",sum:v.sum,time:Date.now()});
+        if(v.type==="wd") setBal(getBal()+v.sum);
+        addHis({type:"rejected",sum:v.sum,time:Date.now()});
     }
     renderReq(); renderHis(); updateUI();
 }
 
-/* PROFILE */
-document.getElementById("btn-profile").onclick=async ()=>{
-    hideAll();
-    // обновляем баланс с сервера и историю
-    await fetchBalanceFromServer();
-    await renderHis();
-    show("popup-profile");
-};
-document.getElementById("close-profile").onclick=e=>{e.preventDefault();hideAll()};
-
-/* BONUSES */
-document.getElementById("btn-bonus").onclick = () => { hideAll(); show("popup-bonus"); };
-document.getElementById("close-bonus").onclick = () => hideAll();
-
-/* PROMOCODES */
+/* ========== Promo, Referral (local logic kept) ========== */
 const PROMO_LIST = { "Vezus50":50, "VezusJ2026":100, "VEZUS2025":25 };
 if(!localStorage.getItem("usedPromos")) localStorage.setItem("usedPromos","[]");
 let getUsedPromos = () => JSON.parse(localStorage.getItem("usedPromos"));
 let setUsedPromos = (arr) => localStorage.setItem("usedPromos", JSON.stringify(arr));
 
-document.getElementById("bonus-promocode").onclick = () => { hideAll(); show("popup-promocode"); };
-document.getElementById("close-promocode").onclick = () => hideAll();
-document.getElementById("activate-promo").onclick = () => {
+function onActivatePromo() {
     let code = document.getElementById("promo-input").value.trim().toUpperCase();
     let used = getUsedPromos();
     if(!code) return alert("Введите промокод!");
     if(!(code in PROMO_LIST)) return alert("❌ Неверный промокод");
     if(used.includes(code)) return alert("⚠ Этот промокод уже активирован");
     let bonus = PROMO_LIST[code];
-    // попытка зачислить на сервер (через RPC)
+
+    // try to credit on server via RPC, fall back to local
     changeBalanceOnServer(bonus, 'Promo: '+code).then(()=>{
       setUsedPromos([...used, code]);
-      addHisLocal({type:"promo", sum:bonus, time:Date.now()});
+      addHis({type:"promo", sum:bonus, time:Date.now()});
       alert("🎉 Промокод активирован! +" + bonus + " VC");
       hideAll();
       renderHis();
     }).catch(err=>{
-      alert("Ошибка зачисления промокода: " + (err.message || err));
+      // if server fail - still apply locally
+      setBal(getBal()+bonus);
+      setUsedPromos([...used, code]);
+      addHis({type:"promo", sum:bonus, time:Date.now()});
+      alert("Промокод применён локально (сервер недоступен). +" + bonus + " VC");
+      hideAll();
+      renderHis();
     });
-};
+}
 
 /* REFERRAL */
 if(!localStorage.getItem("refCode")) localStorage.setItem("refCode","VZ"+Math.floor(100000+Math.random()*900000));
 if(!localStorage.getItem("refFriends")) localStorage.setItem("refFriends","0");
 if(!localStorage.getItem("refEarned")) localStorage.setItem("refEarned","0");
-
-document.getElementById("bonus-referral").onclick = () => { hideAll(); show("popup-referral"); updateReferralUI(); };
-document.getElementById("close-referral").onclick = () => hideAll();
 
 function updateReferralUI() {
     document.getElementById("ref-code").textContent = localStorage.getItem("refCode");
@@ -682,18 +660,85 @@ function updateReferralUI() {
         "Приглашено друзей: <b>" + localStorage.getItem("refFriends") + "</b><br>Заработано: <b>" + localStorage.getItem("refEarned") + " VC</b>";
 }
 
-document.getElementById("copy-ref").onclick = () => {
-    let code = localStorage.getItem("refCode");
-    let link = "https://vezus.com/?ref=" + code;
-    navigator.clipboard.writeText(link);
-    alert("Ссылка скопирована!");
-};
+/* ========== Deposit / Withdraw handlers (use server) ========== */
 
-// ==================== небольшой API для кнопок теста (если нужно) ====================
+function onToPayment(e){
+    e.preventDefault();
+    let sum = +document.getElementById("deposit-amount").value || 0;
+    if(sum < 100) return alert("Минимальная сумма пополнения: 100 ₽");
+    hideAll();
+    show("popup-payment");
+    document.getElementById("pay-amount-text").textContent = sum + " ₽";
+    document.getElementById("qr-image").src =
+        "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
+        encodeURIComponent("SBP|+79901510597|" + sum);
+}
+
+async function onConfirmPaid(e){
+    e.preventDefault();
+    let sum = +document.getElementById("pay-amount-text").textContent.replace(/\D/g,"") || 0;
+    // create local request
+    let r = getReq();
+    r.unshift({id:"r"+Date.now(),type:"dep",sum,sum_rub:sum,status:"pending",time:Date.now()});
+    setReq(r);
+    // Try immediately to credit on server (if your workflow confirms instantly)
+    try {
+      await changeBalanceOnServer(sum, 'SBP deposit');
+      // mark request confirmed
+      r[0].status = 'confirmed';
+      setReq(r);
+      addHis({type:"deposit",sum:sum,time:Date.now()});
+      alert("Пополнение подтверждено и зачислено!");
+      hideAll();
+      renderReq();
+      updateUI();
+      renderHis();
+    } catch (err) {
+      // leave pending and notify
+      alert("Заявка создана и ожидает подтверждения (или ошибка автоматического зачисления).");
+      hideAll();
+      renderReq();
+    }
+}
+
+async function onSubmitWithdraw(e){
+    e.preventDefault();
+    let s = +document.getElementById("withdraw-amount").value || 0;
+    if(s < 500) return alert("Минимальный вывод: 500 VC");
+    if(getBal() < s) return alert("Недостаточно средств");
+
+    // Create local pending request
+    let r=getReq();
+    r.unshift({
+        id:"r"+Date.now(),
+        type:"wd",
+        sum:s,
+        bank:document.getElementById("withdraw-bank").value,
+        phone:document.getElementById("withdraw-phone").value,
+        status:"pending",
+        time:Date.now()
+    });
+    setReq(r);
+
+    // Try to subtract on server so balance consistent
+    try {
+      await changeBalanceOnServer(-s, 'Withdraw request');
+      addHis({type:"withdraw_request",sum:s,time:Date.now()});
+      alert("Заявка на вывод создана. Баланс списан.");
+      hideAll();
+      renderReq();
+      updateUI();
+      renderHis();
+    } catch (err) {
+      alert("Ошибка при создании заявки: " + (err.message || err));
+    }
+}
+
+/* ========== Test buttons (optional) ========== */
 async function addMoney() {
   try {
     await changeBalanceOnServer(100, 'Manual add +100');
-    addHisLocal({type:"deposit",sum:100,time:Date.now()});
+    addHis({type:"deposit",sum:100,time:Date.now()});
     updateUI();
     renderHis();
     alert('Добавлено +100 VC');
@@ -704,9 +749,9 @@ async function addMoney() {
 
 async function removeMoney() {
   try {
-    if(getBalLocal() < 50) return alert('Недостаточно средств');
+    if(getBal() < 50) return alert('Недостаточно средств');
     await changeBalanceOnServer(-50, 'Manual remove -50');
-    addHisLocal({type:"withdraw",sum:50,time:Date.now()});
+    addHis({type:"withdraw",sum:50,time:Date.now()});
     updateUI();
     renderHis();
     alert('Списано -50 VC');
@@ -715,6 +760,7 @@ async function removeMoney() {
   }
 }
 
+/* Save / load progress */
 async function saveProgress(progress) {
   const { error } = await supabase
     .from("progress")
@@ -746,22 +792,23 @@ async function loadProgressTest() {
     .select("data")
     .eq("player_id", playerId)
     .single();
-  if (error) {
+  if (error || !data) {
     alert('Прогресс не найден');
     return;
   }
   alert('Прогресс: ' + JSON.stringify(data.data));
 }
 
-// ==================== Инициализация (подтянем историю при старте) ====================
+/* ========== Initialization ========== */
 (async () => {
+  await createPlayerOnServer();
   await fetchBalanceFromServer();
   await renderHis();
 })();
 
 </script>
 
-<!-- === SNOWFLAKES === -->
+<!-- === SNOWFLAKES (unchanged) === -->
 <style>
 .snowflake {
     position: fixed;
