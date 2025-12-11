@@ -320,6 +320,15 @@ body.show #site {
 <!-- Подключаем supabase CDN и внешний скрипт -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="script.js"></script>
-
+<script>
+/* === ПОКАЗ САЙТА ПОСЛЕ ПРЕЛОАДЕРА === */
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        const p = document.getElementById("preloader");
+        if (p) p.remove();
+        document.body.classList.add("show");
+    }, 1200); // можно 0, если хочешь мгновенно
+});
+</script>
 </body>
 </html>
