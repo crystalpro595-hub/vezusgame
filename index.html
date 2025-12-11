@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
+/* === ВСЯ твоя стилизация (скопирована из исходника) === */
 /* === ОСНОВА === */
 html, body {
     margin: 0;
@@ -143,7 +144,7 @@ body.show #site {
 
 <!-- === ПРЕЛОАДЕР === -->
 <div id="preloader">
-    <img src="https://i.postimg.cc/65mZ59x6/1765310429229.png">
+    <img src="https://i.postimg.cc/65mZ59x6/1765310429229.png" alt="preloader">
 </div>
 
 <!-- === САЙТ === -->
@@ -151,25 +152,25 @@ body.show #site {
 <div id="content">
 
     <div class="logo-container">
-        <img class="logo-img" src="https://i.postimg.cc/zBFBjf4P/Picsart-25-12-05-23-10-11-867.png">
+        <img class="logo-img" src="https://i.postimg.cc/zBFBjf4P/Picsart-25-12-05-23-10-11-867.png" alt="logo">
     </div>
 
     <div class="balance-line">
         <div class="wallet-btn" id="wallet-open">
-            <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png" class="wallet-icon">
+            <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png" class="wallet-icon" alt="wallet">
         </div>
         <div class="balance-btn" id="top-balance">БАЛАНС: 0 VC</div>
     </div>
 
     <div class="mid-menu">
         <div class="mid-btn bonus-btn" id="btn-bonus">
-            <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon"> БОНУСЫ
+            <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon" alt="bonus"> БОНУСЫ
         </div>
         <div class="mid-btn profile-btn" id="btn-profile">
-            <img src="https://i.postimg.cc/j5byLHdC/Picsart-25-12-09-13-32-38-851.png" class="icon"> ПРОФИЛЬ
+            <img src="https://i.postimg.cc/j5byLHdC/Picsart-25-12-09-13-32-38-851.png" class="icon" alt="profile"> ПРОФИЛЬ
         </div>
-        <a class="mid-btn support-btn" href="https://t.me/vezusmanager" target="_blank">
-            <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon"> ПОДДЕРЖКА
+        <a class="mid-btn support-btn" href="https://t.me/vezusmanager" target="_blank" rel="noopener">
+            <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon" alt="support"> ПОДДЕРЖКА
         </a>
     </div>
 
@@ -179,7 +180,15 @@ body.show #site {
     </div>
 </div>
 </div>
-<!-- === ПОПАП: КОШЕЛЁК === -->
+
+<!-- === ПОПАПЫ (оставлены как у тебя) === -->
+<!-- wallet, deposit, payment, withdraw, requests, profile, bonus, promocode, referral -->
+<!-- (все popup блоки — копия твоих блоков из исходника) -->
+
+<!-- вставь тут все те же popups, которые у тебя были (не трогал) -->
+<!-- для компактности в этом файле они присутствуют ниже — полная разметка та же, что была у тебя. -->
+
+<!-- === POPUPS START === -->
 <div class="popup" id="popup-wallet">
   <div class="box">
     <div class="title">Кошелёк</div>
@@ -192,7 +201,6 @@ body.show #site {
   </div>
 </div>
 
-<!-- === ПОПАП: ПОПОЛНЕНИЕ === -->
 <div class="popup" id="popup-deposit">
   <div class="box">
     <div class="title">💰 Пополнение — СБП</div>
@@ -210,7 +218,6 @@ body.show #site {
   </div>
 </div>
 
-<!-- === ПОПАП: ОПЛАТА === -->
 <div class="popup" id="popup-payment">
   <div class="box">
     <div class="title">Оплата — СБП</div>
@@ -220,13 +227,12 @@ body.show #site {
     <div style="margin-bottom:5px;">
         На номер: <b>+7 990 151 05 97</b>
     </div>
-    <img id="qr-image" style="width:220px;height:220px;background:#fff;border-radius:10px;padding:6px;margin-bottom:10px">
+    <img id="qr-image" style="width:220px;height:220px;background:#fff;border-radius:10px;padding:6px;margin-bottom:10px" alt="qr">
     <a class="action btn-deposit" id="confirm-paid">Я оплатил</a>
     <a class="action btn-cancel" id="close-payment">Отмена</a>
   </div>
 </div>
 
-<!-- === ПОПАП: ВЫВОД === -->
 <div class="popup" id="popup-withdraw">
   <div class="box">
     <div class="title">💸 Вывод</div>
@@ -251,7 +257,6 @@ body.show #site {
   </div>
 </div>
 
-<!-- === ПОПАП: ЗАЯВКИ === -->
 <div class="popup" id="popup-requests">
   <div class="box">
     <div class="title">📄 Заявки</div>
@@ -260,7 +265,6 @@ body.show #site {
   </div>
 </div>
 
-<!-- === ПОПАП: ПРОФИЛЬ === -->
 <div class="popup" id="popup-profile">
   <div class="box">
     <div class="title">Профиль</div>
@@ -271,7 +275,6 @@ body.show #site {
   </div>
 </div>
 
-<!-- === ПОПАП: БОНУСЫ === -->
 <div class="popup" id="popup-bonus">
   <div class="box">
     <div class="title">🎁 Бонусы</div>
@@ -283,7 +286,6 @@ body.show #site {
   </div>
 </div>
 
-<!-- === ПОПАП: ПРОМОКОД === -->
 <div class="popup" id="popup-promocode">
   <div class="box">
     <div class="title">🎟 Промокод</div>
@@ -295,7 +297,6 @@ body.show #site {
   </div>
 </div>
 
-<!-- === ПОПАП: РЕФЕРАЛКА === -->
 <div class="popup" id="popup-referral">
   <div class="box">
     <div class="title">👥 Пригласить друга</div>
@@ -311,583 +312,14 @@ body.show #site {
     <a class="action btn-cancel" id="close-referral">Закрыть</a>
   </div>
 </div>
+<!-- === POPUPS END === -->
 
-<script>
-/* === ПОКАЗ САЙТА ПОСЛЕ ПРЕЛОАДЕРА === */
-window.addEventListener("load", () => {
-    setTimeout(() => {
-        const p = document.getElementById("preloader");
-        if (p) p.remove();
-        document.body.classList.add("show");
-    }, 1600);
-});
-</script>
-
-<!-- ================= SUPABASE & GAME LOGIC ================= -->
-<!-- CDN Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-<script>
-/* ========== SUPABASE CONFIG ========== */
-const SUPABASE_URL = 'https://ciqyzrgiuvxmhxgladxu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* ===== ХРАНИЛИЩЕ (локальное) ===== */
-const B='bal', R='req', H='his';
-if(!localStorage.getItem(B))localStorage.setItem(B,'0');
-if(!localStorage.getItem(R))localStorage.setItem(R,'[]');
-if(!localStorage.getItem(H))localStorage.setItem(H,'[]');
-
-const getBal=()=>+localStorage.getItem(B);
-const setBal=v=>{localStorage.setItem(B,String(v)); updateUI();}
-const getReq=()=>JSON.parse(localStorage.getItem(R));
-const setReq=a=>localStorage.setItem(R,JSON.stringify(a));
-const getHis=()=>JSON.parse(localStorage.getItem(H));
-const setHis=a=>localStorage.setItem(H,JSON.stringify(a));
-const addHis=e=>{let a=getHis(); a.unshift(e); setHis(a)};
-
-/* ===== UI обновление ===== */
-function updateUI() {
-    const top = document.getElementById("top-balance");
-    const prof = document.getElementById("profile-balance");
-    if(top) top.textContent = "БАЛАНС: " + getBal() + " VC";
-    if(prof) prof.textContent = "Баланс: " + getBal() + " VC";
-}
-updateUI();
-
-/* ===== POPUP HELPERS (глобальные) ===== */
-const show=id=>{ const el=document.getElementById(id); if(el) el.style.display="flex"; }
-const hide=id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; }
-const hideAll=()=>document.querySelectorAll(".popup").forEach(p=>p.style.display="none");
-
-/* ====== WALLET BUTTONS (назначаем события) ====== */
-document.addEventListener("DOMContentLoaded", () => {
-    // Wallet
-    const walletOpen = document.getElementById("wallet-open");
-    if (walletOpen) walletOpen.addEventListener("click", ()=>{ hideAll(); show("popup-wallet"); });
-
-    const closeWallet = document.getElementById("close-wallet");
-    if (closeWallet) closeWallet.addEventListener("click", (e) => { e.preventDefault(); hideAll(); });
-
-    // Deposit open/close
-    const openDeposit = document.getElementById("open-deposit");
-    if (openDeposit) openDeposit.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); show("popup-deposit"); });
-
-    const closeDeposit = document.getElementById("close-deposit");
-    if (closeDeposit) closeDeposit.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
-
-    // Payment
-    const toPayment = document.getElementById("to-payment");
-    if (toPayment) toPayment.addEventListener("click", onToPayment);
-
-    const closePayment = document.getElementById("close-payment");
-    if (closePayment) closePayment.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
-
-    const confirmPaid = document.getElementById("confirm-paid");
-    if (confirmPaid) confirmPaid.addEventListener("click", onConfirmPaid);
-
-    // Withdraw
-    const openWithdraw = document.getElementById("open-withdraw");
-    if (openWithdraw) openWithdraw.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); show("popup-withdraw"); });
-
-    const closeWithdraw = document.getElementById("close-withdraw");
-    if (closeWithdraw) closeWithdraw.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
-
-    const submitWithdraw = document.getElementById("submit-withdraw");
-    if (submitWithdraw) submitWithdraw.addEventListener("click", onSubmitWithdraw);
-
-    // Requests
-    const openRequests = document.getElementById("open-requests");
-    if (openRequests) openRequests.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); renderReq(); show("popup-requests"); });
-
-    const closeRequests = document.getElementById("close-requests");
-    if (closeRequests) closeRequests.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
-
-    // Profile
-    const btnProfile = document.getElementById("btn-profile");
-    if (btnProfile) btnProfile.addEventListener("click", async ()=>{
-        hideAll();
-        await fetchBalanceFromServer();
-        await renderHis();
-        show("popup-profile");
-    });
-
-    const closeProfile = document.getElementById("close-profile");
-    if (closeProfile) closeProfile.addEventListener("click", (e)=>{ e.preventDefault(); hideAll(); });
-
-    // Bonus / promocode / referral
-    const btnBonus = document.getElementById("btn-bonus");
-    if (btnBonus) btnBonus.addEventListener("click", ()=>{ hideAll(); show("popup-bonus"); });
-
-    const closeBonus = document.getElementById("close-bonus");
-    if (closeBonus) closeBonus.addEventListener("click", ()=>hideAll());
-
-    const bonusPromocode = document.getElementById("bonus-promocode");
-    if (bonusPromocode) bonusPromocode.addEventListener("click", ()=>{ hideAll(); show("popup-promocode"); });
-
-    const closePromocode = document.getElementById("close-promocode");
-    if (closePromocode) closePromocode.addEventListener("click", ()=>hideAll());
-
-    const activatePromo = document.getElementById("activate-promo");
-    if (activatePromo) activatePromo.addEventListener("click", onActivatePromo);
-
-    const bonusReferral = document.getElementById("bonus-referral");
-    if (bonusReferral) bonusReferral.addEventListener("click", ()=>{ hideAll(); show("popup-referral"); updateReferralUI(); });
-
-    const closeReferral = document.getElementById("close-referral");
-    if (closeReferral) closeReferral.addEventListener("click", ()=>hideAll());
-
-    const copyRef = document.getElementById("copy-ref");
-    if (copyRef) copyRef.addEventListener("click", ()=>{
-        let code = localStorage.getItem("refCode");
-        let link = "https://vezus.com/?ref=" + code;
-        navigator.clipboard.writeText(link);
-        alert("Ссылка скопирована!");
-    });
-
-    // deposit amount input
-    const depositAmount = document.getElementById("deposit-amount");
-    if (depositAmount) depositAmount.addEventListener("input", ()=>{
-        document.getElementById("vc-estimate").textContent =
-            (+document.getElementById("deposit-amount").value || 0) + " VC";
-    });
-});
-
-/* ========== SUPABASE: player + balance sync ========== */
-
-// Player ID stored locally
-let playerId = localStorage.getItem("player_id");
-if (!playerId) {
-  playerId = "player_" + Math.floor(Math.random() * 999999999);
-  localStorage.setItem("player_id", playerId);
-  console.log("Создан новый ID игрока:", playerId);
-} else {
-  console.log("ID игрока найден:", playerId);
-}
-
-// Create/upsert player row on server
-async function createPlayerOnServer() {
-  const { data, error } = await supabase
-    .from('players')
-    .upsert([{ id: playerId, username: playerId }])
-    .select();
-
-  if (error) {
-    console.error("createPlayerOnServer error:", error);
-  } else {
-    console.log("Игрок создан/подтверждён на сервере:", data);
-  }
-}
-
-// Fetch balance from server and update local
-async function fetchBalanceFromServer() {
-  try {
-    const { data, error } = await supabase
-      .from('balances')
-      .select('balance')
-      .eq('player_id', playerId)
-      .single();
-
-    if (error || !data) {
-      setBal(0);
-      return 0;
-    }
-    const b = Number(data.balance || 0);
-    setBal(b);
-    return b;
-  } catch (e) {
-    console.error('fetchBalanceFromServer', e);
-    setBal(0);
-    return 0;
-  }
-}
-
-// RPC adjust_balance wrapper
-async function changeBalanceOnServer(amount, note='') {
-  const { data, error } = await supabase
-    .rpc('adjust_balance', { p_player_id: playerId, p_amount: amount, p_note: note });
-
-  if (error) {
-    console.error('changeBalanceOnServer error:', error);
-    throw error;
-  }
-  // refresh local balance
-  await fetchBalanceFromServer();
-  return data;
-}
-
-/* ========== HISTORY from server ========== */
-async function fetchHistoryFromServer() {
-  try {
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('id, amount, type, note, created_at')
-      .eq('player_id', playerId)
-      .order('created_at', { ascending: false })
-      .limit(200);
-    if (error) {
-      console.error('fetchHistoryFromServer', error);
-      return [];
-    }
-    return data || [];
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
-}
-
-// Render history combining server + local (server first)
-async function renderHis() {
-    const serverHistory = await fetchHistoryFromServer();
-    let box = document.getElementById("history-list");
-    box.innerHTML = "";
-
-    if ((serverHistory.length === 0) && getHis().length === 0) {
-        box.innerHTML = "<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>";
-        return;
-    }
-
-    serverHistory.forEach(v => {
-        let d=document.createElement("div"); d.className="item";
-        let L=document.createElement("div");
-        L.innerHTML=`<div style="font-weight:800">${v.type}</div><div class="meta">${new Date(v.created_at).toLocaleString()}</div>`;
-        let R=document.createElement("div");
-        if (v.type === "deposit" || v.type === "promo") {
-          R.innerHTML = `<div class="status-c">+${v.amount}</div>`;
-        } else {
-          // server may store negative amounts for withdraw
-          let amt = v.amount;
-          if (amt < 0) amt = '-' + Math.abs(amt);
-          R.innerHTML = `<div class="status-r">${amt}</div>`;
-        }
-        d.appendChild(L); d.appendChild(R); box.appendChild(d);
-    });
-
-    // local history items
-    getHis().forEach(v=>{
-        let d=document.createElement("div"); d.className="item";
-        let L=document.createElement("div");
-        L.innerHTML=`<div style="font-weight:800">${v.type}</div><div class="meta">${new Date(v.time).toLocaleString()}</div>`;
-        let R=document.createElement("div");
-        R.innerHTML = v.type==="deposit"||v.type==="promo"? `<div class="status-c">+${v.sum}</div>` : `<div class="status-r">-${v.sum}</div>`;
-        d.appendChild(L); d.appendChild(R); box.appendChild(d);
-    });
-}
-
-/* ========== REQUESTS rendering (local) ========== */
-function renderReq(){
-    let r=getReq();
-    let box=document.getElementById("requests-list");
-    box.innerHTML="";
-    if(!r.length){box.innerHTML="<div style='color:#bbb;padding:12px;text-align:center'>Пусто</div>"; return;}
-    r.forEach(v=>{
-        let d=document.createElement("div"); d.className="item";
-        let L=document.createElement("div");
-        L.innerHTML = `<div style="font-weight:900">${v.type==="dep" ? v.sum+" ₽ → "+v.sum+" VC" : v.sum+" VC"}</div><div class="meta">${new Date(v.time).toLocaleString()}</div>`;
-        if(v.type==="wd") L.innerHTML += `<div class="meta">${v.bank} • ${v.phone}</div>`;
-        let R=document.createElement("div");
-        let s=document.createElement("div");
-        s.textContent=v.status.toUpperCase();
-        s.className = v.status==="pending"?"status-p":v.status==="confirmed"?"status-c":"status-r";
-        R.appendChild(s);
-        if(v.status==="pending"){
-            let c=document.createElement("button"), rj=document.createElement("button");
-            c.textContent="CONFIRM"; rj.textContent="REJECT";
-            c.style.cssText=rj.style.cssText="padding:6px 8px;border-radius:6px;color:#fff;margin-left:6px;border:0";
-            c.style.background="#1b5e20"; rj.style.background="#790000";
-            c.onclick=()=>reqSet(v.id,"confirmed");
-            rj.onclick=()=>reqSet(v.id,"rejected");
-            R.appendChild(c); R.appendChild(rj);
-        }
-        d.appendChild(L); d.appendChild(R); box.appendChild(d);
-    });
-}
-
-function reqSet(id, st){
-    let r=getReq(); let i=r.findIndex(x=>x.id===id); if(i<0)return;
-    let v=r[i]; r[i].status = st; setReq(r);
-    if(st==="confirmed"){
-        if(v.type==="dep"){ setBal(getBal()+v.sum); addHis({type:"deposit",sum:v.sum,time:Date.now()}); }
-        if(v.type==="wd"){ addHis({type:"withdraw",sum:v.sum,time:Date.now()}); }
-    } else {
-        if(v.type==="wd") setBal(getBal()+v.sum);
-        addHis({type:"rejected",sum:v.sum,time:Date.now()});
-    }
-    renderReq(); renderHis(); updateUI();
-}
-
-/* ========== Promo, Referral (local logic kept) ========== */
-const PROMO_LIST = { "Vezus50":50, "VezusJ2026":100, "VEZUS2025":25 };
-if(!localStorage.getItem("usedPromos")) localStorage.setItem("usedPromos","[]");
-let getUsedPromos = () => JSON.parse(localStorage.getItem("usedPromos"));
-let setUsedPromos = (arr) => localStorage.setItem("usedPromos", JSON.stringify(arr));
-
-function onActivatePromo() {
-    let code = document.getElementById("promo-input").value.trim().toUpperCase();
-    let used = getUsedPromos();
-    if(!code) return alert("Введите промокод!");
-    if(!(code in PROMO_LIST)) return alert("❌ Неверный промокод");
-    if(used.includes(code)) return alert("⚠ Этот промокод уже активирован");
-    let bonus = PROMO_LIST[code];
-
-    // try to credit on server via RPC, fall back to local
-    changeBalanceOnServer(bonus, 'Promo: '+code).then(()=>{
-      setUsedPromos([...used, code]);
-      addHis({type:"promo", sum:bonus, time:Date.now()});
-      alert("🎉 Промокод активирован! +" + bonus + " VC");
-      hideAll();
-      renderHis();
-    }).catch(err=>{
-      // if server fail - still apply locally
-      setBal(getBal()+bonus);
-      setUsedPromos([...used, code]);
-      addHis({type:"promo", sum:bonus, time:Date.now()});
-      alert("Промокод применён локально (сервер недоступен). +" + bonus + " VC");
-      hideAll();
-      renderHis();
-    });
-}
-
-/* REFERRAL */
-if(!localStorage.getItem("refCode")) localStorage.setItem("refCode","VZ"+Math.floor(100000+Math.random()*900000));
-if(!localStorage.getItem("refFriends")) localStorage.setItem("refFriends","0");
-if(!localStorage.getItem("refEarned")) localStorage.setItem("refEarned","0");
-
-function updateReferralUI() {
-    document.getElementById("ref-code").textContent = localStorage.getItem("refCode");
-    document.getElementById("ref-stats").innerHTML =
-        "Приглашено друзей: <b>" + localStorage.getItem("refFriends") + "</b><br>Заработано: <b>" + localStorage.getItem("refEarned") + " VC</b>";
-}
-
-/* ========== Deposit / Withdraw handlers (use server) ========== */
-
-function onToPayment(e){
-    e.preventDefault();
-    let sum = +document.getElementById("deposit-amount").value || 0;
-    if(sum < 100) return alert("Минимальная сумма пополнения: 100 ₽");
-    hideAll();
-    show("popup-payment");
-    document.getElementById("pay-amount-text").textContent = sum + " ₽";
-    document.getElementById("qr-image").src =
-        "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
-        encodeURIComponent("SBP|+79901510597|" + sum);
-}
-
-async function onConfirmPaid(e){
-    e.preventDefault();
-    let sum = +document.getElementById("pay-amount-text").textContent.replace(/\D/g,"") || 0;
-    // create local request
-    let r = getReq();
-    r.unshift({id:"r"+Date.now(),type:"dep",sum,sum_rub:sum,status:"pending",time:Date.now()});
-    setReq(r);
-    // Try immediately to credit on server (if your workflow confirms instantly)
-    try {
-      await changeBalanceOnServer(sum, 'SBP deposit');
-      // mark request confirmed
-      r[0].status = 'confirmed';
-      setReq(r);
-      addHis({type:"deposit",sum:sum,time:Date.now()});
-      alert("Пополнение подтверждено и зачислено!");
-      hideAll();
-      renderReq();
-      updateUI();
-      renderHis();
-    } catch (err) {
-      // leave pending and notify
-      alert("Заявка создана и ожидает подтверждения (или ошибка автоматического зачисления).");
-      hideAll();
-      renderReq();
-    }
-}
-
-async function onSubmitWithdraw(e){
-    e.preventDefault();
-    let s = +document.getElementById("withdraw-amount").value || 0;
-    if(s < 500) return alert("Минимальный вывод: 500 VC");
-    if(getBal() < s) return alert("Недостаточно средств");
-
-    // Create local pending request
-    let r=getReq();
-    r.unshift({
-        id:"r"+Date.now(),
-        type:"wd",
-        sum:s,
-        bank:document.getElementById("withdraw-bank").value,
-        phone:document.getElementById("withdraw-phone").value,
-        status:"pending",
-        time:Date.now()
-    });
-    setReq(r);
-
-    // Try to subtract on server so balance consistent
-    try {
-      await changeBalanceOnServer(-s, 'Withdraw request');
-      addHis({type:"withdraw_request",sum:s,time:Date.now()});
-      alert("Заявка на вывод создана. Баланс списан.");
-      hideAll();
-      renderReq();
-      updateUI();
-      renderHis();
-    } catch (err) {
-      alert("Ошибка при создании заявки: " + (err.message || err));
-    }
-}
-
-/* ========== Test buttons (optional) ========== */
-async function addMoney() {
-  try {
-    await changeBalanceOnServer(100, 'Manual add +100');
-    addHis({type:"deposit",sum:100,time:Date.now()});
-    updateUI();
-    renderHis();
-    alert('Добавлено +100 VC');
-  } catch (err) {
-    alert('Ошибка: ' + (err.message || err));
-  }
-}
-
-async function removeMoney() {
-  try {
-    if(getBal() < 50) return alert('Недостаточно средств');
-    await changeBalanceOnServer(-50, 'Manual remove -50');
-    addHis({type:"withdraw",sum:50,time:Date.now()});
-    updateUI();
-    renderHis();
-    alert('Списано -50 VC');
-  } catch (err) {
-    alert('Ошибка: ' + (err.message || err));
-  }
-}
-
-/* Save / load progress */
-async function saveProgress(progress) {
-  const { error } = await supabase
-    .from("progress")
-    .upsert({
-      player_id: playerId,
-      data: progress,
-      last_save: new Date().toISOString()
-    });
-  if (error) {
-    console.error("Ошибка сохранения прогресса:", error);
-    alert('Ошибка сохранения прогресса');
-  } else {
-    alert('Прогресс сохранён');
-  }
-}
-
-function saveProgressTest() {
-  const progress = {
-    level: 3,
-    xp: 250,
-    coins: Math.floor(Math.random() * 1000)
-  };
-  saveProgress(progress);
-}
-
-async function loadProgressTest() {
-  const { data, error } = await supabase
-    .from("progress")
-    .select("data")
-    .eq("player_id", playerId)
-    .single();
-  if (error || !data) {
-    alert('Прогресс не найден');
-    return;
-  }
-  alert('Прогресс: ' + JSON.stringify(data.data));
-}
-
-/* ========== Initialization ========== */
-(async () => {
-  await createPlayerOnServer();
-  await fetchBalanceFromServer();
-  await renderHis();
-})();
-
-</script>
-
-<!-- === SNOWFLAKES (unchanged) === -->
-<style>
-.snowflake {
-    position: fixed;
-    top: -10px;
-    color: #ffffff;
-    font-size: 8px;
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 1; /* снежинки под всем контентом */
-    animation-name: fall;
-    animation-timing-function: linear;
-}
-@keyframes fall {
-    0% { transform: translateY(-10px); }
-    100% { transform: translateY(110vh); }
-}
-</style>
-
-<!-- === SNOW BACKGROUND === -->
-<style>
-#snow-container {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    z-index: 0; /* снег — под всем контентом */
-    pointer-events: none;
-}
-
-.snowflake {
-    position: absolute;
-    top: -10px;
-    color: #ffffff;
-    opacity: 0.9;
-    font-size: 10px;
-    pointer-events: none;
-    animation-name: fall;
-    animation-timing-function: linear;
-}
-
-@keyframes fall {
-    0%   { transform: translateY(-10px); }
-    100% { transform: translateY(110vh); }
-}
-
-/* поднимаем весь сайт над снегом */
-#site {
-    position: relative;
-    z-index: 10;
-}
-</style>
-
+<!-- Snow container -->
 <div id="snow-container"></div>
 
-<script>
-function createSnowflake() {
-    const snow = document.createElement("div");
-    snow.classList.add("snowflake");
-    snow.textContent = "❄";
+<!-- Подключаем supabase CDN и внешний скрипт -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="script.js"></script>
 
-    // размер
-    let size = Math.random() * 10 + 8;
-    snow.style.fontSize = size + "px";
-
-    // позиция
-    snow.style.left = Math.random() * 100 + "vw";
-
-    // медленная анимация
-    let duration = Math.random() * 10 + 10; // 10–20 сек
-    snow.style.animationDuration = duration + "s";
-
-    document.getElementById("snow-container").appendChild(snow);
-
-    // удалить после падения
-    setTimeout(() => snow.remove(), duration * 1000);
-}
-
-// новая снежинка каждые 350 ms
-setInterval(createSnowflake, 350);
-</script>
-    
 </body>
 </html>
