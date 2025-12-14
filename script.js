@@ -1,14 +1,18 @@
-<script>
-
+// ===============================
+// SUPABASE
+// ===============================
 const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
 
-// === ПОЛУЧАЕМ ИЛИ СОЗДАЁМ ИГРОКА ===
+// ===============================
+// USER
+// ===============================
 async function getOrCreateUser() {
   let userId = localStorage.getItem("user_id");
 
@@ -16,10 +20,7 @@ async function getOrCreateUser() {
     userId = crypto.randomUUID();
     localStorage.setItem("user_id", userId);
 
-    await supabase.from("Users").insert({
-      id: userId
-    });
-
+    await supabase.from("Users").insert({ id: userId });
     await supabase.from("profiles").insert({
       user_id: userId,
       balance: 0,
@@ -31,7 +32,9 @@ async function getOrCreateUser() {
   return userId;
 }
 
-// === ПОЛУЧАЕМ ПРОФИЛЬ ===
+// ===============================
+// PROFILE LOAD
+// ===============================
 async function loadProfile() {
   const userId = await getOrCreateUser();
 
@@ -53,96 +56,91 @@ async function loadProfile() {
     "Баланс: " + data.balance + " VC";
 }
 
-window.addEventListener("load", () => {
-  loadProfile();
-});
-</script>
+window.addEventListener("load", loadProfile);
 
-/* === инициализация Supabase (если нужно) === */
-const supabaseUrl = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-const supabaseKey = "PUBLIC-KEY-HERE"; // вставь свой public anon key
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-/* === ФУНКЦИИ ПОПАПОВ === */
+// ===============================
+// POPUPS
+// ===============================
 function openPopup(id) {
-    document.getElementById(id).style.display = "flex";
+  document.getElementById(id).style.display = "flex";
 }
 
 function closePopup(id) {
-    document.getElementById(id).style.display = "none";
+  document.getElementById(id).style.display = "none";
 }
 
-/* === ЖДЁМ ПОЛНУЮ ЗАГРУЗКУ DOM === */
 document.addEventListener("DOMContentLoaded", () => {
+  // Wallet
+  document.getElementById("wallet-open").onclick =
+    () => openPopup("popup-wallet");
+  document.getElementById("close-wallet").onclick =
+    () => closePopup("popup-wallet");
 
-    /* === КОШЕЛЁК === */
-    const walletBtn = document.getElementById("wallet-open");
-    const closeWallet = document.getElementById("close-wallet");
-    walletBtn.onclick = () => openPopup("popup-wallet");
-    closeWallet.onclick = () => closePopup("popup-wallet");
+  // Deposit
+  document.getElementById("open-deposit").onclick = () => {
+    closePopup("popup-wallet");
+    openPopup("popup-deposit");
+  };
+  document.getElementById("close-deposit").onclick =
+    () => closePopup("popup-deposit");
 
-    /* === ПОПОЛНЕНИЕ === */
-    document.getElementById("open-deposit").onclick = () => {
-        closePopup("popup-wallet");
-        openPopup("popup-deposit");
-    };
-    document.getElementById("close-deposit").onclick = () =>
-        closePopup("popup-deposit");
+  // Payment
+  document.getElementById("to-payment").onclick = () => {
+    const amount = document.getElementById("deposit-amount").value;
+    if (!amount || amount < 100) {
+      alert("Минимальная сумма — 100 ₽");
+      return;
+    }
 
-    /* === ОПЛАТА === */
-    document.getElementById("to-payment").onclick = () => {
-        const amount = document.getElementById("deposit-amount").value;
-        if (!amount || amount < 100) return alert("Минимум 100 ₽");
+    document.getElementById("pay-amount-text").textContent = amount + " ₽";
+    closePopup("popup-deposit");
+    openPopup("popup-payment");
+  };
 
-        document.getElementById("pay-amount-text").textContent = amount + " ₽";
+  document.getElementById("close-payment").onclick =
+    () => closePopup("popup-payment");
 
-        closePopup("popup-deposit");
-        openPopup("popup-payment");
-    };
-    document.getElementById("close-payment").onclick = () =>
-        closePopup("popup-payment");
+  // Withdraw
+  document.getElementById("open-withdraw").onclick = () => {
+    closePopup("popup-wallet");
+    openPopup("popup-withdraw");
+  };
+  document.getElementById("close-withdraw").onclick =
+    () => closePopup("popup-withdraw");
 
-    /* === ВЫВОД === */
-    document.getElementById("open-withdraw").onclick = () => {
-        closePopup("popup-wallet");
-        openPopup("popup-withdraw");
-    };
-    document.getElementById("close-withdraw").onclick = () =>
-        closePopup("popup-withdraw");
+  // Requests
+  document.getElementById("open-requests").onclick = () => {
+    closePopup("popup-wallet");
+    openPopup("popup-requests");
+  };
+  document.getElementById("close-requests").onclick =
+    () => closePopup("popup-requests");
 
-    /* === ЗАЯВКИ === */
-    document.getElementById("open-requests").onclick = () => {
-        closePopup("popup-wallet");
-        openPopup("popup-requests");
-    };
-    document.getElementById("close-requests").onclick = () =>
-        closePopup("popup-requests");
+  // Profile
+  document.getElementById("btn-profile").onclick =
+    () => openPopup("popup-profile");
+  document.getElementById("close-profile").onclick =
+    () => closePopup("popup-profile");
 
-    /* === ПРОФИЛЬ === */
-    document.getElementById("btn-profile").onclick = () =>
-        openPopup("popup-profile");
-    document.getElementById("close-profile").onclick = () =>
-        closePopup("popup-profile");
+  // Bonus
+  document.getElementById("btn-bonus").onclick =
+    () => openPopup("popup-bonus");
+  document.getElementById("close-bonus").onclick =
+    () => closePopup("popup-bonus");
 
-    /* === БОНУСЫ === */
-    document.getElementById("btn-bonus").onclick = () =>
-        openPopup("popup-bonus");
-    document.getElementById("close-bonus").onclick = () =>
-        closePopup("popup-bonus");
+  // Promocode
+  document.getElementById("bonus-promocode").onclick = () => {
+    closePopup("popup-bonus");
+    openPopup("popup-promocode");
+  };
+  document.getElementById("close-promocode").onclick =
+    () => closePopup("popup-promocode");
 
-    /* === ПРОМОКОД === */
-    document.getElementById("bonus-promocode").onclick = () => {
-        closePopup("popup-bonus");
-        openPopup("popup-promocode");
-    };
-    document.getElementById("close-promocode").onclick = () =>
-        closePopup("popup-promocode");
-
-    /* === РЕФЕРАЛКА === */
-    document.getElementById("bonus-referral").onclick = () => {
-        closePopup("popup-bonus");
-        openPopup("popup-referral");
-    };
-    document.getElementById("close-referral").onclick = () =>
-        closePopup("popup-referral");
+  // Referral
+  document.getElementById("bonus-referral").onclick = () => {
+    closePopup("popup-bonus");
+    openPopup("popup-referral");
+  };
+  document.getElementById("close-referral").onclick =
+    () => closePopup("popup-referral");
 });
