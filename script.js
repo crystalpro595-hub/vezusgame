@@ -1,15 +1,40 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* ================= SUPABASE ================= */
+/***********************
+ * SUPABASE
+ ***********************/
 const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
 
-/* ================= USER ================= */
+/***********************
+ * ВСПОМОГАТЕЛЬНЫЕ
+ ***********************/
+function $(id) {
+  return document.getElementById(id);
+}
+
+function openPopup(id) {
+  const el = $(id);
+  if (el) el.style.display = "flex";
+}
+
+function closePopup(id) {
+  const el = $(id);
+  if (el) el.style.display = "none";
+}
+
+function bind(id, fn) {
+  const el = $(id);
+  if (el) el.onclick = fn;
+}
+
+/***********************
+ * USER
+ ***********************/
 async function getOrCreateUser() {
   let userId = localStorage.getItem("user_id");
 
@@ -29,123 +54,106 @@ async function getOrCreateUser() {
   return userId;
 }
 
-/* ================= APPLY DEPOSITS ================= */
-async function applyConfirmedDeposits() {
-  const userId = localStorage.getItem("user_id");
-  if (!userId) return;
-
-  const { data: deposits, error } = await supabase
-    .from("deposits")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("status", "confirmed")
-    .eq("applied", false);
-
-  if (error || !deposits || deposits.length === 0) return;
-
-  let total = 0;
-  deposits.forEach(d => total += d.amount);
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("balance")
-    .eq("user_id", userId)
-    .single();
-
-  if (!profile) return;
-
-  const newBalance = profile.balance + total;
-
-  await supabase
-    .from("profiles")
-    .update({ balance: newBalance })
-    .eq("user_id", userId);
-
-  const ids = deposits.map(d => d.id);
-  await supabase
-    .from("deposits")
-    .update({ applied: true })
-    .in("id", ids);
-}
-
-/* ================= LOAD PROFILE ================= */
 async function loadProfile() {
   const userId = await getOrCreateUser();
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("profiles")
     .select("*")
     .eq("user_id", userId)
     .single();
 
-  if (error) return;
+  if (!data) return;
 
-  document.getElementById("top-balance").innerText =
-    "БАЛАНС: " + data.balance + " VC";
+  if ($("top-balance"))
+    $("top-balance").innerText = `БАЛАНС: ${data.balance} VC`;
 
-  document.getElementById("profile-balance").innerText =
-    "Баланс: " + data.balance + " VC";
+  if ($("profile-balance"))
+    $("profile-balance").innerText = `Баланс: ${data.balance} VC`;
 }
 
-/* ================= POPUPS ================= */
-function openPopup(id) {
-  document.getElementById(id).style.display = "flex";
-}
-function closePopup(id) {
-  document.getElementById(id).style.display = "none";
+/***********************
+ * DEPOSIT
+ ***********************/
+async function createDeposit(amount) {
+  const userId = await getOrCreateUser();
+
+  await supabase.from("deposits").insert({
+    user_id: userId,
+    amount: amount,
+    status: "pending",
+    applied: false
+  });
 }
 
-/* ================= DOM ================= */
+/***********************
+ * POPUPS
+ ***********************/
 document.addEventListener("DOMContentLoaded", () => {
+  loadProfile();
 
-  document.getElementById("wallet-open").onclick = () =>
-    openPopup("popup-wallet");
-  document.getElementById("close-wallet").onclick = () =>
-    closePopup("popup-wallet");
+  // Кошелёк
+  bind("wallet-open", () => openPopup("popup-wallet"));
+  bind("close-wallet", () => closePopup("popup-wallet"));
 
-  document.getElementById("open-deposit").onclick = () => {
+  // Пополнение
+  bind("open-deposit", () => {
     closePopup("popup-wallet");
     openPopup("popup-deposit");
-  };
-  document.getElementById("close-deposit").onclick = () =>
-    closePopup("popup-deposit");
+  });
+  bind("close-deposit", () => closePopup("popup-deposit"));
 
-  document.getElementById("to-payment").onclick = () => {
-    const amount = document.getElementById("deposit-amount").value;
-    if (!amount || amount < 100) {
+  // К оплате
+  bind("to-payment", async () => {
+    const input = $("deposit-amount");
+    if (!input || input.value < 100) {
       alert("Минимум 100 ₽");
       return;
     }
-    document.getElementById("pay-amount-text").innerText = amount + " ₽";
+
+    await createDeposit(Number(input.value));
+    if ($("pay-amount-text"))
+      $("pay-amount-text").innerText = input.value + " ₽";
+
     closePopup("popup-deposit");
     openPopup("popup-payment");
-  };
-  document.getElementById("close-payment").onclick = () =>
-    closePopup("popup-payment");
+  });
 
-  document.getElementById("open-withdraw").onclick = () => {
+  bind("close-payment", () => closePopup("popup-payment"));
+
+  // Вывод
+  bind("open-withdraw", () => {
     closePopup("popup-wallet");
     openPopup("popup-withdraw");
-  };
-  document.getElementById("close-withdraw").onclick = () =>
-    closePopup("popup-withdraw");
+  });
+  bind("close-withdraw", () => closePopup("popup-withdraw"));
 
-  document.getElementById("btn-profile").onclick = () =>
-    openPopup("popup-profile");
-  document.getElementById("close-profile").onclick = () =>
-    closePopup("popup-profile");
+  // Заявки
+  bind("open-requests", () => {
+    closePopup("popup-wallet");
+    openPopup("popup-requests");
+  });
+  bind("close-requests", () => closePopup("popup-requests"));
 
-  document.getElementById("btn-bonus").onclick = () =>
-    openPopup("popup-bonus");
-  document.getElementById("close-bonus").onclick = () =>
+  // Профиль
+  bind("btn-profile", () => openPopup("popup-profile"));
+  bind("close-profile", () => closePopup("popup-profile"));
+
+  // Бонусы
+  bind("btn-bonus", () => openPopup("popup-bonus"));
+  bind("close-bonus", () => closePopup("popup-bonus"));
+
+  // Промокод
+  bind("bonus-promocode", () => {
     closePopup("popup-bonus");
+    openPopup("popup-promocode");
+  });
+  bind("close-promocode", () => closePopup("popup-promocode"));
 
+  // Рефералка
+  bind("bonus-referral", () => {
+    closePopup("popup-bonus");
+    openPopup("popup-referral");
+  });
+  bind("close-referral", () => closePopup("popup-referral"));
 });
-
-/* ================= START ================= */
-window.addEventListener("load", async () => {
-  await getOrCreateUser();
-  await applyConfirmedDeposits();
-  await loadProfile();
-});
-</script>
