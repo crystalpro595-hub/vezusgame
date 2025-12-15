@@ -185,3 +185,48 @@ bind("confirm-paid", async () => {
   alert("Заявка отправлена на проверку");
   closePopup("popup-payment");
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const confirmBtn = document.getElementById("confirm-paid");
+
+  if (!confirmBtn) {
+    console.error("Кнопка confirm-paid не найдена");
+    return;
+  }
+
+  confirmBtn.addEventListener("click", async () => {
+    console.log("Нажата кнопка Я оплатил");
+
+    const userId = localStorage.getItem("user_id");
+    if (!userId) {
+      alert("Пользователь не найден");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("deposits")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error || !data) {
+      alert("Заявка не найдена");
+      console.error(error);
+      return;
+    }
+
+    await supabase
+      .from("deposits")
+      .update({ status: "waiting" })
+      .eq("id", data.id);
+
+    alert("Заявка отправлена на проверку");
+
+    document.getElementById("popup-payment").style.display = "none";
+  });
+
+});
