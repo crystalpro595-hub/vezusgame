@@ -15,8 +15,15 @@ const supabase = window.supabase.createClient(
  ***********************/
 const $ = (id) => document.getElementById(id);
 
-const openPopup = (id) => $(id) && ($(id).style.display = "flex");
-const closePopup = (id) => $(id) && ($(id).style.display = "none");
+function openPopup(id) {
+  const el = $(id);
+  if (el) el.style.display = "flex";
+}
+
+function closePopup(id) {
+  const el = $(id);
+  if (el) el.style.display = "none";
+}
 
 /***********************
  * USER
@@ -45,7 +52,7 @@ async function loadProfile() {
 
   const { data } = await supabase
     .from("profiles")
-    .select("balance")
+    .select("*")
     .eq("user_id", userId)
     .single();
 
@@ -64,15 +71,63 @@ async function createDeposit(amount) {
   await supabase.from("deposits").insert({
     user_id: userId,
     amount,
-    status: "process" // ⏳ В процессе
+    status: "waiting"
+  });
+}
+
+/***********************
+ * ЗАЯВКИ
+ ***********************/
+async function loadRequests() {
+  const userId = localStorage.getItem("user_id");
+  if (!userId) return;
+
+  const { data } = await supabase
+    .from("deposits")
+    .select("amount, status, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  const list = $("requests-list");
+  list.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    list.innerHTML = `<div class="meta">Заявок пока нет</div>`;
+    return;
+  }
+
+  data.forEach((d) => {
+    let statusText = "⏳ В процессе";
+    let statusClass = "status-p";
+
+    if (d.status === "success") {
+      statusText = "✅ Успешно";
+      statusClass = "status-c";
+    }
+    if (d.status === "reject") {
+      statusText = "❌ Отказ";
+      statusClass = "status-r";
+    }
+
+    const date = new Date(d.created_at).toLocaleString("ru-RU");
+
+    list.innerHTML += `
+      <div class="item">
+        <div>
+          <b>${d.amount} ₽</b>
+          <div class="meta">${date}</div>
+        </div>
+        <div class="${statusClass}">${statusText}</div>
+      </div>
+    `;
   });
 }
 
 /***********************
  * DOM READY
  ***********************/
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadProfile();
+document.addEventListener("DOMContentLoaded", () => {
+  loadProfile();
 
   $("wallet-open").onclick = () => openPopup("popup-wallet");
   $("close-wallet").onclick = () => closePopup("popup-wallet");
@@ -81,11 +136,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     closePopup("popup-wallet");
     openPopup("popup-deposit");
   };
+
   $("close-deposit").onclick = () => closePopup("popup-deposit");
 
   $("to-payment").onclick = async () => {
     const amount = Number($("deposit-amount").value);
-    if (amount < 100) return alert("Минимум 100 ₽");
+    if (!amount || amount < 100) return alert("Минимум 100 ₽");
 
     await createDeposit(amount);
     $("pay-amount-text").innerText = amount + " ₽";
@@ -94,43 +150,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     openPopup("popup-payment");
   };
 
-  $("close-payment").onclick = () => closePopup("popup-payment");
-
-  /********** Я ОПЛАТИЛ **********/
-  $("confirm-paid").onclick = async () => {
-    $("confirm-paid").style.pointerEvents = "none";
-
-    const userId = localStorage.getItem("user_id");
-
-    const { data } = await supabase
-      .from("deposits")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("status", "process")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    if (!data) {
-      alert("Заявка не найдена");
-      $("confirm-paid").style.pointerEvents = "auto";
-      return;
-    }
-
-    alert("Заявка отправлена. Ожидает проверки ✅");
+  $("confirm-paid").onclick = () => {
+    alert("Заявка отправлена на проверку");
     closePopup("popup-payment");
   };
 
-  $("open-withdraw").onclick = () => {
+  $("open-requests").onclick = async () => {
     closePopup("popup-wallet");
-    openPopup("popup-withdraw");
-  };
-  $("close-withdraw").onclick = () => closePopup("popup-withdraw");
-
-  $("open-requests").onclick = () => {
-    closePopup("popup-wallet");
+    await loadRequests();
     openPopup("popup-requests");
   };
+
   $("close-requests").onclick = () => closePopup("popup-requests");
 
   $("btn-profile").onclick = () => openPopup("popup-profile");
@@ -143,11 +173,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     closePopup("popup-bonus");
     openPopup("popup-promocode");
   };
+
   $("close-promocode").onclick = () => closePopup("popup-promocode");
 
   $("bonus-referral").onclick = () => {
     closePopup("popup-bonus");
     openPopup("popup-referral");
   };
+
   $("close-referral").onclick = () => closePopup("popup-referral");
 });
