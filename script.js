@@ -76,22 +76,8 @@ async function createDeposit(amount) {
 }
 
 /***********************
- * ЗАЯВКИ
+ * ЗАЯВКИ (РУССКИЕ СТАТУСЫ)
  ***********************/
-function statusRu(status) {
-  if (status === "waiting") return "⏳ В процессе";
-  if (status === "success") return "✅ Успешно";
-  if (status === "rejected") return "❌ Отказ";
-  return status;
-}
-
-function statusClass(status) {
-  if (status === "waiting") return "status-p";
-  if (status === "success") return "status-c";
-  if (status === "rejected") return "status-r";
-  return "";
-}
-
 async function loadRequests() {
   const userId = localStorage.getItem("user_id");
   if (!userId) return;
@@ -111,6 +97,20 @@ async function loadRequests() {
   }
 
   data.forEach((d) => {
+
+    let statusText = "⏳ В процессе";
+    let statusClass = "status-p";
+
+    if (d.status === "success") {
+      statusText = "✅ Успешно";
+      statusClass = "status-c";
+    }
+
+    if (d.status === "rejected") {
+      statusText = "❌ Отказ";
+      statusClass = "status-r";
+    }
+
     const date = new Date(d.created_at).toLocaleString("ru-RU");
 
     list.innerHTML += `
@@ -119,9 +119,7 @@ async function loadRequests() {
           <b>${d.amount} ₽</b>
           <div class="meta">${date}</div>
         </div>
-        <div class="${statusClass(d.status)}">
-          ${statusRu(d.status)}
-        </div>
+        <div class="${statusClass}">${statusText}</div>
       </div>
     `;
   });
