@@ -11,11 +11,9 @@ const supabase = window.supabase.createClient(
 );
 
 /***********************
- * ВСПОМОГАТЕЛЬНЫЕ
+ * HELPERS
  ***********************/
-function $(id) {
-  return document.getElementById(id);
-}
+const $ = (id) => document.getElementById(id);
 
 function openPopup(id) {
   const el = $(id);
@@ -25,11 +23,6 @@ function openPopup(id) {
 function closePopup(id) {
   const el = $(id);
   if (el) el.style.display = "none";
-}
-
-function bind(id, fn) {
-  const el = $(id);
-  if (el) el.onclick = fn;
 }
 
 /***********************
@@ -57,13 +50,13 @@ async function getOrCreateUser() {
 async function loadProfile() {
   const userId = await getOrCreateUser();
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("user_id", userId)
     .single();
 
-  if (!data) return;
+  if (error || !data) return;
 
   if ($("top-balance"))
     $("top-balance").innerText = `БАЛАНС: ${data.balance} VC`;
@@ -81,121 +74,54 @@ async function createDeposit(amount) {
   await supabase.from("deposits").insert({
     user_id: userId,
     amount: amount,
-    status: "pending",
-    applied: false
+    status: "pending"
   });
 }
 
 /***********************
- * POPUPS
+ * DOM READY
  ***********************/
 document.addEventListener("DOMContentLoaded", () => {
+
   loadProfile();
 
-  // Кошелёк
-  bind("wallet-open", () => openPopup("popup-wallet"));
-  bind("close-wallet", () => closePopup("popup-wallet"));
+  /* === КОШЕЛЁК === */
+  $("wallet-open")?.addEventListener("click", () => openPopup("popup-wallet"));
+  $("close-wallet")?.addEventListener("click", () => closePopup("popup-wallet"));
 
-  // Пополнение
-  bind("open-deposit", () => {
+  /* === ПОПОЛНЕНИЕ === */
+  $("open-deposit")?.addEventListener("click", () => {
     closePopup("popup-wallet");
     openPopup("popup-deposit");
   });
-  bind("close-deposit", () => closePopup("popup-deposit"));
 
-  // К оплате
-  bind("to-payment", async () => {
-    const input = $("deposit-amount");
-    if (!input || input.value < 100) {
+  $("close-deposit")?.addEventListener("click", () =>
+    closePopup("popup-deposit")
+  );
+
+  /* === К ОПЛАТЕ === */
+  $("to-payment")?.addEventListener("click", async () => {
+    const amount = Number($("deposit-amount")?.value);
+
+    if (!amount || amount < 100) {
       alert("Минимум 100 ₽");
       return;
     }
 
-    await createDeposit(Number(input.value));
-    if ($("pay-amount-text"))
-      $("pay-amount-text").innerText = input.value + " ₽";
+    await createDeposit(amount);
+
+    $("pay-amount-text").innerText = amount + " ₽";
 
     closePopup("popup-deposit");
     openPopup("popup-payment");
   });
 
-  bind("close-payment", () => closePopup("popup-payment"));
+  $("close-payment")?.addEventListener("click", () =>
+    closePopup("popup-payment")
+  );
 
-  // Вывод
-  bind("open-withdraw", () => {
-    closePopup("popup-wallet");
-    openPopup("popup-withdraw");
-  });
-  bind("close-withdraw", () => closePopup("popup-withdraw"));
-
-  // Заявки
-  bind("open-requests", () => {
-    closePopup("popup-wallet");
-    openPopup("popup-requests");
-  });
-  bind("close-requests", () => closePopup("popup-requests"));
-
-  // Профиль
-  bind("btn-profile", () => openPopup("popup-profile"));
-  bind("close-profile", () => closePopup("popup-profile"));
-
-  // Бонусы
-  bind("btn-bonus", () => openPopup("popup-bonus"));
-  bind("close-bonus", () => closePopup("popup-bonus"));
-
-  // Промокод
-  bind("bonus-promocode", () => {
-    closePopup("popup-bonus");
-    openPopup("popup-promocode");
-  });
-  bind("close-promocode", () => closePopup("popup-promocode"));
-
-  // Рефералка
-  bind("bonus-referral", () => {
-    closePopup("popup-bonus");
-    openPopup("popup-referral");
-  });
-  bind("close-referral", () => closePopup("popup-referral"));
-});
-
-// ===== КНОПКА "Я ОПЛАТИЛ" =====
-bind("confirm-paid", async () => {
-  const userId = localStorage.getItem("user_id");
-  if (!userId) return;
-
-  const { data } = await supabase
-    .from("deposits")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("status", "pending")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single();
-
-  if (!data) {
-    alert("Заявка не найдена");
-    return;
-  }
-
-  await supabase
-    .from("deposits")
-    .update({ status: "waiting" })
-    .eq("id", data.id);
-
-  alert("Заявка отправлена на проверку");
-  closePopup("popup-payment");
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  const confirmBtn = document.getElementById("confirm-paid");
-
-  if (!confirmBtn) {
-    console.error("Кнопка confirm-paid не найдена");
-    return;
-  }
-
-  confirmBtn.addEventListener("click", async () => {
+  /* === КНОПКА Я ОПЛАТИЛ (ГЛАВНОЕ) === */
+  $("confirm-paid")?.addEventListener("click", async () => {
     console.log("Нажата кнопка Я оплатил");
 
     const userId = localStorage.getItem("user_id");
@@ -215,7 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (error || !data) {
       alert("Заявка не найдена");
-      console.error(error);
       return;
     }
 
@@ -225,8 +150,60 @@ document.addEventListener("DOMContentLoaded", () => {
       .eq("id", data.id);
 
     alert("Заявка отправлена на проверку");
-
-    document.getElementById("popup-payment").style.display = "none";
+    closePopup("popup-payment");
   });
 
+  /* === ВЫВОД === */
+  $("open-withdraw")?.addEventListener("click", () => {
+    closePopup("popup-wallet");
+    openPopup("popup-withdraw");
+  });
+
+  $("close-withdraw")?.addEventListener("click", () =>
+    closePopup("popup-withdraw")
+  );
+
+  /* === ЗАЯВКИ === */
+  $("open-requests")?.addEventListener("click", () => {
+    closePopup("popup-wallet");
+    openPopup("popup-requests");
+  });
+
+  $("close-requests")?.addEventListener("click", () =>
+    closePopup("popup-requests")
+  );
+
+  /* === ПРОФИЛЬ === */
+  $("btn-profile")?.addEventListener("click", () =>
+    openPopup("popup-profile")
+  );
+  $("close-profile")?.addEventListener("click", () =>
+    closePopup("popup-profile")
+  );
+
+  /* === БОНУСЫ === */
+  $("btn-bonus")?.addEventListener("click", () =>
+    openPopup("popup-bonus")
+  );
+  $("close-bonus")?.addEventListener("click", () =>
+    closePopup("popup-bonus")
+  );
+
+  $("bonus-promocode")?.addEventListener("click", () => {
+    closePopup("popup-bonus");
+    openPopup("popup-promocode");
+  });
+
+  $("close-promocode")?.addEventListener("click", () =>
+    closePopup("popup-promocode")
+  );
+
+  $("bonus-referral")?.addEventListener("click", () => {
+    closePopup("popup-bonus");
+    openPopup("popup-referral");
+  });
+
+  $("close-referral")?.addEventListener("click", () =>
+    closePopup("popup-referral")
+  );
 });
