@@ -15,15 +15,8 @@ const supabase = window.supabase.createClient(
  ***********************/
 const $ = (id) => document.getElementById(id);
 
-function openPopup(id) {
-  const el = $(id);
-  if (el) el.style.display = "flex";
-}
-
-function closePopup(id) {
-  const el = $(id);
-  if (el) el.style.display = "none";
-}
+const openPopup = (id) => $(id) && ($(id).style.display = "flex");
+const closePopup = (id) => $(id) && ($(id).style.display = "none");
 
 /***********************
  * USER
@@ -50,19 +43,16 @@ async function getOrCreateUser() {
 async function loadProfile() {
   const userId = await getOrCreateUser();
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("profiles")
-    .select("*")
+    .select("balance")
     .eq("user_id", userId)
     .single();
 
-  if (error || !data) return;
+  if (!data) return;
 
-  if ($("top-balance"))
-    $("top-balance").innerText = `БАЛАНС: ${data.balance} VC`;
-
-  if ($("profile-balance"))
-    $("profile-balance").innerText = `Баланс: ${data.balance} VC`;
+  $("top-balance").innerText = `БАЛАНС: ${data.balance} VC`;
+  $("profile-balance").innerText = `Баланс: ${data.balance} VC`;
 }
 
 /***********************
@@ -73,137 +63,91 @@ async function createDeposit(amount) {
 
   await supabase.from("deposits").insert({
     user_id: userId,
-    amount: amount,
-    status: "pending"
+    amount,
+    status: "process" // ⏳ В процессе
   });
 }
 
 /***********************
  * DOM READY
  ***********************/
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadProfile();
 
-  loadProfile();
+  $("wallet-open").onclick = () => openPopup("popup-wallet");
+  $("close-wallet").onclick = () => closePopup("popup-wallet");
 
-  /* === КОШЕЛЁК === */
-  $("wallet-open")?.addEventListener("click", () => openPopup("popup-wallet"));
-  $("close-wallet")?.addEventListener("click", () => closePopup("popup-wallet"));
-
-  /* === ПОПОЛНЕНИЕ === */
-  $("open-deposit")?.addEventListener("click", () => {
+  $("open-deposit").onclick = () => {
     closePopup("popup-wallet");
     openPopup("popup-deposit");
-  });
+  };
+  $("close-deposit").onclick = () => closePopup("popup-deposit");
 
-  $("close-deposit")?.addEventListener("click", () =>
-    closePopup("popup-deposit")
-  );
-
-  /* === К ОПЛАТЕ === */
-  $("to-payment")?.addEventListener("click", async () => {
-    const amount = Number($("deposit-amount")?.value);
-
-    if (!amount || amount < 100) {
-      alert("Минимум 100 ₽");
-      return;
-    }
+  $("to-payment").onclick = async () => {
+    const amount = Number($("deposit-amount").value);
+    if (amount < 100) return alert("Минимум 100 ₽");
 
     await createDeposit(amount);
-
     $("pay-amount-text").innerText = amount + " ₽";
 
     closePopup("popup-deposit");
     openPopup("popup-payment");
-  });
+  };
 
-  $("close-payment")?.addEventListener("click", () =>
-    closePopup("popup-payment")
-  );
+  $("close-payment").onclick = () => closePopup("popup-payment");
 
-  /* === КНОПКА Я ОПЛАТИЛ (ГЛАВНОЕ) === */
-  $("confirm-paid")?.addEventListener("click", async () => {
-    console.log("Нажата кнопка Я оплатил");
+  /********** Я ОПЛАТИЛ **********/
+  $("confirm-paid").onclick = async () => {
+    $("confirm-paid").style.pointerEvents = "none";
 
     const userId = localStorage.getItem("user_id");
-    if (!userId) {
-      alert("Пользователь не найден");
-      return;
-    }
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("deposits")
       .select("id")
       .eq("user_id", userId)
-      .eq("status", "pending")
+      .eq("status", "process")
       .order("created_at", { ascending: false })
       .limit(1)
       .single();
 
-    if (error || !data) {
+    if (!data) {
       alert("Заявка не найдена");
+      $("confirm-paid").style.pointerEvents = "auto";
       return;
     }
 
-    await supabase
-      .from("deposits")
-      .update({ status: "waiting" })
-      .eq("id", data.id);
-
-    alert("Заявка отправлена на проверку");
+    alert("Заявка отправлена. Ожидает проверки ✅");
     closePopup("popup-payment");
-  });
+  };
 
-  /* === ВЫВОД === */
-  $("open-withdraw")?.addEventListener("click", () => {
+  $("open-withdraw").onclick = () => {
     closePopup("popup-wallet");
     openPopup("popup-withdraw");
-  });
+  };
+  $("close-withdraw").onclick = () => closePopup("popup-withdraw");
 
-  $("close-withdraw")?.addEventListener("click", () =>
-    closePopup("popup-withdraw")
-  );
-
-  /* === ЗАЯВКИ === */
-  $("open-requests")?.addEventListener("click", () => {
+  $("open-requests").onclick = () => {
     closePopup("popup-wallet");
     openPopup("popup-requests");
-  });
+  };
+  $("close-requests").onclick = () => closePopup("popup-requests");
 
-  $("close-requests")?.addEventListener("click", () =>
-    closePopup("popup-requests")
-  );
+  $("btn-profile").onclick = () => openPopup("popup-profile");
+  $("close-profile").onclick = () => closePopup("popup-profile");
 
-  /* === ПРОФИЛЬ === */
-  $("btn-profile")?.addEventListener("click", () =>
-    openPopup("popup-profile")
-  );
-  $("close-profile")?.addEventListener("click", () =>
-    closePopup("popup-profile")
-  );
+  $("btn-bonus").onclick = () => openPopup("popup-bonus");
+  $("close-bonus").onclick = () => closePopup("popup-bonus");
 
-  /* === БОНУСЫ === */
-  $("btn-bonus")?.addEventListener("click", () =>
-    openPopup("popup-bonus")
-  );
-  $("close-bonus")?.addEventListener("click", () =>
-    closePopup("popup-bonus")
-  );
-
-  $("bonus-promocode")?.addEventListener("click", () => {
+  $("bonus-promocode").onclick = () => {
     closePopup("popup-bonus");
     openPopup("popup-promocode");
-  });
+  };
+  $("close-promocode").onclick = () => closePopup("popup-promocode");
 
-  $("close-promocode")?.addEventListener("click", () =>
-    closePopup("popup-promocode")
-  );
-
-  $("bonus-referral")?.addEventListener("click", () => {
+  $("bonus-referral").onclick = () => {
     closePopup("popup-bonus");
     openPopup("popup-referral");
-  });
-
-  $("close-referral")?.addEventListener("click", () =>
-    closePopup("popup-referral")
-  );
+  };
+  $("close-referral").onclick = () => closePopup("popup-referral");
 });
