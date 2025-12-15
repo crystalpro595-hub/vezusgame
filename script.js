@@ -157,3 +157,31 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   bind("close-referral", () => closePopup("popup-referral"));
 });
+
+// ===== КНОПКА "Я ОПЛАТИЛ" =====
+bind("confirm-paid", async () => {
+  const userId = localStorage.getItem("user_id");
+  if (!userId) return;
+
+  const { data } = await supabase
+    .from("deposits")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("status", "pending")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (!data) {
+    alert("Заявка не найдена");
+    return;
+  }
+
+  await supabase
+    .from("deposits")
+    .update({ status: "waiting" })
+    .eq("id", data.id);
+
+  alert("Заявка отправлена на проверку");
+  closePopup("popup-payment");
+});
