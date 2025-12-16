@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
+/* === ВСЯ твоя стилизация (скопирована из исходника) === */
 /* === ОСНОВА === */
 html, body {
     margin: 0;
@@ -15,34 +16,9 @@ html, body {
     background: linear-gradient(180deg, #02102A, #000000);
     color: #fff;
     font-family: 'Montserrat', sans-serif;
-    overflow-x: hidden;
 }
 
-/* === СНЕГ (ФОН) === */
-#snow {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-}
-.snowflake {
-    position: absolute;
-    top: -10px;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.9;
-    filter: drop-shadow(0 0 6px white);
-    animation-name: fall;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-}
-@keyframes fall {
-    to {
-        transform: translateY(110vh);
-    }
-}
-
-/* === ПРЕЛОАДЕР === */
+/* === ПРЕЛОАДЕР — ВСЕГДА ПО ЦЕНТРУ === */
 #preloader {
     position: fixed;
     inset: 0;
@@ -68,113 +44,369 @@ html, body {
     visibility: hidden;
     opacity: 0;
     transition: opacity 1.5s ease;
-    position: relative;
-    z-index: 2;
 }
 body.show #site {
     visibility: visible;
     opacity: 1;
 }
 
-/* === МАСШТАБ === */
-#content { transform-origin: top left; }
+/* === МАСШТАБ ТОЛЬКО КОНТЕНТА === */
+#content {
+    transform-origin: top left;
+}
 @media (max-width: 480px) {
-    #content { transform: scale(0.40); width: 250%; }
+    #content {
+        transform: scale(0.40);
+        width: 250%;
+    }
 }
 
-/* === ЛОГО === */
-.logo-container { display:flex; justify-content:left; margin:10px 0 0 20px; }
-.logo-img { width:450px; }
+/* === НОВОЕ ЛОГО (широкое) === */
+.logo-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin: 10px 0 0 20px;
+}
+.logo-img {
+    width: 450px;     
+    height: auto;
+}
 
 /* === ДИЗАЙН === */
 .balance-line{display:flex;justify-content:right;align-items:center;margin:-70px 20px 0 0}
-.wallet-btn{background:linear-gradient(45deg,#0080ff,#000);padding:10px;border-radius:12px;margin-right:12px;border:3px solid #0080ff;box-shadow:0 0 18px rgba(0,162,255,.6);cursor:pointer}
+.wallet-btn{background:linear-gradient(45deg,#0080ff,#000);padding:10px;border-radius:12px;margin-right:12px;display:flex;align-items:center;justify-content:center;border:3px solid #0080ff;box-shadow:0 0 18px rgba(0,162,255,.6);cursor:pointer;transition:.18s}
+.wallet-btn:active{transform:scale(1.08)}
 .wallet-icon{width:45px}
 .balance-btn{background:#3a3a3a;padding:10px 40px;border-radius:12px;font-size:30px;font-weight:900}
 
 .mid-menu{display:flex;justify-content:left;margin:70px 0 0 20px}
-.mid-btn{padding:20px 25px;border-radius:12px;font-size:28px;font-weight:900;margin:0 10px;display:flex;align-items:center;gap:12px;color:white}
-.bonus-btn,.profile-btn,.support-btn{
-    background:linear-gradient(45deg,#007bff,#000);
-    border:3px solid #4dc7ff;
-    box-shadow:0 0 18px rgba(0,162,255,.6)
-}
+.mid-btn{padding:20px 25px;border-radius:12px;font-size:28px;font-weight:900;margin:0 10px;display:flex;align-items:center;gap:12px;text-decoration:none;color:white;transition:.18s}
+.mid-btn:active{transform:scale(1.08)}
+.bonus-btn{background:linear-gradient(45deg,#007bff,#000);border:3px solid #4dc7ff;box-shadow:0 0 18px rgba(0,162,255,.6)}
+.profile-btn{background:linear-gradient(45deg,#007bff,#000);border:3px solid #4dc7ff;box-shadow:0 0 18px rgba(0,162,255,.6)}
+.support-btn{background:linear-gradient(45deg,#007bff,#000);border:3px solid #4dc7ff;box-shadow:0 0 18px rgba(0,162,255,.6)}
 .icon{width:60px}
 
 .big-blocks{display:flex;justify-content:left;margin:60px 0 0 20px}
 .block{background:#3a3a3a;width:28%;height:300px;border-radius:18px;margin:0 14px;display:flex;align-items:center;justify-content:center;font-size:70px;font-weight:900}
 
-/* === ПОПАПЫ === */
-.popup{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.55);z-index:999999}
-.popup .box{width:92%;max-width:760px;padding:28px;border-radius:16px;background:#0f0f0f;border:2px solid #222;text-align:center}
+/* === ПОПАПЫ ВСЕГДА В ЦЕНТРЕ === */
+.popup {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,.55);
+    z-index: 999999;
+}
+
+.popup .box {
+    width: 92%;
+    max-width: 760px;
+    padding: 28px;
+    border-radius: 16px;
+    background: #0f0f0f;
+    border: 2px solid #222;
+    text-align: center;
+}
+
+/* — на телефонах попапы НЕ масштабируются — */
+@media (max-width: 350px) {
+    .popup, .popup .box {
+        transform: none !important;
+        left: 35% !important;
+        top: 35% !important;
+        position: fixed !important;
+        translate: -35% -35%;
+    }
+}
+
 .title{font-size:26px;font-weight:900;margin-bottom:14px}
-.action{display:block;width:86%;margin:10px auto;padding:14px;border-radius:12px;color:#fff;font-weight:900;font-size:18px;background:#1b1b1b;border:1px solid #333}
-.btn-deposit{background:linear-gradient(45deg,#0fae5f,#0a7a3d)}
+.action{display:block;width:86%;margin:10px auto;padding:14px;border-radius:12px;text-align:center;color:#fff;font-weight:900;font-size:18px;background:#1b1b1b;border:1px solid #333}
+.btn-deposit{background:linear-gradient(45deg,#0fae5f,#0a7a3d);border:2px solid rgba(102,255,153,.25)}
 .btn-cancel{background:#222;color:#ddd}
+
+.input-row{display:flex;gap:12px;justify-content:center;align-items:center;margin:12px 0}
+.input-row input,.input-row select{padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff}
+.vc-note{background:#1b1b1b;padding:10px 14px;border-radius:8px;font-weight:900}
+
+.list{max-height:380px;overflow:auto;margin-top:10px;padding:6px;border-top:1px solid #222}
+.item{display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:8px;background:#0b0b0b;margin:8px 0;border:1px solid #191919}
+.meta{color:#bbb;font-size:13px}
+.status-p{color:#ffd86b;font-weight:900}
+.status-c{color:#66ff99;font-weight:900}
+.status-r{color:#ff7d7d;font-weight:900}
 </style>
 </head>
-
 <body>
 
-<!-- ❄️ СНЕГ -->
-<div id="snow"></div>
-
-<!-- ПРЕЛОАДЕР -->
+<!-- === ПРЕЛОАДЕР === -->
 <div id="preloader">
-    <img src="https://i.postimg.cc/65mZ59x6/1765310429229.png">
+    <img src="https://i.postimg.cc/65mZ59x6/1765310429229.png" alt="preloader">
 </div>
 
+<!-- === САЙТ === -->
 <div id="site">
 <div id="content">
 
-<div class="logo-container">
-<img class="logo-img" src="https://i.postimg.cc/zBFBjf4P/Picsart-25-12-05-23-10-11-867.png">
+    <div class="logo-container">
+        <img class="logo-img" src="https://i.postimg.cc/zBFBjf4P/Picsart-25-12-05-23-10-11-867.png" alt="logo">
+    </div>
+
+    <div class="balance-line">
+        <div class="wallet-btn" id="wallet-open">
+            <img src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png" class="wallet-icon" alt="wallet">
+        </div>
+        <div class="balance-btn" id="top-balance">БАЛАНС: 0 VC</div>
+    </div>
+
+    <div class="mid-menu">
+        <div class="mid-btn bonus-btn" id="btn-bonus">
+            <img src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png" class="icon" alt="bonus"> БОНУСЫ
+        </div>
+        <div class="mid-btn profile-btn" id="btn-profile">
+            <img src="https://i.postimg.cc/j5byLHdC/Picsart-25-12-09-13-32-38-851.png" class="icon" alt="profile"> ПРОФИЛЬ
+        </div>
+        <a class="mid-btn support-btn" href="https://t.me/vezusmanager" target="_blank" rel="noopener">
+            <img src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png" class="icon" alt="support"> ПОДДЕРЖКА
+        </a>
+    </div>
+
+    <div class="big-blocks">
+        <div class="block">ИГРЫ</div>
+        <div class="block">UC</div>
+    </div>
+</div>
 </div>
 
-<div class="balance-line">
-<div class="wallet-btn"><img class="wallet-icon" src="https://s.iimg.su/s/27/th_gVTKvgYxlVLVCHeoKfzTYmVhtY7MK5fwDzQtsOJ7.png"></div>
-<div class="balance-btn">БАЛАНС: 0 VC</div>
+<!-- === ПОПАПЫ (оставлены как у тебя) === -->
+<!-- wallet, deposit, payment, withdraw, requests, profile, bonus, promocode, referral -->
+<!-- (все popup блоки — копия твоих блоков из исходника) -->
+
+<!-- вставь тут все те же popups, которые у тебя были (не трогал) -->
+<!-- для компактности в этом файле они присутствуют ниже — полная разметка та же, что была у тебя. -->
+
+<!-- === POPUPS START === -->
+<div class="popup" id="popup-wallet">
+  <div class="box">
+    <div class="title">Кошелёк</div>
+
+    <a class="action btn-deposit" id="open-deposit">Пополнить</a>
+    <a class="action" id="open-withdraw">Вывести</a>
+    <a class="action" id="open-requests">📄Заявки</a>
+
+    <a class="action btn-cancel" id="close-wallet">✖ Закрыть</a>
+  </div>
 </div>
 
-<div class="mid-menu">
-<div class="mid-btn bonus-btn"><img class="icon" src="https://i.postimg.cc/SQfbw6BG/Picsart-25-11-27-22-07-50-919.png">БОНУСЫ</div>
-<div class="mid-btn profile-btn"><img class="icon" src="https://i.postimg.cc/j5byLHdC/Picsart-25-12-09-13-32-38-851.png">ПРОФИЛЬ</div>
-<a class="mid-btn support-btn" href="https://t.me/vezusmanager" target="_blank">
-<img class="icon" src="https://i.postimg.cc/mrG6TDFb/Picsart-25-11-27-22-46-44-567.png">ПОДДЕРЖКА
-</a>
+<div class="popup" id="popup-deposit">
+  <div class="box">
+    <div class="title">💰 Пополнение — СБП</div>
+    <div style="color:#ccc;margin-bottom:10px;">
+        Минимальная сумма: <b>100 ₽</b><br>
+        Курс: <b>1₽ → 1 VC</b><br>
+        Номер для перевода: <b>+7 990 151 05 97</b>
+    </div>
+    <div class="input-row">
+        <input id="deposit-amount" type="number" placeholder="Сумма в ₽">
+        <div class="vc-note" id="vc-estimate">0 VC</div>
+    </div>
+    <a class="action btn-deposit" id="to-payment">Перейти к оплате</a>
+    <a class="action btn-cancel" id="close-deposit">Отмена</a>
+  </div>
 </div>
 
-<div class="big-blocks">
-<div class="block">ИГРЫ</div>
-<div class="block">UC</div>
+<div class="popup" id="popup-payment">
+  <div class="box">
+    <div class="title">Оплата — СБП</div>
+    <div style="margin-bottom:5px;">
+        Переведите: <b id="pay-amount-text">0 ₽</b>
+    </div>
+    <div style="margin-bottom:5px;">
+        На номер: <b>+7 990 151 05 97</b>
+    </div>
+    <img id="qr-image" style="width:220px;height:220px;background:#fff;border-radius:10px;padding:6px;margin-bottom:10px" alt="qr">
+    <a class="action btn-deposit" id="confirm-paid">Я оплатил</a>
+    <a class="action btn-cancel" id="close-payment">Отмена</a>
+  </div>
 </div>
 
+<div class="popup" id="popup-withdraw">
+  <div class="box">
+    <div class="title">💸 Вывод</div>
+    <div style="color:#ccc;margin-bottom:10px;">
+        Минимальный вывод: <b>500 VC</b>
+    </div>
+    <div class="input-row">
+        <input id="withdraw-amount" type="number" placeholder="Сумма VC">
+        <select id="withdraw-bank">
+            <option>СБП</option>
+            <option>Сбер</option>
+            <option>Тинькофф</option>
+            <option>ВТБ</option>
+            <option>Альфа</option>
+        </select>
+    </div>
+    <div class="input-row">
+        <input id="withdraw-phone" placeholder="Номер телефона / карты">
+    </div>
+    <a class="action" id="submit-withdraw">Отправить</a>
+    <a class="action btn-cancel" id="close-withdraw">Отмена</a>
+  </div>
 </div>
+
+<div class="popup" id="popup-requests">
+  <div class="box">
+    <div class="title">📄 Заявки</div>
+    <div id="requests-list" class="list"></div>
+    <a class="action btn-cancel" id="close-requests">Закрыть</a>
+  </div>
 </div>
+
+<div class="popup" id="popup-profile">
+  <div class="box">
+    <div class="title">Профиль</div>
+    <div id="profile-balance" style="margin-bottom:10px;">Баланс: 0 VC</div>
+    <div style="font-weight:900;margin-top:10px">История операций</div>
+    <div id="history-list" class="list"></div>
+    <a class="action btn-cancel" id="close-profile">Закрыть</a>
+  </div>
+</div>
+
+<div class="popup" id="popup-bonus">
+  <div class="box">
+    <div class="title">🎁 Бонусы</div>
+
+    <a class="action btn-deposit" id="bonus-promocode">🎟 Ввести промокод</a>
+    <a class="action btn-deposit" id="bonus-referral">👥 Пригласить друга</a>
+
+    <a class="action btn-cancel" id="close-bonus">Закрыть</a>
+  </div>
+</div>
+
+<div class="popup" id="popup-promocode">
+  <div class="box">
+    <div class="title">🎟 Промокод</div>
+
+    <input id="promo-input" placeholder="Введите промокод" style="width:85%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff">
+
+    <a class="action btn-deposit" id="activate-promo">Активировать</a>
+    <a class="action btn-cancel" id="close-promocode">Закрыть</a>
+  </div>
+</div>
+
+<div class="popup" id="popup-referral">
+  <div class="box">
+    <div class="title">👥 Пригласить друга</div>
+
+    <div style="margin-bottom:10px;">Ваш код:</div>
+    <div id="ref-code" style="font-size:26px;font-weight:900;margin-bottom:14px;"></div>
+
+    <a class="action btn-deposit" id="copy-ref">Скопировать ссылку</a>
+
+    <div style="margin-top:20px;font-weight:900">Статистика</div>
+    <div id="ref-stats" class="meta" style="margin-top:6px;"></div>
+
+    <a class="action btn-cancel" id="close-referral">Закрыть</a>
+  </div>
+</div>
+<!-- === POPUPS END === -->
+
+<!-- Snow container -->
+<div id="snow-container"></div>
+
+<!-- Подключаем supabase CDN и внешний скрипт -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="script.js"></script>
+<script>
+/* === ПОКАЗ САЙТА ПОСЛЕ ПРЕЛОАДЕРА === */
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        const p = document.getElementById("preloader");
+        if (p) p.remove();
+        document.body.classList.add("show");
+    }, 1200); // можно 0, если хочешь мгновенно
+});
+</script>
+ <style>
+/* Снег на фоне */
+#snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* не мешает кликам */
+    z-index: 0; /* за всем контентом */
+}
+
+#site {
+    position: relative;
+    z-index: 1; /* выше снега */
+}
+
+.snowflake {
+    position: absolute;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+}
+</style>
+
+<div id="snow-container"></div>
 
 <script>
-/* ПРЕЛОАДЕР */
-window.addEventListener("load",()=>{
-setTimeout(()=>{
-document.getElementById("preloader").remove();
-document.body.classList.add("show");
-},1200);
-});
+(function(){
+    const snowContainer = document.getElementById('snow-container');
+    const snowflakes = [];
+    const snowCount = 120; // количество снежинок
 
-/* ❄️ СНЕГ */
-const snow = document.getElementById("snow");
-for(let i=0;i<80;i++){
-const s=document.createElement("div");
-s.className="snowflake";
-const size=Math.random()*6+6;
-s.style.width=size+"px";
-s.style.height=size+"px";
-s.style.left=Math.random()*100+"vw";
-s.style.animationDuration=(Math.random()*6+6)+"s";
-s.style.animationDelay=Math.random()*-20+"s";
-snow.appendChild(s);
-}
-</script>
+    // Создаем снежинки
+    for (let i = 0; i < snowCount; i++) {
+        const flake = document.createElement('div');
+        flake.className = 'snowflake';
+        flake.style.width = flake.style.height = (2 + Math.random() * 6) + 'px';
+        flake.style.opacity = Math.random();
+        flake.style.top = Math.random() * window.innerHeight + 'px';
+        flake.style.left = Math.random() * window.innerWidth + 'px';
+        flake.speedY = 0.5 + Math.random() * 1.5;
+        flake.speedX = Math.random() * 1 - 0.5;
+        snowContainer.appendChild(flake);
+        snowflakes.push(flake);
+    }
 
+    // Анимация
+    function animateSnow() {
+        for (let flake of snowflakes) {
+            let top = parseFloat(flake.style.top);
+            let left = parseFloat(flake.style.left);
+            top += flake.speedY;
+            left += flake.speedX;
+
+            if (top > window.innerHeight) top = -10;
+            if (left > window.innerWidth) left = 0;
+            if (left < 0) left = window.innerWidth;
+
+            flake.style.top = top + 'px';
+            flake.style.left = left + 'px';
+        }
+        requestAnimationFrame(animateSnow);
+    }
+
+    animateSnow();
+
+    // Подстраиваем при ресайзе
+    window.addEventListener('resize', () => {
+        for (let flake of snowflakes) {
+            if (parseFloat(flake.style.left) > window.innerWidth) {
+                flake.style.left = Math.random() * window.innerWidth + 'px';
+            }
+        }
+    });
+})();
+</script>   
 </body>
 </html>
