@@ -12,10 +12,7 @@
       color: #fff;
       padding: 20px;
     }
-
-    h1 {
-      margin-bottom: 20px;
-    }
+    h1 { margin-bottom: 20px; }
 
     .item {
       background: #1e1e1e;
@@ -27,10 +24,7 @@
       align-items: center;
     }
 
-    .meta {
-      font-size: 13px;
-      opacity: 0.7;
-    }
+    .meta { font-size: 13px; opacity: 0.7; }
 
     button {
       padding: 6px 12px;
@@ -39,17 +33,8 @@
       cursor: pointer;
       font-weight: bold;
     }
-
-    .ok {
-      background: #2ecc71;
-      color: #000;
-    }
-
-    .no {
-      background: #e74c3c;
-      color: #fff;
-      margin-left: 6px;
-    }
+    .ok { background: #2ecc71; color: #000; }
+    .no { background: #e74c3c; color: #fff; margin-left: 6px; }
   </style>
 </head>
 <body>
@@ -62,12 +47,10 @@
  * SUPABASE (ADMIN)
  ***********************/
 const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
+const SUPABASE_SERVICE_KEY = "ТВОЙ_SERVICE_ROLE_KEY";
 
-/* ⚠️ SERVICE ROLE KEY — ТОЛЬКО В АДМИНКЕ */
-const SUPABASE_SERVICE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTQ1ODMwMiwiZXhwIjoyMDgxMDM0MzAyfQ.muYuEoKV63vDFs4s3lxEwHZJc1r3z06GcQNKlLAauEg";
-
-const supabase = supabase.createClient(
+/* ⚠️ ВАЖНО: используем ДРУГОЕ ИМЯ */
+const sb = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_SERVICE_KEY
 );
@@ -78,12 +61,13 @@ const list = document.getElementById("list");
  * LOAD DEPOSITS
  ***********************/
 async function loadDeposits() {
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from("deposits")
     .select("id, user_id, amount, status, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
+    console.error(error);
     list.innerText = "Ошибка загрузки";
     return;
   }
@@ -129,8 +113,7 @@ async function loadDeposits() {
  ***********************/
 async function approve(depositId) {
 
-  // 1. Получаем заявку
-  const { data: deposit } = await supabase
+  const { data: deposit } = await sb
     .from("deposits")
     .select("id, user_id, amount, status")
     .eq("id", depositId)
@@ -141,8 +124,7 @@ async function approve(depositId) {
     return;
   }
 
-  // 2. Получаем профиль
-  const { data: profile } = await supabase
+  const { data: profile } = await sb
     .from("profiles")
     .select("balance")
     .eq("user_id", deposit.user_id)
@@ -153,22 +135,19 @@ async function approve(depositId) {
     return;
   }
 
-  // 3. Начисляем баланс
   const newBalance = profile.balance + deposit.amount;
 
-  await supabase
+  await sb
     .from("profiles")
     .update({ balance: newBalance })
     .eq("user_id", deposit.user_id);
 
-  // 4. Обновляем статус заявки
-  await supabase
+  await sb
     .from("deposits")
     .update({ status: "success" })
     .eq("id", depositId);
 
   alert("✅ Баланс начислен");
-
   loadDeposits();
 }
 
@@ -176,7 +155,7 @@ async function approve(depositId) {
  * REJECT
  ***********************/
 async function reject(depositId) {
-  await supabase
+  await sb
     .from("deposits")
     .update({ status: "rejected" })
     .eq("id", depositId);
