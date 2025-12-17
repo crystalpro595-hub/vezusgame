@@ -5,84 +5,88 @@
 <title>Админка — депозиты</title>
 
 <style>
-body { background:#111;color:#fff;font-family:Arial;padding:20px }
-.item { background:#1e1e1e;padding:14px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between }
-.meta { font-size:13px;opacity:.7 }
-button { padding:6px 12px;border-radius:6px;border:none;font-weight:700;cursor:pointer }
-.ok { background:#2ecc71;color:#000 }
-.no { background:#e74c3c;color:#fff;margin-left:6px }
+body{background:#111;color:#fff;font-family:Arial;padding:20px}
+.item{background:#1e1e1e;padding:15px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between}
+button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:pointer}
+.ok{background:#2ecc71}
+.no{background:#e74c3c;color:#fff}
+.meta{font-size:13px;opacity:.7}
 </style>
 </head>
 <body>
 
-<h1>💳 Заявки</h1>
+<h2>💳 Заявки</h2>
 <div id="list">Загрузка…</div>
 
 <script>
 const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 
-/* ⚠️ ТУТ service_role ключ */
-const TOKEN = "Bearer ТВОЙ_SERVICE_ROLE_KEY";
+/* ⚠️ ВАЖНО: ОБЯЗАТЕЛЬНО Bearer */
+const TOKEN = "Bearer ВСТАВЬ_СЮДА_SERVICE_ROLE_KEY";
 
 async function load() {
-  const r = await fetch(API, {
-    headers: { authorization: TOKEN }
-  });
-  const data = await r.json();
+  try {
+    const r = await fetch(API, {
+      headers: { authorization: TOKEN }
+    });
 
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+    if (!r.ok) throw new Error(r.status);
 
-  data.forEach(d => {
-    const div = document.createElement("div");
-    div.className = "item";
+    const data = await r.json();
+    const list = document.getElementById("list");
+    list.innerHTML = "";
 
-    let status = "⏳ В процессе";
-    if (d.status === "success") status = "✅ Успешно";
-    if (d.status === "rejected") status = "❌ Отказ";
+    if (!data.length) {
+      list.innerText = "Заявок нет";
+      return;
+    }
 
-    div.innerHTML = `
-      <div>
-        <b>${d.amount} ₽</b>
-        <div class="meta">${new Date(d.created_at).toLocaleString("ru-RU")}</div>
-        <div class="meta">${status}</div>
-      </div>
-      <div>
-        ${d.status === "waiting" ? `
-          <button class="ok" onclick="approve('${d.id}')">Одобрить</button>
-          <button class="no" onclick="reject('${d.id}')">Отказ</button>
-        ` : ""}
-      </div>
-    `;
-    list.appendChild(div);
-  });
+    data.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "item";
+
+      let status = "⏳ В процессе";
+      if (d.status === "success") status = "✅ Успешно";
+      if (d.status === "rejected") status = "❌ Отказ";
+
+      div.innerHTML = `
+        <div>
+          <b>${d.amount} ₽</b>
+          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+          <div class="meta">${status}</div>
+        </div>
+        <div>
+          ${d.status === "waiting" ? `
+            <button class="ok" onclick="action('${d.id}','approve')">Одобрить</button>
+            <button class="no" onclick="action('${d.id}','reject')">Отказ</button>
+          ` : ""}
+        </div>
+      `;
+
+      list.appendChild(div);
+    });
+
+  } catch (e) {
+    document.getElementById("list").innerText = "❌ Ошибка соединения";
+    console.error(e);
+  }
 }
 
-async function approve(id) {
+async function action(id, type) {
   await fetch(API, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       authorization: TOKEN
     },
-    body: JSON.stringify({ action: "approve", depositId: id })
+    body: JSON.stringify({ id, action: type })
   });
-  load();
-}
 
-async function reject(id) {
-  await fetch(API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: TOKEN
-    },
-    body: JSON.stringify({ action: "reject", depositId: id })
-  });
   load();
 }
 
 load();
 </script>
+
 </body>
 </html>
