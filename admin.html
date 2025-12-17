@@ -20,17 +20,17 @@ button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:po
 
 <script>
 const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-
-/* ⚠️ ВАЖНО: ОБЯЗАТЕЛЬНО Bearer */
 const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTQ1ODMwMiwiZXhwIjoyMDgxMDM0MzAyfQ.muYuEoKV63vDFs4s3lxEwHZJc1r3z06GcQNKlLAauEg";
 
 async function load() {
   try {
     const r = await fetch(API, {
-      headers: { authorization: TOKEN }
+      headers: {
+        "Authorization": TOKEN
+      }
     });
 
-    if (!r.ok) throw new Error(r.status);
+    if (!r.ok) throw new Error(await r.text());
 
     const data = await r.json();
     const list = document.getElementById("list");
@@ -77,7 +77,7 @@ async function action(id, type) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: TOKEN
+      "Authorization": TOKEN
     },
     body: JSON.stringify({ id, action: type })
   });
