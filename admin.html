@@ -1,8 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Админка — депозиты</title>
+
+<style>
+body{background:#111;color:#fff;font-family:Arial;padding:20px}
+.item{background:#1e1e1e;padding:15px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between}
+button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:pointer}
+.ok{background:#2ecc71}
+.no{background:#e74c3c;color:#fff}
+.meta{font-size:13px;opacity:.7}
+</style>
+</head>
+<body>
+
+<h2>💳 Заявки</h2>
+<div id="list">Загрузка…</div>
+
 <script>
 const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-const ADMIN_TOKEN = "MY_SUPER_SECRET_PASSWORD_123";
+const ADMIN_TOKEN = "MY_SUPER_SECRET_PASSWORD_123"; // ТОТ ЖЕ, что в Supabase Secrets
 
 async function load() {
+  const list = document.getElementById("list");
+
   try {
     const r = await fetch(API, {
       headers: {
@@ -13,7 +35,6 @@ async function load() {
     if (!r.ok) throw new Error(await r.text());
 
     const data = await r.json();
-    const list = document.getElementById("list");
     list.innerHTML = "";
 
     if (!data.length) {
@@ -47,8 +68,8 @@ async function load() {
     });
 
   } catch (e) {
-    document.getElementById("list").innerText = "❌ Ошибка соединения";
-    console.error(e);
+    list.innerText = "❌ Ошибка соединения";
+    console.error("ADMIN ERROR:", e);
   }
 }
 
@@ -67,3 +88,6 @@ async function action(id, type) {
 
 load();
 </script>
+
+</body>
+</html>
