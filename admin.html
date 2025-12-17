@@ -2,39 +2,58 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Админка — депозиты</title>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
+  <title>Админка — заявки на пополнение</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #111;
+      background: #0f0f0f;
       color: #fff;
       padding: 20px;
     }
-    h1 { margin-bottom: 20px; }
+
+    h1 {
+      margin-bottom: 20px;
+    }
 
     .item {
       background: #1e1e1e;
       padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      border-radius: 12px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .meta { font-size: 13px; opacity: 0.7; }
+    .meta {
+      font-size: 13px;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
 
     button {
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       font-weight: bold;
+      margin-left: 6px;
     }
-    .ok { background: #2ecc71; color: #000; }
-    .no { background: #e74c3c; color: #fff; margin-left: 6px; }
+
+    .ok {
+      background: #2ecc71;
+      color: #000;
+    }
+
+    .no {
+      background: #e74c3c;
+      color: #fff;
+    }
+
+    .status {
+      margin-top: 6px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -44,16 +63,10 @@
 
 <script>
 /***********************
- * SUPABASE (ADMIN)
+ * EDGE FUNCTION URL
  ***********************/
-const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-const SUPABASE_SERVICE_KEY = "ТВОЙ_SERVICE_ROLE_KEY";
-
-/* ⚠️ ВАЖНО: используем ДРУГОЕ ИМЯ */
-const sb = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
+const FUNCTION_URL =
+"https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 
 const list = document.getElementById("list");
 
@@ -61,104 +74,85 @@ const list = document.getElementById("list");
  * LOAD DEPOSITS
  ***********************/
 async function loadDeposits() {
-  const { data, error } = await sb
-    .from("deposits")
-    .select("id, user_id, amount, status, created_at")
-    .order("created_at", { ascending: false });
+  list.innerText = "Загрузка…";
 
-  if (error) {
-    console.error(error);
+  try {
+    const res = await fetch(FUNCTION_URL);
+    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      list.innerText = "Заявок нет";
+      return;
+    }
+
+    list.innerHTML = "";
+
+    data.forEach(d => {
+      const date = new Date(d.created_at).toLocaleString("ru-RU");
+
+      let statusText = "⏳ В процессе";
+      if (d.status === "success") statusText = "✅ Успешно";
+      if (d.status === "rejected") statusText = "❌ Отказ";
+
+      const div = document.createElement("div");
+      div.className = "item";
+
+      div.innerHTML = `
+        <div>
+          <b>${d.amount} ₽</b>
+          <div class="meta">user_id: ${d.user_id}</div>
+          <div class="meta">${date}</div>
+          <div class="status">${statusText}</div>
+        </div>
+        <div>
+          ${d.status === "waiting" ? `
+            <button class="ok" onclick="approve('${d.id}')">Одобрить</button>
+            <button class="no" onclick="reject('${d.id}')">Отказ</button>
+          ` : ""}
+        </div>
+      `;
+
+      list.appendChild(div);
+    });
+
+  } catch (e) {
+    console.error(e);
     list.innerText = "Ошибка загрузки";
-    return;
   }
-
-  if (!data || data.length === 0) {
-    list.innerText = "Заявок нет";
-    return;
-  }
-
-  list.innerHTML = "";
-
-  data.forEach(d => {
-    const date = new Date(d.created_at).toLocaleString("ru-RU");
-
-    let statusText = "⏳ В процессе";
-    if (d.status === "success") statusText = "✅ Успешно";
-    if (d.status === "rejected") statusText = "❌ Отказ";
-
-    const div = document.createElement("div");
-    div.className = "item";
-
-    div.innerHTML = `
-      <div>
-        <b>${d.amount} ₽</b>
-        <div class="meta">user_id: ${d.user_id}</div>
-        <div class="meta">${date}</div>
-        <div class="meta">${statusText}</div>
-      </div>
-      <div>
-        ${d.status === "waiting" ? `
-          <button class="ok" onclick="approve('${d.id}')">Одобрить</button>
-          <button class="no" onclick="reject('${d.id}')">Отказ</button>
-        ` : ""}
-      </div>
-    `;
-
-    list.appendChild(div);
-  });
 }
 
 /***********************
- * APPROVE = НАЧИСЛЕНИЕ
+ * APPROVE
  ***********************/
-async function approve(depositId) {
+async function approve(id) {
+  if (!confirm("Подтвердить и начислить баланс?")) return;
 
-  const { data: deposit } = await sb
-    .from("deposits")
-    .select("id, user_id, amount, status")
-    .eq("id", depositId)
-    .single();
+  await fetch(FUNCTION_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "approve",
+      depositId: id
+    })
+  });
 
-  if (!deposit || deposit.status === "success") {
-    alert("Ошибка заявки");
-    return;
-  }
-
-  const { data: profile } = await sb
-    .from("profiles")
-    .select("balance")
-    .eq("user_id", deposit.user_id)
-    .single();
-
-  if (!profile) {
-    alert("Профиль не найден");
-    return;
-  }
-
-  const newBalance = profile.balance + deposit.amount;
-
-  await sb
-    .from("profiles")
-    .update({ balance: newBalance })
-    .eq("user_id", deposit.user_id);
-
-  await sb
-    .from("deposits")
-    .update({ status: "success" })
-    .eq("id", depositId);
-
-  alert("✅ Баланс начислен");
   loadDeposits();
 }
 
 /***********************
  * REJECT
  ***********************/
-async function reject(depositId) {
-  await sb
-    .from("deposits")
-    .update({ status: "rejected" })
-    .eq("id", depositId);
+async function reject(id) {
+  if (!confirm("Отклонить заявку?")) return;
+
+  await fetch(FUNCTION_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "reject",
+      depositId: id
+    })
+  });
 
   loadDeposits();
 }
