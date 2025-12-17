@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Админка — заявки на пополнение</title>
+  <meta charset="UTF-8">
+  <title>Админка — заявки</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0f0f0f;
+      background: #111;
       color: #fff;
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
 
@@ -18,8 +19,8 @@
     .item {
       background: #1e1e1e;
       padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -27,17 +28,16 @@
 
     .meta {
       font-size: 13px;
-      opacity: 0.75;
-      margin-top: 4px;
+      opacity: 0.7;
+      margin-top: 3px;
     }
 
     button {
-      padding: 7px 14px;
-      border-radius: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
       border: none;
       cursor: pointer;
       font-weight: bold;
-      margin-left: 6px;
     }
 
     .ok {
@@ -48,11 +48,7 @@
     .no {
       background: #e74c3c;
       color: #fff;
-    }
-
-    .status {
-      margin-top: 6px;
-      font-weight: bold;
+      margin-left: 6px;
     }
   </style>
 </head>
@@ -62,25 +58,34 @@
 <div id="list">Загрузка…</div>
 
 <script>
-/***********************
- * EDGE FUNCTION URL
- ***********************/
+/* === НАСТРОЙКИ === */
 const FUNCTION_URL =
-"https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
+  "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 
-const list = document.getElementById("list");
+const SERVICE_ROLE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTQ1ODMwMiwiZXhwIjoyMDgxMDM0MzAyfQ.muYuEoKV63vDFs4s3lxEwHZJc1r3z06GcQNKlLAauEg";
 
-/***********************
- * LOAD DEPOSITS
- ***********************/
+/* === ЗАГРУЗКА ЗАЯВОК === */
 async function loadDeposits() {
+  const list = document.getElementById("list");
   list.innerText = "Загрузка…";
 
   try {
-    const res = await fetch(FUNCTION_URL);
+    const res = await fetch(FUNCTION_URL, {
+      headers: {
+        "Authorization": "Bearer " + SERVICE_ROLE_KEY
+      }
+    });
+
     const data = await res.json();
 
-    if (!Array.isArray(data) || data.length === 0) {
+    if (!res.ok) {
+      console.error(data);
+      list.innerText = "Ошибка загрузки";
+      return;
+    }
+
+    if (!data.length) {
       list.innerText = "Заявок нет";
       return;
     }
@@ -90,9 +95,9 @@ async function loadDeposits() {
     data.forEach(d => {
       const date = new Date(d.created_at).toLocaleString("ru-RU");
 
-      let statusText = "⏳ В процессе";
-      if (d.status === "success") statusText = "✅ Успешно";
-      if (d.status === "rejected") statusText = "❌ Отказ";
+      let status = "⏳ В процессе";
+      if (d.status === "success") status = "✅ Успешно";
+      if (d.status === "rejected") status = "❌ Отказ";
 
       const div = document.createElement("div");
       div.className = "item";
@@ -102,13 +107,7 @@ async function loadDeposits() {
           <b>${d.amount} ₽</b>
           <div class="meta">user_id: ${d.user_id}</div>
           <div class="meta">${date}</div>
-          <div class="status">${statusText}</div>
-        </div>
-        <div>
-          ${d.status === "waiting" ? `
-            <button class="ok" onclick="approve('${d.id}')">Одобрить</button>
-            <button class="no" onclick="reject('${d.id}')">Отказ</button>
-          ` : ""}
+          <div class="meta">${status}</div>
         </div>
       `;
 
@@ -117,44 +116,8 @@ async function loadDeposits() {
 
   } catch (e) {
     console.error(e);
-    list.innerText = "Ошибка загрузки";
+    list.innerText = "Ошибка соединения";
   }
-}
-
-/***********************
- * APPROVE
- ***********************/
-async function approve(id) {
-  if (!confirm("Подтвердить и начислить баланс?")) return;
-
-  await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action: "approve",
-      depositId: id
-    })
-  });
-
-  loadDeposits();
-}
-
-/***********************
- * REJECT
- ***********************/
-async function reject(id) {
-  if (!confirm("Отклонить заявку?")) return;
-
-  await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action: "reject",
-      depositId: id
-    })
-  });
-
-  loadDeposits();
 }
 
 loadDeposits();
