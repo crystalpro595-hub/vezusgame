@@ -3,7 +3,7 @@
  ***********************/
 const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
@@ -26,60 +26,83 @@ function closePopup(id) {
 }
 
 /***********************
+ * TELEGRAM AUTH
+ ***********************/
+window.onTelegramAuth = async function (user) {
+  const tgId = String(user.id);
+
+  localStorage.setItem("user_id", tgId);
+  localStorage.setItem("tg_username", user.username || "");
+  localStorage.setItem("tg_name", user.first_name || "");
+
+  // users
+  await supabase.from("Users").upsert({
+    id: tgId
+  });
+
+  // profile
+  await supabase.from("profiles").upsert({
+    user_id: tgId,
+    telegram_username: user.username || null,
+    telegram_name: user.first_name || null,
+    balance: 0
+  });
+
+  await loadProfile();
+};
+
+/***********************
  * USER
  ***********************/
-async function getOrCreateUser() {
-  let userId = localStorage.getItem("user_id");
-
-  if (!userId) {
-    userId = crypto.randomUUID();
-    localStorage.setItem("user_id", userId);
-
-    await supabase.from("Users").insert({ id: userId });
-    await supabase.from("profiles").insert({
-      user_id: userId,
-      balance: 0,
-      level: 1,
-      exp: 0
-    });
-  }
-
-  return userId;
+function getUserId() {
+  return localStorage.getItem("user_id");
 }
 
+/***********************
+ * PROFILE
+ ***********************/
 async function loadProfile() {
-  const userId = await getOrCreateUser();
+  const userId = getUserId();
+  if (!userId) return;
 
   const { data } = await supabase
     .from("profiles")
-    .select("balance")
+    .select("balance, telegram_username, telegram_name")
     .eq("user_id", userId)
     .single();
 
   if (!data) return;
 
   $("top-balance").innerText = `БАЛАНС: ${data.balance} VC`;
-  $("profile-balance").innerText = `Баланс: ${data.balance} VC`;
+  $("profile-balance").innerHTML = `
+    Баланс: <b>${data.balance} VC</b><br>
+    Telegram ID: <b>${userId}</b><br>
+    Ник: <b>@${data.telegram_username || "—"}</b>
+  `;
 }
 
 /***********************
  * DEPOSIT
  ***********************/
 async function createDeposit(amount) {
-  const userId = await getOrCreateUser();
+  const userId = getUserId();
+  if (!userId) {
+    alert("Войдите через Telegram");
+    return;
+  }
 
   await supabase.from("deposits").insert({
     user_id: userId,
-    amount: amount,
-    status: "waiting" // ⏳ в процессе
+    amount,
+    status: "waiting"
   });
 }
 
 /***********************
- * ЗАЯВКИ (РУССКИЕ СТАТУСЫ)
+ * REQUESTS
  ***********************/
 async function loadRequests() {
-  const userId = localStorage.getItem("user_id");
+  const userId = getUserId();
   if (!userId) return;
 
   const { data } = await supabase
@@ -96,30 +119,19 @@ async function loadRequests() {
     return;
   }
 
-  data.forEach((d) => {
-
-    let statusText = "⏳ В процессе";
-    let statusClass = "status-p";
-
-    if (d.status === "success") {
-      statusText = "✅ Успешно";
-      statusClass = "status-c";
-    }
-
-    if (d.status === "rejected") {
-      statusText = "❌ Отказ";
-      statusClass = "status-r";
-    }
-
-    const date = new Date(d.created_at).toLocaleString("ru-RU");
+  data.forEach(d => {
+    let status = "⏳ В процессе";
+    let cls = "status-p";
+    if (d.status === "success") { status = "✅ Успешно"; cls = "status-c"; }
+    if (d.status === "rejected") { status = "❌ Отказ"; cls = "status-r"; }
 
     list.innerHTML += `
       <div class="item">
         <div>
           <b>${d.amount} ₽</b>
-          <div class="meta">${date}</div>
+          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
         </div>
-        <div class="${statusClass}">${statusText}</div>
+        <div class="${cls}">${status}</div>
       </div>
     `;
   });
@@ -129,68 +141,35 @@ async function loadRequests() {
  * DOM READY
  ***********************/
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadProfile();
+  if (getUserId()) await loadProfile();
 
-  /* КОШЕЛЁК */
   $("wallet-open").onclick = () => openPopup("popup-wallet");
   $("close-wallet").onclick = () => closePopup("popup-wallet");
 
-  /* ПОПОЛНЕНИЕ */
   $("open-deposit").onclick = () => {
     closePopup("popup-wallet");
     openPopup("popup-deposit");
   };
 
-  $("close-deposit").onclick = () => closePopup("popup-deposit");
-
   $("to-payment").onclick = async () => {
     const amount = Number($("deposit-amount").value);
-    if (!amount || amount < 100) {
-      alert("Минимум 100 ₽");
-      return;
-    }
-
+    if (amount < 100) return alert("Минимум 100 ₽");
     await createDeposit(amount);
     $("pay-amount-text").innerText = amount + " ₽";
-
     closePopup("popup-deposit");
     openPopup("popup-payment");
   };
 
-  /* Я ОПЛАТИЛ */
   $("confirm-paid").onclick = () => {
-    alert("✅ Заявка отправлена и находится в обработке");
+    alert("Заявка отправлена");
     closePopup("popup-payment");
   };
 
-  /* ЗАЯВКИ */
   $("open-requests").onclick = async () => {
     closePopup("popup-wallet");
     await loadRequests();
     openPopup("popup-requests");
   };
 
-  $("close-requests").onclick = () => closePopup("popup-requests");
-
-  /* ПРОФИЛЬ */
   $("btn-profile").onclick = () => openPopup("popup-profile");
-  $("close-profile").onclick = () => closePopup("popup-profile");
-
-  /* БОНУСЫ */
-  $("btn-bonus").onclick = () => openPopup("popup-bonus");
-  $("close-bonus").onclick = () => closePopup("popup-bonus");
-
-  $("bonus-promocode").onclick = () => {
-    closePopup("popup-bonus");
-    openPopup("popup-promocode");
-  };
-
-  $("close-promocode").onclick = () => closePopup("popup-promocode");
-
-  $("bonus-referral").onclick = () => {
-    closePopup("popup-bonus");
-    openPopup("popup-referral");
-  };
-
-  $("close-referral").onclick = () => closePopup("popup-referral");
 });
