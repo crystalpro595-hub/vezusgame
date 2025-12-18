@@ -1,3 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Админка — депозиты</title>
+
+<style>
+body{background:#111;color:#fff;font-family:Arial;padding:20px}
+.item{background:#1e1e1e;padding:15px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between}
+button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:pointer}
+.ok{background:#2ecc71}
+.no{background:#e74c3c;color:#fff}
+.meta{font-size:13px;opacity:.7}
+</style>
+</head>
+<body>
+
+<h2>💳 Заявки</h2>
+<div id="list">Загрузка…</div>
+
 <script>
 const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 const ADMIN_TOKEN = "@smoke2323j228";
@@ -7,12 +27,10 @@ async function load() {
 
   try {
     const r = await fetch(API, {
-      headers: {
-        "x-admin-token": ADMIN_TOKEN
-      }
+      headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
-    if (!r.ok) throw new Error(await r.text());
+    if (!r.ok) throw await r.text();
 
     const data = await r.json();
     list.innerHTML = "";
@@ -49,32 +67,25 @@ async function load() {
 
   } catch (e) {
     list.innerText = "❌ Ошибка соединения";
-    console.error("ADMIN LOAD ERROR:", e);
+    console.error(e);
   }
 }
 
 async function action(id, type) {
-  try {
-    const r = await fetch(API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-token": ADMIN_TOKEN
-      },
-      body: JSON.stringify({ id, action: type })
-    });
+  await fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-token": ADMIN_TOKEN
+    },
+    body: JSON.stringify({ id, action: type })
+  });
 
-    if (!r.ok) {
-      throw new Error(await r.text());
-    }
-
-    await load();
-
-  } catch (e) {
-    alert("Ошибка действия, смотри консоль");
-    console.error("ADMIN ACTION ERROR:", e);
-  }
+  load();
 }
 
 load();
 </script>
+
+</body>
+</html>
