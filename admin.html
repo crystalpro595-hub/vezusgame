@@ -2,21 +2,15 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Админка — депозиты</title>
 
 <style>
 body {
   background:#111;
   color:#fff;
-  font-family:Arial, sans-serif;
-  padding:20px;
+  font-family:Arial;
+  padding:20px
 }
-
-h2 {
-  margin-bottom: 15px;
-}
-
 .item {
   background:#1e1e1e;
   padding:15px;
@@ -24,32 +18,18 @@ h2 {
   margin-bottom:10px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  align-items:center
 }
-
 button {
   padding:6px 12px;
   border-radius:6px;
   border:none;
   font-weight:bold;
-  cursor:pointer;
+  cursor:pointer
 }
-
-.ok {
-  background:#2ecc71;
-  color:#000;
-}
-
-.no {
-  background:#e74c3c;
-  color:#fff;
-  margin-left:6px;
-}
-
-.meta {
-  font-size:13px;
-  opacity:.7;
-}
+.ok { background:#2ecc71 }
+.no { background:#e74c3c; color:#fff }
+.meta { font-size:13px; opacity:.7 }
 </style>
 </head>
 <body>
@@ -58,30 +38,25 @@ button {
 <div id="list">Загрузка…</div>
 
 <script>
-/* === НАСТРОЙКИ === */
 const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-const ADMIN_TOKEN = "@smoke2323j228"; // ТОЧНО как в Supabase → Secrets → ADMIN_TOKEN
+const ADMIN_TOKEN = "@smoke2323j228";
 
-/* === ЗАГРУЗКА ЗАЯВОК === */
 async function load() {
   const list = document.getElementById("list");
 
   try {
-    const response = await fetch(API, {
+    const r = await fetch(API, {
       headers: {
         "x-admin-token": ADMIN_TOKEN
       }
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(text);
-    }
+    if (!r.ok) throw new Error(await r.text());
 
-    const data = await response.json();
+    const data = await r.json();
     list.innerHTML = "";
 
-    if (!data || data.length === 0) {
+    if (!data.length) {
       list.innerText = "Заявок нет";
       return;
     }
@@ -90,16 +65,15 @@ async function load() {
       const div = document.createElement("div");
       div.className = "item";
 
-      let statusText = "⏳ В процессе";
-      if (d.status === "success") statusText = "✅ Успешно";
-      if (d.status === "rejected") statusText = "❌ Отказ";
+      let status = "⏳ В процессе";
+      if (d.status === "success") status = "✅ Успешно";
+      if (d.status === "rejected") status = "❌ Отказ";
 
       div.innerHTML = `
         <div>
           <b>${d.amount} ₽</b>
-          <div class="meta">user_id: ${d.user_id}</div>
           <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-          <div class="meta">${statusText}</div>
+          <div class="meta">${status}</div>
         </div>
         <div>
           ${d.status === "waiting" ? `
@@ -112,60 +86,35 @@ async function load() {
       list.appendChild(div);
     });
 
-  } catch (err) {
-    list.innerText = "❌ Ошибка соединения / Unauthorized";
-    console.error("ADMIN LOAD ERROR:", err);
+  } catch (e) {
+    list.innerText = "❌ Ошибка соединения";
+    console.error(e);
   }
 }
 
-/* === ДЕЙСТВИЯ === */
-async function action(id, actionType) {
+async function action(id, type) {
+  document.querySelectorAll("button").forEach(b => b.disabled = true);
+
   try {
-    const response = await fetch(API, {
+    const r = await fetch(API, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-admin-token": ADMIN_TOKEN
       },
-      body: JSON.stringify({
-        id: id,
-        action: actionType
-      })
+      body: JSON.stringify({ id, action: type })
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(text);
-    }
+    if (!r.ok) throw new Error(await r.text());
 
     load();
-
-  } catch (err) {
-    alert("❌ Ошибка действия. Открой консоль.");
-    console.error("ADMIN ACTION ERROR:", err);
+  } catch (e) {
+    alert("Ошибка действия");
+    console.error(e);
   }
 }
 
-/* === СТАРТ === */
 load();
-</script>
-
-<script>
-(function () {
-  const PASSWORD = "Vezus2323j228";
-  const key = "admin_auth_ok";
-
-  if (sessionStorage.getItem(key) === "yes") return;
-
-  let input = prompt("🔐 Введите пароль администратора:");
-  if (input !== PASSWORD) {
-    alert("❌ Неверный пароль");
-    document.body.innerHTML = "";
-    throw new Error("Unauthorized");
-  }
-
-  sessionStorage.setItem(key, "yes");
-})();
 </script>
 
 </body>
