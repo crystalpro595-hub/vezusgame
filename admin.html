@@ -2,40 +2,86 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Админка — депозиты</title>
 
 <style>
-body{background:#111;color:#fff;font-family:Arial;padding:20px}
-.item{background:#1e1e1e;padding:15px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between}
-button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:pointer}
-.ok{background:#2ecc71}
-.no{background:#e74c3c;color:#fff}
-.meta{font-size:13px;opacity:.7}
+body {
+  background:#111;
+  color:#fff;
+  font-family:Arial, sans-serif;
+  padding:20px;
+}
+
+h2 {
+  margin-bottom: 15px;
+}
+
+.item {
+  background:#1e1e1e;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+button {
+  padding:6px 12px;
+  border-radius:6px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.ok {
+  background:#2ecc71;
+  color:#000;
+}
+
+.no {
+  background:#e74c3c;
+  color:#fff;
+  margin-left:6px;
+}
+
+.meta {
+  font-size:13px;
+  opacity:.7;
+}
 </style>
 </head>
 <body>
 
-<h2>💳 Заявки</h2>
+<h2>💳 Заявки на пополнение</h2>
 <div id="list">Загрузка…</div>
 
 <script>
+/* === НАСТРОЙКИ === */
 const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-const ADMIN_TOKEN = "@smoke2323j228";
+const ADMIN_TOKEN = "@smoke2323j228"; // ТОЧНО как в Supabase → Secrets → ADMIN_TOKEN
 
+/* === ЗАГРУЗКА ЗАЯВОК === */
 async function load() {
   const list = document.getElementById("list");
 
   try {
-    const r = await fetch(API, {
-      headers: { "x-admin-token": ADMIN_TOKEN }
+    const response = await fetch(API, {
+      headers: {
+        "x-admin-token": ADMIN_TOKEN
+      }
     });
 
-    if (!r.ok) throw await r.text();
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text);
+    }
 
-    const data = await r.json();
+    const data = await response.json();
     list.innerHTML = "";
 
-    if (!data.length) {
+    if (!data || data.length === 0) {
       list.innerText = "Заявок нет";
       return;
     }
@@ -44,15 +90,16 @@ async function load() {
       const div = document.createElement("div");
       div.className = "item";
 
-      let status = "⏳ В процессе";
-      if (d.status === "success") status = "✅ Успешно";
-      if (d.status === "rejected") status = "❌ Отказ";
+      let statusText = "⏳ В процессе";
+      if (d.status === "success") statusText = "✅ Успешно";
+      if (d.status === "rejected") statusText = "❌ Отказ";
 
       div.innerHTML = `
         <div>
           <b>${d.amount} ₽</b>
+          <div class="meta">user_id: ${d.user_id}</div>
           <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-          <div class="meta">${status}</div>
+          <div class="meta">${statusText}</div>
         </div>
         <div>
           ${d.status === "waiting" ? `
@@ -65,25 +112,41 @@ async function load() {
       list.appendChild(div);
     });
 
-  } catch (e) {
-    list.innerText = "❌ Ошибка соединения";
-    console.error(e);
+  } catch (err) {
+    list.innerText = "❌ Ошибка соединения / Unauthorized";
+    console.error("ADMIN LOAD ERROR:", err);
   }
 }
 
-async function action(id, type) {
-  await fetch(API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-token": ADMIN_TOKEN
-    },
-    body: JSON.stringify({ id, action: type })
-  });
+/* === ДЕЙСТВИЯ === */
+async function action(id, actionType) {
+  try {
+    const response = await fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({
+        id: id,
+        action: actionType
+      })
+    });
 
-  load();
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text);
+    }
+
+    load();
+
+  } catch (err) {
+    alert("❌ Ошибка действия. Открой консоль.");
+    console.error("ADMIN ACTION ERROR:", err);
+  }
 }
 
+/* === СТАРТ === */
 load();
 </script>
 
