@@ -150,5 +150,23 @@ async function action(id, actionType) {
 load();
 </script>
 
+<script>
+(function () {
+  const PASSWORD = "Vezus2323j228";
+  const key = "admin_auth_ok";
+
+  if (sessionStorage.getItem(key) === "yes") return;
+
+  let input = prompt("🔐 Введите пароль администратора:");
+  if (input !== PASSWORD) {
+    alert("❌ Неверный пароль");
+    document.body.innerHTML = "";
+    throw new Error("Unauthorized");
+  }
+
+  sessionStorage.setItem(key, "yes");
+})();
+</script>
+
 </body>
 </html>
