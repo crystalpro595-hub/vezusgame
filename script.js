@@ -1,142 +1,133 @@
-// ==================
-// SUPABASE
-// ==================
-const SUPABASE_URL = "https://ТВОЙ_PROJECT_ID.supabase.co";
-const SUPABASE_KEY = "ТВОЙ_PUBLIC_ANON_KEY";
+// =============================
+// 🔑 НАСТРОЙКИ (ВСТАВЛЕНО)
+// =============================
+const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
+// =============================
+// 📦 SUPABASE INIT
+// =============================
 const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
 );
 
-// ==================
-// TELEGRAM USER
-// ==================
+// =============================
+// 📲 TELEGRAM AUTH
+// =============================
 let tgUser = null;
-let userId = null;
+let USER_ID = null;
 
-if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.ready();
-    tgUser = Telegram.WebApp.initDataUnsafe?.user || null;
+function initTelegram() {
+  if (!window.Telegram || !Telegram.WebApp) {
+    alert("❌ Открой через Telegram");
+    return;
+  }
+
+  const tg = Telegram.WebApp;
+  tg.ready();
+
+  tgUser = tg.initDataUnsafe?.user;
+
+  if (!tgUser) {
+    alert("❌ Не удалось получить Telegram user");
+    return;
+  }
+
+  USER_ID = tgUser.id;
+
+  console.log("TG USER:", tgUser);
+
+  syncUser();
 }
 
-if (!tgUser) {
-    alert("Открой сайт через Telegram");
-    throw new Error("No Telegram user");
-}
+// =============================
+// 👤 SYNC USER WITH DB
+// =============================
+async function syncUser() {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, balance")
+    .eq("id", USER_ID)
+    .single();
 
-userId = tgUser.id.toString();
+  if (error && error.code !== "PGRST116") {
+    console.error("USER LOAD ERROR", error);
+    return;
+  }
 
-// ==================
-// DOM UTILS
-// ==================
-const $ = id => document.getElementById(id);
-const openPopup = id => $(id).style.display = "flex";
-const closePopup = id => $(id).style.display = "none";
+  if (!data) {
+    // create user
+    const { error: insertError } = await supabase
+      .from("users")
+      .insert({
+        id: USER_ID,
+        username: tgUser.username || null,
+        first_name: tgUser.first_name || null,
+        balance: 0
+      });
 
-// ==================
-// USER INIT
-// ==================
-async function initUser() {
-    let { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", userId)
-        .single();
-
-    if (!profile) {
-        await supabase.from("profiles").insert({
-            user_id: userId,
-            username: tgUser.username || null,
-            first_name: tgUser.first_name || null,
-            balance: 0
-        });
-
-        profile = { balance: 0 };
+    if (insertError) {
+      console.error("USER CREATE ERROR", insertError);
+      return;
     }
 
-    updateBalance(profile.balance);
+    updateBalance(0);
+  } else {
+    updateBalance(data.balance);
+  }
 }
 
-function updateBalance(balance) {
-    $("top-balance").innerText = `БАЛАНС: ${balance} VC`;
-    $("profile-balance").innerText = `Баланс: ${balance} VC`;
+// =============================
+// 💰 BALANCE UI
+// =============================
+function updateBalance(amount) {
+  const top = document.getElementById("top-balance");
+  const profile = document.getElementById("profile-balance");
+
+  if (top) top.innerText = `БАЛАНС: ${amount} VC`;
+  if (profile) profile.innerText = `Баланс: ${amount} VC`;
 }
 
-// ==================
-// DOM READY
-// ==================
-document.addEventListener("DOMContentLoaded", async () => {
+// =============================
+// 💳 CREATE DEPOSIT REQUEST
+// =============================
+document.addEventListener("DOMContentLoaded", () => {
+  initTelegram();
 
-    await initUser();
+  const confirmBtn = document.getElementById("confirm-paid");
+  if (!confirmBtn) return;
 
-    // КОШЕЛЁК
-    $("wallet-open").onclick = () => openPopup("popup-wallet");
-    $("close-wallet").onclick = () => closePopup("popup-wallet");
+  confirmBtn.onclick = async () => {
+    const amount = +document.getElementById("deposit-amount").value || 0;
 
-    // ПОПОЛНЕНИЕ
-    $("open-deposit").onclick = () => {
-        closePopup("popup-wallet");
-        openPopup("popup-deposit");
-    };
-    $("close-deposit").onclick = () => closePopup("popup-deposit");
+    if (amount < 100) {
+      alert("Минимум 100 ₽");
+      return;
+    }
 
-    $("to-payment").onclick = () => {
-        const amount = Number($("deposit-amount").value);
-        if (amount < 100) return alert("Минимум 100 ₽");
+    const { error } = await supabase
+      .from("deposits")
+      .insert({
+        user_id: USER_ID,
+        amount: amount,
+        status: "waiting"
+      });
 
-        $("pay-amount-text").innerText = amount + " ₽";
-        closePopup("popup-deposit");
-        openPopup("popup-payment");
-    };
+    if (error) {
+      alert("Ошибка создания заявки");
+      console.error(error);
+      return;
+    }
 
-    $("close-payment").onclick = () => closePopup("popup-payment");
-
-    // ПОДТВЕРЖДЕНИЕ ОПЛАТЫ
-    $("confirm-paid").onclick = async () => {
-        const amount = Number($("deposit-amount").value);
-
-        await supabase.from("deposits").insert({
-            user_id: userId,
-            amount: amount,
-            status: "waiting"
-        });
-
-        alert("Заявка отправлена");
-        closePopup("popup-payment");
-    };
-
-    // ВЫВОД
-    $("open-withdraw").onclick = () => {
-        closePopup("popup-wallet");
-        openPopup("popup-withdraw");
-    };
-    $("close-withdraw").onclick = () => closePopup("popup-withdraw");
-
-    // ЗАЯВКИ
-    $("open-requests").onclick = () => {
-        closePopup("popup-wallet");
-        openPopup("popup-requests");
-    };
-    $("close-requests").onclick = () => closePopup("popup-requests");
-
-    // ПРОФИЛЬ
-    $("btn-profile").onclick = () => openPopup("popup-profile");
-    $("close-profile").onclick = () => closePopup("popup-profile");
-
-    // БОНУСЫ
-    $("btn-bonus").onclick = () => openPopup("popup-bonus");
-    $("close-bonus").onclick = () => closePopup("popup-bonus");
-
-    $("bonus-promocode").onclick = () => {
-        closePopup("popup-bonus");
-        openPopup("popup-promocode");
-    };
-    $("close-promocode").onclick = () => closePopup("popup-promocode");
-
-    $("bonus-referral").onclick = () => {
-        closePopup("popup-bonus");
-        openPopup("popup-referral");
-    };
-    $("close-referral").onclick = () => closePopup("popup-referral");
+    alert("✅ Заявка отправлена");
+  };
 });
+
+// =============================
+// 🔔 ЗАГЛУШКИ (будем расширять)
+// =============================
+// withdraw
+// history
+// referrals
+// promocodes
