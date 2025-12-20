@@ -110,3 +110,48 @@ document.addEventListener("DOMContentLoaded", () => {
   initUser();
 
 });
+// ===============================
+// DEPOSIT LOGIC
+// ===============================
+const depositInput = document.getElementById("deposit-amount");
+const vcEstimate = document.getElementById("vc-estimate");
+
+depositInput.addEventListener("input", () => {
+  const value = parseInt(depositInput.value || 0);
+  vcEstimate.innerText = `${value} VC`;
+});
+
+// Переход к оплате
+document.getElementById("to-payment").onclick = () => {
+  const amount = parseInt(depositInput.value);
+
+  if (!amount || amount < 100) {
+    alert("Минимум 100 ₽");
+    return;
+  }
+
+  document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
+  openPopup("popup-payment");
+};
+
+// Я оплатил
+document.getElementById("confirm-paid").onclick = async () => {
+  const amount = parseInt(depositInput.value);
+
+  if (!amount || amount < 100) {
+    alert("Ошибка суммы");
+    return;
+  }
+
+  await supabase.from("deposits").insert({
+    user_id: window.USER_ID,
+    amount_rub: amount,
+    amount_vc: amount,
+    status: "waiting"
+  });
+
+  closePopup("popup-payment");
+  closePopup("popup-deposit");
+
+  alert("Заявка отправлена. Ожидайте подтверждения.");
+};
