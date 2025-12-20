@@ -72,103 +72,37 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===============================
-// POPUPS
-// ===============================
-const openPopup = id => document.getElementById(id).style.display = "flex";
-const closePopup = id => document.getElementById(id).style.display = "none";
-
-// Кошелёк
-wallet-open.onclick = () => openPopup("popup-wallet");
-close-wallet.onclick = () => closePopup("popup-wallet");
-
-// Пополнение
-open-deposit.onclick = () => {
-  closePopup("popup-wallet");
-  openPopup("popup-deposit");
-};
-close-deposit.onclick = () => closePopup("popup-deposit");
-
-// Оплата
-close-payment.onclick = () => closePopup("popup-payment");
-
-// Вывод
-open-withdraw.onclick = () => {
-  closePopup("popup-wallet");
-  openPopup("popup-withdraw");
-};
-close-withdraw.onclick = () => closePopup("popup-withdraw");
-
-// Заявки
-open-requests.onclick = () => {
-  closePopup("popup-wallet");
-  openPopup("popup-requests");
-};
-close-requests.onclick = () => closePopup("popup-requests");
-
-// Профиль
-btn-profile.onclick = () => openPopup("popup-profile");
-close-profile.onclick = () => closePopup("popup-profile");
-
-// Бонусы
-btn-bonus.onclick = () => openPopup("popup-bonus");
-close-bonus.onclick = () => closePopup("popup-bonus");
-
-// Промокод
-bonus-promocode.onclick = () => {
-  closePopup("popup-bonus");
-  openPopup("popup-promocode");
-};
-close-promocode.onclick = () => closePopup("popup-promocode");
-
-// Реферал
-bonus-referral.onclick = () => {
-  closePopup("popup-bonus");
-  openPopup("popup-referral");
-};
-close-referral.onclick = () => closePopup("popup-referral");
+  // POPUPS
   // ===============================
-  // DEPOSIT
-  // ===============================
-  const depositInput = document.getElementById("deposit-amount");
-  const vcEstimate = document.getElementById("vc-estimate");
+  const openPopup = id => document.getElementById(id).style.display = "flex";
+  const closePopup = id => document.getElementById(id).style.display = "none";
 
-  depositInput.addEventListener("input", () => {
-    const value = parseInt(depositInput.value || 0);
-    vcEstimate.innerText = `${value} VC`;
-  });
+  document.getElementById("wallet-open").onclick = () => openPopup("popup-wallet");
+  document.getElementById("close-wallet").onclick = () => closePopup("popup-wallet");
 
-  document.getElementById("to-payment").onclick = () => {
-    const amount = parseInt(depositInput.value);
+  document.getElementById("open-deposit").onclick = () => openPopup("popup-deposit");
+  document.getElementById("close-deposit").onclick = () => closePopup("popup-deposit");
 
-    if (!amount || amount < 100) {
-      alert("Минимум 100 ₽");
-      return;
-    }
+  document.getElementById("to-payment").onclick = () => openPopup("popup-payment");
+  document.getElementById("close-payment").onclick = () => closePopup("popup-payment");
 
-    document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
-    openPopup("popup-payment");
-  };
+  document.getElementById("open-withdraw").onclick = () => openPopup("popup-withdraw");
+  document.getElementById("close-withdraw").onclick = () => closePopup("popup-withdraw");
 
-  document.getElementById("confirm-paid").onclick = async () => {
-    const amount = parseInt(depositInput.value);
+  document.getElementById("open-requests").onclick = () => openPopup("popup-requests");
+  document.getElementById("close-requests").onclick = () => closePopup("popup-requests");
 
-    if (!amount || amount < 100) {
-      alert("Ошибка суммы");
-      return;
-    }
+  document.getElementById("btn-profile").onclick = () => openPopup("popup-profile");
+  document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
 
-    await supabase.from("deposits").insert({
-      user_id: window.USER_ID,
-      amount_rub: amount,
-      amount_vc: amount,
-      status: "waiting"
-    });
+  document.getElementById("btn-bonus").onclick = () => openPopup("popup-bonus");
+  document.getElementById("close-bonus").onclick = () => closePopup("popup-bonus");
 
-    closePopup("popup-payment");
-    closePopup("popup-deposit");
+  document.getElementById("bonus-promocode").onclick = () => openPopup("popup-promocode");
+  document.getElementById("close-promocode").onclick = () => closePopup("popup-promocode");
 
-    alert("Заявка отправлена. Ожидайте подтверждения.");
-  };
+  document.getElementById("bonus-referral").onclick = () => openPopup("popup-referral");
+  document.getElementById("close-referral").onclick = () => closePopup("popup-referral");
 
   // ===============================
   // START
