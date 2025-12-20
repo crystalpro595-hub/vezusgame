@@ -23,7 +23,7 @@ if (!tg.initDataUnsafe?.user) {
 const tgUser = tg.initDataUnsafe.user;
 
 // ===============================
-// INIT AFTER DOM
+// START AFTER DOM
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
   bindButtons();
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ===============================
-// INIT USER
+// USER
 // ===============================
 async function initUser() {
   let { data: user } = await supabase
@@ -78,7 +78,7 @@ async function loadBalance() {
 }
 
 // ===============================
-// POPUPS
+// UI
 // ===============================
 function openPopup(id) {
   document.getElementById(id).style.display = "flex";
@@ -91,21 +91,6 @@ function bindButtons() {
   document.getElementById("wallet-open").onclick = () => openPopup("popup-wallet");
   document.getElementById("close-wallet").onclick = () => closePopup("popup-wallet");
 
-  document.getElementById("open-deposit").onclick = () => openPopup("popup-deposit");
-  document.getElementById("close-deposit").onclick = () => closePopup("popup-deposit");
-
-  document.getElementById("to-payment").onclick = () => openPopup("popup-payment");
-  document.getElementById("close-payment").onclick = () => closePopup("popup-payment");
-
-  document.getElementById("open-withdraw").onclick = () => openPopup("popup-withdraw");
-  document.getElementById("close-withdraw").onclick = () => closePopup("popup-withdraw");
-
-  document.getElementById("open-requests").onclick = () => openPopup("popup-requests");
-  document.getElementById("close-requests").onclick = () => closePopup("popup-requests");
-
   document.getElementById("btn-profile").onclick = () => openPopup("popup-profile");
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
-
-  document.getElementById("btn-bonus").onclick = () => openPopup("popup-bonus");
-  document.getElementById("close-bonus").onclick = () => closePopup("popup-bonus");
 }
