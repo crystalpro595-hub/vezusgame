@@ -72,19 +72,60 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===============================
-  // POPUPS
-  // ===============================
-  const openPopup = id => document.getElementById(id).style.display = "flex";
-  const closePopup = id => document.getElementById(id).style.display = "none";
+// POPUPS
+// ===============================
+const openPopup = id => document.getElementById(id).style.display = "flex";
+const closePopup = id => document.getElementById(id).style.display = "none";
 
-  document.getElementById("wallet-open").onclick = () => openPopup("popup-wallet");
-  document.getElementById("close-wallet").onclick = () => closePopup("popup-wallet");
+// Кошелёк
+wallet-open.onclick = () => openPopup("popup-wallet");
+close-wallet.onclick = () => closePopup("popup-wallet");
 
-  document.getElementById("open-deposit").onclick = () => openPopup("popup-deposit");
-  document.getElementById("close-deposit").onclick = () => closePopup("popup-deposit");
+// Пополнение
+open-deposit.onclick = () => {
+  closePopup("popup-wallet");
+  openPopup("popup-deposit");
+};
+close-deposit.onclick = () => closePopup("popup-deposit");
 
-  document.getElementById("close-payment").onclick = () => closePopup("popup-payment");
+// Оплата
+close-payment.onclick = () => closePopup("popup-payment");
 
+// Вывод
+open-withdraw.onclick = () => {
+  closePopup("popup-wallet");
+  openPopup("popup-withdraw");
+};
+close-withdraw.onclick = () => closePopup("popup-withdraw");
+
+// Заявки
+open-requests.onclick = () => {
+  closePopup("popup-wallet");
+  openPopup("popup-requests");
+};
+close-requests.onclick = () => closePopup("popup-requests");
+
+// Профиль
+btn-profile.onclick = () => openPopup("popup-profile");
+close-profile.onclick = () => closePopup("popup-profile");
+
+// Бонусы
+btn-bonus.onclick = () => openPopup("popup-bonus");
+close-bonus.onclick = () => closePopup("popup-bonus");
+
+// Промокод
+bonus-promocode.onclick = () => {
+  closePopup("popup-bonus");
+  openPopup("popup-promocode");
+};
+close-promocode.onclick = () => closePopup("popup-promocode");
+
+// Реферал
+bonus-referral.onclick = () => {
+  closePopup("popup-bonus");
+  openPopup("popup-referral");
+};
+close-referral.onclick = () => closePopup("popup-referral");
   // ===============================
   // DEPOSIT
   // ===============================
