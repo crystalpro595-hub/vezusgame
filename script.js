@@ -83,26 +83,51 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("open-deposit").onclick = () => openPopup("popup-deposit");
   document.getElementById("close-deposit").onclick = () => closePopup("popup-deposit");
 
-  document.getElementById("to-payment").onclick = () => openPopup("popup-payment");
   document.getElementById("close-payment").onclick = () => closePopup("popup-payment");
 
-  document.getElementById("open-withdraw").onclick = () => openPopup("popup-withdraw");
-  document.getElementById("close-withdraw").onclick = () => closePopup("popup-withdraw");
+  // ===============================
+  // DEPOSIT
+  // ===============================
+  const depositInput = document.getElementById("deposit-amount");
+  const vcEstimate = document.getElementById("vc-estimate");
 
-  document.getElementById("open-requests").onclick = () => openPopup("popup-requests");
-  document.getElementById("close-requests").onclick = () => closePopup("popup-requests");
+  depositInput.addEventListener("input", () => {
+    const value = parseInt(depositInput.value || 0);
+    vcEstimate.innerText = `${value} VC`;
+  });
 
-  document.getElementById("btn-profile").onclick = () => openPopup("popup-profile");
-  document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
+  document.getElementById("to-payment").onclick = () => {
+    const amount = parseInt(depositInput.value);
 
-  document.getElementById("btn-bonus").onclick = () => openPopup("popup-bonus");
-  document.getElementById("close-bonus").onclick = () => closePopup("popup-bonus");
+    if (!amount || amount < 100) {
+      alert("Минимум 100 ₽");
+      return;
+    }
 
-  document.getElementById("bonus-promocode").onclick = () => openPopup("popup-promocode");
-  document.getElementById("close-promocode").onclick = () => closePopup("popup-promocode");
+    document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
+    openPopup("popup-payment");
+  };
 
-  document.getElementById("bonus-referral").onclick = () => openPopup("popup-referral");
-  document.getElementById("close-referral").onclick = () => closePopup("popup-referral");
+  document.getElementById("confirm-paid").onclick = async () => {
+    const amount = parseInt(depositInput.value);
+
+    if (!amount || amount < 100) {
+      alert("Ошибка суммы");
+      return;
+    }
+
+    await supabase.from("deposits").insert({
+      user_id: window.USER_ID,
+      amount_rub: amount,
+      amount_vc: amount,
+      status: "waiting"
+    });
+
+    closePopup("popup-payment");
+    closePopup("popup-deposit");
+
+    alert("Заявка отправлена. Ожидайте подтверждения.");
+  };
 
   // ===============================
   // START
@@ -110,48 +135,3 @@ document.addEventListener("DOMContentLoaded", () => {
   initUser();
 
 });
-// ===============================
-// DEPOSIT LOGIC
-// ===============================
-const depositInput = document.getElementById("deposit-amount");
-const vcEstimate = document.getElementById("vc-estimate");
-
-depositInput.addEventListener("input", () => {
-  const value = parseInt(depositInput.value || 0);
-  vcEstimate.innerText = `${value} VC`;
-});
-
-// Переход к оплате
-document.getElementById("to-payment").onclick = () => {
-  const amount = parseInt(depositInput.value);
-
-  if (!amount || amount < 100) {
-    alert("Минимум 100 ₽");
-    return;
-  }
-
-  document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
-  openPopup("popup-payment");
-};
-
-// Я оплатил
-document.getElementById("confirm-paid").onclick = async () => {
-  const amount = parseInt(depositInput.value);
-
-  if (!amount || amount < 100) {
-    alert("Ошибка суммы");
-    return;
-  }
-
-  await supabase.from("deposits").insert({
-    user_id: window.USER_ID,
-    amount_rub: amount,
-    amount_vc: amount,
-    status: "waiting"
-  });
-
-  closePopup("popup-payment");
-  closePopup("popup-deposit");
-
-  alert("Заявка отправлена. Ожидайте подтверждения.");
-};
