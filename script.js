@@ -144,7 +144,7 @@ document.getElementById("confirm-paid").onclick = async () => {
 
   const { error } = await supabase.from("deposits").insert({
     user_id: window.USER_ID,
-    amount: amount,
+    amount_vc: amount,
     status: "waiting"
   });
 
