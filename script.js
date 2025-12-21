@@ -107,6 +107,59 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===============================
   // START
   // ===============================
+
+// ===============================
+// DEPOSIT (создание заявки)
+// ===============================
+const depositInput = document.getElementById("deposit-amount");
+const vcEstimate = document.getElementById("vc-estimate");
+
+// Подсчёт VC
+depositInput.addEventListener("input", () => {
+  const value = parseInt(depositInput.value || 0);
+  vcEstimate.innerText = `${value} VC`;
+});
+
+// Переход к оплате
+document.getElementById("to-payment").onclick = () => {
+  const amount = parseInt(depositInput.value);
+
+  if (!amount || amount < 100) {
+    alert("Минимум 100 ₽");
+    return;
+  }
+
+  document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
+  document.getElementById("popup-payment").style.display = "flex";
+};
+
+// Я оплатил
+document.getElementById("confirm-paid").onclick = async () => {
+  const amount = parseInt(depositInput.value);
+
+  if (!amount || amount < 100) {
+    alert("Ошибка суммы");
+    return;
+  }
+
+  const { error } = await supabase.from("deposits").insert({
+    user_id: window.USER_ID,
+    amount: amount,
+    status: "waiting"
+  });
+
+  if (error) {
+    console.error(error);
+    alert("Ошибка создания заявки");
+    return;
+  }
+
+  document.getElementById("popup-payment").style.display = "none";
+  document.getElementById("popup-deposit").style.display = "none";
+
+  alert("Заявка отправлена. Ожидайте подтверждения.");
+};
+  
   initUser();
 
 });
