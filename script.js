@@ -210,6 +210,48 @@ document.getElementById("confirm-paid").onclick = async () => {
 
   alert("Заявка отправлена. Ожидайте подтверждения.");
 };
+
+// ===============================
+// WITHDRAW REQUEST
+// ===============================
+document.getElementById("confirm-withdraw").onclick = async () => {
+  const amount = parseInt(
+    document.getElementById("withdraw-amount").value
+  );
+  const wallet = document
+    .getElementById("withdraw-wallet")
+    .value
+    .trim();
+
+  if (!amount || amount <= 0) {
+    alert("Введите сумму");
+    return;
+  }
+
+  if (!wallet) {
+    alert("Введите реквизиты");
+    return;
+  }
+
+  const { error } = await supabase.from("withdraws").insert({
+    user_id: window.USER_ID,
+    amount_vc: amount,
+    wallet: wallet,
+    status: "waiting"
+  });
+
+  if (error) {
+    console.error("WITHDRAW ERROR:", error);
+    alert("Ошибка отправки заявки");
+    return;
+  }
+
+  document.getElementById("withdraw-amount").value = "";
+  document.getElementById("withdraw-wallet").value = "";
+
+  closePopup("popup-withdraw");
+  alert("Заявка на вывод отправлена");
+};
   
   initUser();
 
