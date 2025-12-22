@@ -140,9 +140,6 @@ async function loadHistory() {
   document.getElementById("open-withdraw").onclick = () => openPopup("popup-withdraw");
   document.getElementById("close-withdraw").onclick = () => closePopup("popup-withdraw");
 
-  document.getElementById("open-requests").onclick = () => openPopup("popup-requests");
-  document.getElementById("close-requests").onclick = () => closePopup("popup-requests");
-
   document.getElementById("btn-profile").onclick = () => {
   openPopup("popup-profile");
   loadHistory();
