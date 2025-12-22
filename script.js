@@ -54,6 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.USER_ID = user.id;
     loadBalance();
+    // === Профиль: данные Telegram ===
+const name =
+  tgUser.first_name +
+  (tgUser.last_name ? " " + tgUser.last_name : "");
+
+document.getElementById("profile-user").innerText =
+  `👤 ${name} | ID: ${tgUser.id}`;
   }
 
   // ===============================
