@@ -143,7 +143,10 @@ async function loadHistory() {
   document.getElementById("open-requests").onclick = () => openPopup("popup-requests");
   document.getElementById("close-requests").onclick = () => closePopup("popup-requests");
 
-  document.getElementById("btn-profile").onclick = () => openPopup("popup-profile");
+  document.getElementById("btn-profile").onclick = () => {
+  openPopup("popup-profile");
+  loadHistory();
+};
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
 
   document.getElementById("btn-bonus").onclick = () => openPopup("popup-bonus");
