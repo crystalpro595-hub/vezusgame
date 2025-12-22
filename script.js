@@ -77,7 +77,51 @@ document.getElementById("profile-user").innerText =
     document.getElementById("top-balance").innerText = `БАЛАНС: ${balance} VC`;
     document.getElementById("profile-balance").innerText = `Баланс: ${balance} VC`;
   }
+// ===============================
+// HISTORY (DEPOSITS)
+// ===============================
+async function loadHistory() {
+  const { data, error } = await supabase
+    .from("deposits")
+    .select("amount_vc, status, created_at")
+    .eq("user_id", window.USER_ID)
+    .order("created_at", { ascending: false });
 
+  if (error) {
+    console.error("HISTORY ERROR:", error);
+    return;
+  }
+
+  const list = document.getElementById("history-list");
+  list.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    list.innerHTML = "<div class='meta'>Операций пока нет</div>";
+    return;
+  }
+
+  data.forEach(d => {
+    let statusText = "⏳ В обработке";
+    if (d.status === "success") statusText = "✅ Зачислено";
+    if (d.status === "rejected") statusText = "❌ Отказ";
+
+    const item = document.createElement("div");
+    item.className = "item";
+    item.innerHTML = `
+      <div>
+        <b>➕ Пополнение</b>
+        <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+      </div>
+      <div style="text-align:right">
+        <b>${d.amount_vc} VC</b><br>
+        <span class="meta">${statusText}</span>
+      </div>
+    `;
+
+    list.appendChild(item);
+  });
+}
+  
   // ===============================
   // POPUPS
   // ===============================
