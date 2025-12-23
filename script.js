@@ -233,7 +233,7 @@ document.getElementById("confirm-withdraw").onclick = async () => {
     return;
   }
 
-  const { error } = await supabase.from("withdraws").insert({
+  const { error } = await supabase.from("withdrawals").insert({
     user_id: window.USER_ID,
     amount_vc: amount,
     wallet: wallet,
