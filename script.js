@@ -215,10 +215,11 @@ document.getElementById("confirm-paid").onclick = async () => {
 // WITHDRAW REQUEST
 // ===============================
 document.getElementById("confirm-withdraw").onclick = async () => {
-  const amount = parseInt(
+  const amount = parseFloat(
     document.getElementById("withdraw-amount").value
   );
-  const wallet = document
+
+  const requisites = document
     .getElementById("withdraw-wallet")
     .value
     .trim();
@@ -228,31 +229,29 @@ document.getElementById("confirm-withdraw").onclick = async () => {
     return;
   }
 
-  if (!wallet) {
+  if (!requisites) {
     alert("Введите реквизиты");
     return;
   }
 
-  const { error } = await supabase.from("withdrawals").insert({
-    user_id: window.USER_ID,
-    amount_vc: amount,
-    wallet: wallet,
-    status: "waiting"
-  });
+  const { error } = await supabase
+    .from("withdrawals")
+    .insert({
+      user_id: window.USER_ID,
+      amount: amount,
+      requisites: requisites,
+      status: "waiting"
+    });
 
   if (error) {
     console.error("WITHDRAW ERROR:", error);
-    alert("Ошибка отправки заявки");
+    alert(error.message);
     return;
   }
 
   document.getElementById("withdraw-amount").value = "";
   document.getElementById("withdraw-wallet").value = "";
 
-  closePopup("popup-withdraw");
+  document.getElementById("popup-withdraw").style.display = "none";
   alert("Заявка на вывод отправлена");
 };
-  
-  initUser();
-
-});
