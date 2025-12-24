@@ -1,5 +1,4 @@
-
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
@@ -35,7 +34,6 @@
         .single();
 
       await supabase.from("balances").insert({ user_id: newUser.id, balance: 0 });
-
       user = newUser;
     }
 
@@ -99,24 +97,25 @@
     }
 
     data.forEach(d => {
-  let statusText = "⏳ В ожидании";
-  if (d.status === "success") statusText = "✅ Успешно";
-  if (d.status === "rejected") statusText = "❌ Отказано";
+      let statusText = "⏳ В ожидании";
+      if (d.status === "success") statusText = "✅ Успешно";
+      if (d.status === "rejected") statusText = "❌ Отказано";
 
-  const item = document.createElement("div");
-  item.className = "item";
-  item.innerHTML = `
-    <div>
-      <b>➕ Пополнение</b>
-      <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-    </div>
-    <div style="text-align:right">
-      <b>${d.amount_vc} VC</b><br>
-      <span>${statusText}</span>
-    </div>
-  `;
-  list.appendChild(item);
-});
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = `
+        <div>
+          <b>➕ Пополнение</b>
+          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+        </div>
+        <div style="text-align:right">
+          <b>${d.amount_vc} VC</b><br>
+          <span>${statusText}</span>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  } // ← ВОТ закрытие функции, которого не было
 
   document.getElementById("to-payment").onclick = () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
