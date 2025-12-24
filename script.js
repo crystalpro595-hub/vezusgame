@@ -99,21 +99,24 @@
     }
 
     data.forEach(d => {
-      const item = document.createElement("div");
-      item.className = "item";
-      item.innerHTML = `
-        <div>
-          <b>➕ Пополнение</b>
-          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-        </div>
-        <div style="text-align:right">
-          <b>${d.amount_vc} VC</b><br>
-          <span class="meta">${d.status}</span>
-        </div>
-      `;
-      list.appendChild(item);
-    });
-  }
+  let statusText = "⏳ В ожидании";
+  if (d.status === "success") statusText = "✅ Успешно";
+  if (d.status === "rejected") statusText = "❌ Отказано";
+
+  const item = document.createElement("div");
+  item.className = "item";
+  item.innerHTML = `
+    <div>
+      <b>➕ Пополнение</b>
+      <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+    </div>
+    <div style="text-align:right">
+      <b>${d.amount_vc} VC</b><br>
+      <span>${statusText}</span>
+    </div>
+  `;
+  list.appendChild(item);
+});
 
   document.getElementById("to-payment").onclick = () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
