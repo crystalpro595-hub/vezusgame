@@ -49,14 +49,16 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* === LOAD DEPOSITS === */
+/* === LOAD DEPOSITS FROM EDGE FUNCTION === */
 async function loadDeposits() {
   const list = document.getElementById("deposit-list");
 
   try {
     const response = await fetch("https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits", {
-  headers: { "x-admin-token": "@smoke2323j228" }
-});
+      headers: { "x-admin-token": "@smoke2323j228" }
+    });
+
+    if (!response.ok) throw new Error(await response.text());
     const data = await response.json();
     list.innerHTML = "";
 
@@ -91,12 +93,12 @@ async function loadDeposits() {
     });
 
   } catch (err) {
-    list.innerText = "❌ Ошибка загрузки";
-    console.error(err);
+    list.innerText = "❌ Ошибка загрузки депозитов";
+    console.error("DEPOSIT LOAD ERROR:", err);
   }
 }
 
-/* === LOAD WITHDRAWALS === */
+/* === LOAD WITHDRAWALS FROM TABLE === */
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
 
@@ -106,7 +108,7 @@ async function loadWithdrawals() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(error);
+    console.error("WITHDRAW LOAD ERROR:", error);
     list.innerText = "❌ Ошибка загрузки выводов";
     return;
   }
@@ -147,14 +149,20 @@ async function loadWithdrawals() {
 
 /* === ADMIN ACTIONS === */
 window.depositAction = async (id, actionType) => {
-  const { error } = await supabase.from("deposits").update({ status: actionType === "approve" ? "success" : "rejected" }).eq("id", id);
-  if (error) alert("❌ Ошибка");
+  const { error } = await supabase.from("deposits")
+    .update({ status: actionType === "approve" ? "success" : "rejected" })
+    .eq("id", id);
+
+  if (error) alert("❌ Ошибка обновления депозита");
   loadDeposits();
 };
 
 window.withdrawAction = async (id, actionType, amount, userId) => {
-  const { error } = await supabase.from("withdrawals").update({ status: actionType === "approve" ? "success" : "rejected" }).eq("id", id);
-  if (error) alert("❌ Ошибка");
+  const { error } = await supabase.from("withdrawals")
+    .update({ status: actionType === "approve" ? "success" : "rejected" })
+    .eq("id", id);
+
+  if (error) alert("❌ Ошибка обновления вывода");
   loadWithdrawals();
   loadDeposits();
 };
