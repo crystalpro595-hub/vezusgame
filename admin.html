@@ -54,7 +54,7 @@ async function loadDeposits() {
   const list = document.getElementById("deposit-list");
 
   try {
-    const response = await fetch("admin-deposits-api", { headers: { "x-admin-token": "ADMIN_TOKEN" } });
+    const response = await fetch("admin-deposits-api", { headers: { "x-admin-token": "@smoke2323j228" } });
     if (!response.ok) throw new Error(await response.text());
     const data = await response.json();
     list.innerHTML = "";
