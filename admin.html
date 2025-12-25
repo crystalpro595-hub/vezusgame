@@ -42,146 +42,157 @@ button {
 <h2>💸 Заявки на вывод</h2>
 <div id="withdraw-list">Загрузка…</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTQ1ODMwMiwiZXhwIjoyMDgxMDM0MzAyfQ.muYuEoKV63vDFs4s3lxEwHZJc1r3z06GcQNKlLAauEg";
+const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
+const ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws"; // ← Сюда вставишь URL функции admin-withdraws
+const ADMIN_TOKEN = "@smoke2323j228";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-/* === LOAD DEPOSITS (direct from table) === */
+/* === Загрузка депозитов === */
 async function loadDeposits() {
   const list = document.getElementById("deposit-list");
 
-  const { data, error } = await supabase
-    .from("deposits")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const res = await fetch(ADMIN_DEPOSITS_API, {
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
 
-  if (error) {
-    console.error("DEPOSIT LOAD ERROR:", error);
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+
+    list.innerHTML = "";
+
+    if (!data?.length) {
+      list.innerText = "Заявок на пополнение нет";
+      return;
+    }
+
+    data.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "item";
+
+      let statusText = "⏳ В процессе";
+      if (d.status === "success") statusText = "✅ Успешно";
+      if (d.status === "rejected") statusText = "❌ Отказано";
+
+      div.innerHTML = `
+        <div>
+          <b>${d.amount_vc} VC</b>
+          <div class="meta">user_id: ${d.user_id}</div>
+          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+          <div class="meta">${statusText}</div>
+        </div>
+        <div>
+          ${d.status === "waiting" ? `
+            <button class="ok" onclick="depositAction('${d.id}','approve')">Одобрить</button>
+            <button class="no" onclick="depositAction('${d.id}','reject')">Отказать</button>
+          ` : ""}
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+  } catch(e) {
     list.innerText = "❌ Ошибка загрузки депозитов";
-    return;
+    console.error(e);
   }
-
-  list.innerHTML = "";
-
-  if (!data?.length) {
-    list.innerText = "Заявок на пополнение нет";
-    return;
-  }
-
-  data.forEach(d => {
-    const div = document.createElement("div");
-    div.className = "item";
-
-    let statusText = "⏳ В ожидании";
-    if (d.status === "success") statusText = "✅ Успешно";
-    if (d.status === "rejected") statusText = "❌ Отказано";
-    if (d.status === "waiting") statusText = "⏳ В ожидании";
-
-    div.innerHTML = `
-      <div>
-        <b>${d.amount_vc} VC</b>
-        <div class="meta">user_id: ${d.user_id}</div>
-        <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-        <div class="meta">${statusText}</div>
-      </div>
-      <div>
-        ${d.status === "waiting" ? `
-          <button class="ok" onclick="depositAction('${d.id}','approve')">Одобрить</button>
-          <button class="no" onclick="depositAction('${d.id}','reject')">Отказать</button>
-        ` : ""}
-      </div>
-    `;
-    list.appendChild(div);
-  });
 }
 
-/* === LOAD WITHDRAWALS (direct from table) === */
+/* === Загрузка выводов === */
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
 
-  const { data, error } = await supabase
-    .from("withdrawals")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
 
-  if (error) {
-    console.error("WITHDRAW LOAD ERROR:", error);
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+
+    list.innerHTML = "";
+
+    if (!data?.length) {
+      list.innerText = "Заявок на вывод нет";
+      return;
+    }
+
+    data.forEach(w => {
+      const div = document.createElement("div");
+      div.className = "item";
+
+      let statusText = "⏳ В ожидании";
+      if (w.status === "success") statusText = "✅ Одобрено";
+      if (w.status === "rejected") statusText = "❌ Отклонено";
+
+      div.innerHTML = `
+        <div>
+          <b>${w.amount} VC</b>
+          <div class="meta">user_id: ${w.user_id}</div>
+          <div class="meta">реквизиты: ${w.requisites}</div>
+          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+          <div class="meta">${statusText}</div>
+        </div>
+        <div>
+          ${w.status === "waiting" ? `
+            <button class="ok" onclick="withdrawAction('${w.id}','approve')">Одобрить</button>
+            <button class="no" onclick="withdrawAction('${w.id}','reject')">Отказать</button>
+          ` : ""}
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+  } catch(e) {
     list.innerText = "❌ Ошибка загрузки выводов";
-    return;
+    console.error(e);
   }
-
-  list.innerHTML = "";
-
-  if (!data?.length) {
-    list.innerText = "Заявок на вывод нет";
-    return;
-  }
-
-  data.forEach(w => {
-    const div = document.createElement("div");
-    div.className = "item";
-
-    let statusText = "⏳ В ожидании";
-    if (w.status === "success") statusText = "✅ Одобрено";
-    if (w.status === "rejected") statusText = "❌ Отклонено";
-    if (w.status === "waiting") statusText = "⏳ На рассмотрении";
-
-    div.innerHTML = `
-      <div>
-        <b>${w.amount} VC</b>
-        <div class="meta">user_id: ${w.user_id}</div>
-        <div class="meta">реквизиты: ${w.requisites}</div>
-        <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-        <div class="meta">${statusText}</div>
-      </div>
-      <div>
-        ${w.status === "waiting" ? `
-          <button class="ok" onclick="withdrawAction('${w.id}','approve')">Одобрить</button>
-          <button class="no" onclick="withdrawAction('${w.id}','reject')">Отказать</button>
-        ` : ""}
-      </div>
-    `;
-    list.appendChild(div);
-  });
 }
 
-/* === ACTIONS === */
-window.depositAction = async (id, actionType) => {
-  const { error } = await supabase
-    .from("deposits")
-    .update({ status: actionType === "approve" ? "success" : "rejected" })
-    .eq("id", id);
+/* === Действия по депозитам === */
+window.depositAction = async (id, type) => {
+  try {
+    const res = await fetch(ADMIN_DEPOSITS_API, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({ id, action: type })
+    });
 
-  if (error) {
-    alert("❌ Ошибка обновления депозита");
-    console.error(error);
-    return;
+    if (!res.ok) throw new Error(await res.text());
+    loadDeposits();
+    loadWithdrawals();
+
+  } catch(e) {
+    alert("❌ Ошибка действия по депозиту");
+    console.error(e);
   }
-
-  loadDeposits();
-  loadWithdrawals();
 };
 
-window.withdrawAction = async (id, actionType) => {
-  const { error } = await supabase
-    .from("withdrawals")
-    .update({ status: actionType === "approve" ? "success" : "rejected" })
-    .eq("id", id);
+/* === Действия по выводам === */
+window.withdrawAction = async (id, type) => {
+  try {
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({ id, action: type })
+    });
 
-  if (error) {
-    alert("❌ Ошибка обновления вывода");
-    console.error(error);
-    return;
+    if (!res.ok) throw new Error(await res.text());
+    loadWithdrawals();
+    loadDeposits();
+
+  } catch(e) {
+    alert("❌ Ошибка действия по выводу");
+    console.error(e);
   }
-
-  loadWithdrawals();
-  loadDeposits();
 };
 
-/* === START === */
+/* === Старт загрузки === */
 loadDeposits();
 loadWithdrawals();
 </script>
