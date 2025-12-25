@@ -54,8 +54,9 @@ async function loadDeposits() {
   const list = document.getElementById("deposit-list");
 
   try {
-    const response = await fetch("admin-deposits-api", { headers: { "x-admin-token": "@smoke2323j228" } });
-    if (!response.ok) throw new Error(await response.text());
+    const response = await fetch("https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits", {
+  headers: { "x-admin-token": "@smoke2323j228" }
+});
     const data = await response.json();
     list.innerHTML = "";
 
@@ -74,7 +75,7 @@ async function loadDeposits() {
 
       div.innerHTML = `
         <div>
-          <b>${d.amount} ₽</b>
+          <b>${d.amount_vc} VC</b>
           <div class="meta">user_id: ${d.user_id}</div>
           <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
           <div class="meta">${statusText}</div>
