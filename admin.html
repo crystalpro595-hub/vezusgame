@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Админка — депозиты</title>
+<title>Админка</title>
 
 <style>
 body {
@@ -57,31 +57,31 @@ button {
 <h2>💳 Заявки на пополнение</h2>
 <div id="list">Загрузка…</div>
 
-<script>
-/* === НАСТРОЙКИ === */
-const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-const ADMIN_TOKEN = "@smoke2323j228"; // ТОЧНО как в Supabase → Secrets → ADMIN_TOKEN
+<h2>💸 Заявки на вывод</h2>
+<div id="withdraw-list">Загрузка…</div>
 
-/* === ЗАГРУЗКА ЗАЯВОК === */
+<script>
+const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
+const SUPABASE_KEY = "ВАШ_SUPABASE_KEY";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.supabaseClient = supabase;
+
+/* === ЗАГРУЗКА ДЕПОЗИТОВ (как было) === */
 async function load() {
   const list = document.getElementById("list");
 
   try {
-    const response = await fetch(API, {
-      headers: {
-        "x-admin-token": ADMIN_TOKEN
-      }
+    const response = await fetch("https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits", {
+      headers: { "x-admin-token": "@smoke2323j228" }
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(text);
-    }
+    if (!response.ok) throw new Error(await response.text());
 
     const data = await response.json();
     list.innerHTML = "";
 
-    if (!data || data.length === 0) {
+    if (!data?.length) {
       list.innerText = "Заявок нет";
       return;
     }
@@ -104,50 +104,124 @@ async function load() {
         <div>
           ${d.status === "waiting" ? `
             <button class="ok" onclick="action('${d.id}','approve')">Одобрить</button>
-            <button class="no" onclick="action('${d.id}','reject')">Отказ</button>
+            <button class="no" onclick="action('${d.id}','reject')">Отказать</button>
           ` : ""}
         </div>
       `;
-
       list.appendChild(div);
     });
 
   } catch (err) {
-    list.innerText = "❌ Ошибка соединения / Unauthorized";
-    console.error("ADMIN LOAD ERROR:", err);
+    list.innerText = "❌ Ошибка соединения";
+    console.error(err);
   }
 }
 
-/* === ДЕЙСТВИЯ === */
+/* === ЗАГРУЗКА ВЫВОДОВ (новый блок) === */
+async function loadWithdrawals() {
+  const list = document.getElementById("withdraw-list");
+
+  const { data, error } = await supabase
+    .from("withdrawals")
+    .select("*")
+    .eq("status", "waiting")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    list.innerText = "❌ Ошибка загрузки выводов";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  if (!data?.length) {
+    list.innerText = "Заявок на вывод нет";
+    return;
+  }
+
+  data.forEach(w => {
+    const div = document.createElement("div");
+    div.className = "item";
+
+    div.innerHTML = `
+      <div>
+        <b>${w.amount} VC</b>
+        <div class="meta">user_id: ${w.user_id}</div>
+        <div class="meta">реквизиты: ${w.requisites}</div>
+        <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+      </div>
+      <div>
+        <button class="ok" onclick="approveWithdraw('${w.id}', ${w.amount}, '${w.user_id}')">Одобрить</button>
+        <button class="no" onclick="rejectWithdraw('${w.id}', ${w.amount}, '${w.user_id}')">Отказать</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+/* === ДЕЙСТВИЯ АДМИНА ПО ДЕПОЗИТАМ (как было) === */
 async function action(id, actionType) {
   try {
-    const response = await fetch(API, {
+    const response = await fetch("https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-admin-token": ADMIN_TOKEN
+        "x-admin-token": "@smoke2323j228"
       },
-      body: JSON.stringify({
-        id: id,
-        action: actionType
-      })
+      body: JSON.stringify({ id, action: actionType })
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(text);
-    }
-
+    if (!response.ok) throw new Error(await response.text());
     load();
+    loadWithdrawals();
 
   } catch (err) {
-    alert("❌ Ошибка действия. Открой консоль.");
-    console.error("ADMIN ACTION ERROR:", err);
+    alert("❌ Ошибка действия");
+    console.error(err);
   }
+}
+
+/* === ДЕЙСТВИЯ АДМИНА ПО ВЫВОДУ (заморозка/разморозка баланса) === */
+async function approveWithdraw(id, amount, userId) {
+  const { error } = await supabase.rpc("admin_approve_withdraw", {
+    p_id: id,
+    p_amount: amount,
+    p_user: userId
+  });
+
+  if (error) {
+    console.error(error);
+    alert("❌ Ошибка одобрения вывода");
+    return;
+  }
+
+  alert("✅ Вывод одобрен");
+  loadWithdrawals();
+  load();
+}
+
+async function rejectWithdraw(id, amount, userId) {
+  const { error } = await supabase.rpc("admin_reject_withdraw", {
+    p_id: id,
+    p_amount: amount,
+    p_user: userId
+  });
+
+  if (error) {
+    console.error(error);
+    alert("❌ Ошибка отказа");
+    return;
+  }
+
+  alert("❌ Вывод отклонён, баланс возвращён");
+  loadWithdrawals();
+  load();
 }
 
 /* === СТАРТ === */
 load();
+loadWithdrawals();
 </script>
 
 </body>
