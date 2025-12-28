@@ -32,6 +32,20 @@ button {
 .ok { background:#2ecc71; color:#000; }
 .no { background:#e74c3c; color:#fff; margin-left:6px; }
 .meta { font-size:13px; opacity:.7; }
+.log {
+  background:#222;
+  padding:8px;
+  margin-top:6px;
+  border-left:3px solid #2ecc71;
+  font-size:12px;
+}
+.error {
+  background:#c00;
+  padding:10px;
+  margin-top:10px;
+  border-radius:6px;
+  font-size:12px;
+}
 </style>
 </head>
 <body>
@@ -42,59 +56,24 @@ button {
 <h2>💸 Заявки на вывод</h2>
 <div id="withdraw-list">Загрузка…</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-
+// === Вывод ошибок и логов прямо на страницу (для iPad) ===
 window.onerror = function(msg, url, line, col, error) {
-  document.body.innerHTML += `<div style="background:#c00;padding:10px;margin-top:10px;border-radius:6px;font-size:12px;">
-    ❌ JS Error:<br>${msg}<br>📍 ${line}:${col}
-  </div>`;
+  document.body.innerHTML += `<div class="error">❌ JS Error:<br>${msg}<br>📍 ${line}:${col}</div>`;
 };
 
+const realConsoleLog = console.log;
 console.log = function(...args) {
-  document.body.innerHTML += `<div style="background:#222;padding:8px;margin-top:6px;border-left:3px solid #2ecc71;font-size:12px;">
-    🟢 LOG: ${args.join(" ")}
-  </div>`;
+  document.body.innerHTML += `<div class="log">🟢 LOG: ${args.join(" ")}</div>`;
+  realConsoleLog.apply(console, args);
 };
 
+// === API и токен ===
 const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 const ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
 const ADMIN_TOKEN = "@smoke2323j228";
 
-/* === Загрузка депозитов === */
-async function loadDeposits() {
-  const list = document.getElementById("deposit-list");
-  list.innerText = "Загрузка…";
-
-  try {
-    const res = await fetch(ADMIN_DEPOSITS_API, {
-      headers: { "x-admin-token": ADMIN_TOKEN }
-    });
-
-    console.log("Deposit API status:", res.status);
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-
-    list.innerHTML = "";
-    if (!data?.length) {
-      list.innerText = "Заявок на пополнение нет";
-      return;
-    }
-
-    data.forEach(d => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `<b>${d.amount_vc} VC</b> — статус: ${d.status}`;
-      list.appendChild(div);
-    });
-
-  } catch(e) {
-    list.innerText = "❌ Ошибка загрузки депозитов";
-    console.error(e);
-  }
-}
-
-/* === Загрузка выводов === */
+// === Загрузка выводов ===
 async function loadWithdrawals() {
   console.log("➡️ loadWithdrawals started");
 
@@ -102,15 +81,19 @@ async function loadWithdrawals() {
   list.innerText = "Загрузка…";
 
   try {
-    const res = await fetch("https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws", {
-      headers: { "x-admin-token": "@smoke2323j228" }
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
+      headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
     console.log("Withdraw API status:", res.status);
+
+    if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-    console.log("Withdraw API data:", JSON.stringify(data));
+
+    console.log("Withdraw API response:", JSON.stringify(data));
 
     list.innerHTML = "";
+
     if (!Array.isArray(data) || data.length === 0) {
       list.innerText = "Заявок на вывод нет";
       return;
@@ -119,7 +102,27 @@ async function loadWithdrawals() {
     data.forEach(w => {
       const div = document.createElement("div");
       div.className = "item";
-      div.innerHTML = `<b>${w.amount} VC</b> — статус: ${w.status}`;
+
+      let statusText = "⏳ В ожидании";
+      if (w.status === "success") statusText = "✅ Одобрено";
+      if (w.status === "rejected") statusText = "❌ Отклонено";
+
+      div.innerHTML = `
+        <div>
+          <b>${w.amount} VC</b>
+          <div class="meta">user_id: ${w.user_id}</div>
+          <div class="meta">реквизиты: ${w.requisites}</div>
+          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+          <div class="meta">${statusText}</div>
+        </div>
+        <div>
+          ${w.status === "waiting" ? `
+            <button class="ok" onclick="withdrawAction('${w.id}','approve')">Одобрить</button>
+            <button class="no" onclick="withdrawAction('${w.id}','reject')">Отказать</button>
+          ` : ""}
+        </div>
+      `;
+
       list.appendChild(div);
     });
 
@@ -129,52 +132,33 @@ async function loadWithdrawals() {
   }
 }
 
-loadWithdrawals();
-
-/* === Действия по депозитам === */
-window.depositAction = async (id, type) => {
-  try {
-    const res = await fetch(ADMIN_DEPOSITS_API, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json","x-admin-token": ADMIN_TOKEN },
-      body: JSON.stringify({ id, action: type })
-    });
-
-    console.log("Deposit action:", type, "status:", res.status);
-    if (!res.ok) throw new Error(await res.text());
-    loadDeposits();
-    loadWithdrawals();
-
-  } catch(e) {
-    alert("❌ Ошибка действия по депозиту");
-    console.error(e);
-  }
-};
-
-/* === Действия по выводам === */
+// === Действия по выводу ===
 window.withdrawAction = async (id, type) => {
+  console.log("Withdraw action:", id, type);
+
   try {
     const res = await fetch(ADMIN_WITHDRAWS_API, {
       method:"POST",
-      headers:{ "Content-Type":"application/json","x-admin-token": ADMIN_TOKEN },
+      headers:{
+        "Content-Type":"application/json",
+        "x-admin-token": ADMIN_TOKEN
+      },
       body: JSON.stringify({ id, action: type })
     });
 
-    console.log("Withdraw action:", type, "status:", res.status);
+    console.log("Withdraw action status:", res.status);
+
     if (!res.ok) throw new Error(await res.text());
     loadWithdrawals();
-    loadDeposits();
 
   } catch(e) {
     alert("❌ Ошибка действия по выводу");
-    console.error(e);
+    console.log("Withdraw action error:", e.message);
   }
 };
 
-/* === Старт загрузки === */
-loadDeposits();
+// === Старт ===
 loadWithdrawals();
-
 </script>
 
 </body>
