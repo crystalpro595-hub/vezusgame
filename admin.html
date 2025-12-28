@@ -96,19 +96,19 @@ async function loadDeposits() {
 
 /* === Загрузка выводов === */
 async function loadWithdrawals() {
+  console.log("➡️ loadWithdrawals started");
+
   const list = document.getElementById("withdraw-list");
   list.innerText = "Загрузка…";
 
   try {
-    const res = await fetch(ADMIN_WITHDRAWS_API, {
-      headers: { "x-admin-token": ADMIN_TOKEN }
+    const res = await fetch("https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws", {
+      headers: { "x-admin-token": "@smoke2323j228" }
     });
 
     console.log("Withdraw API status:", res.status);
-    if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-
-    console.log("Withdraw API response:", JSON.stringify(data));
+    console.log("Withdraw API data:", JSON.stringify(data));
 
     list.innerHTML = "";
     if (!Array.isArray(data) || data.length === 0) {
@@ -125,9 +125,11 @@ async function loadWithdrawals() {
 
   } catch(e) {
     list.innerText = "❌ Ошибка загрузки выводов";
-    console.error(e);
+    console.log("Withdraw error:", e.message);
   }
 }
+
+loadWithdrawals();
 
 /* === Действия по депозитам === */
 window.depositAction = async (id, type) => {
