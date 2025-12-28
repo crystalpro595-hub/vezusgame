@@ -42,6 +42,20 @@ button {
 <h2>💸 Заявки на вывод</h2>
 <div id="withdraw-list">Загрузка…</div>
 
+  window.onerror = function(msg, url, line, col, error) {
+  document.body.innerHTML += `<div style="background:#c00;padding:10px;margin-top:10px;border-radius:6px;font-size:12px;">
+    ❌ JS Error:<br>
+    ${msg}<br>
+    📍 ${line}:${col}
+  </div>`;
+};
+
+console.log = function(...args) {
+  document.body.innerHTML += `<div style="background:#222;padding:8px;margin-top:6px;border-left:3px solid #2ecc71;font-size:12px;">
+    🟢 LOG: ${args.join(" ")}
+  </div>`;
+};
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
