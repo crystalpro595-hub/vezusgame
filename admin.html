@@ -4,160 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Админка</title>
-
-<style>
-body {
-  background:#111;
-  color:#fff;
-  font-family:Arial, sans-serif;
-  padding:20px;
-}
-h2 { margin-bottom: 15px; }
-.item {
-  background:#1e1e1e;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-button {
-  padding:6px 12px;
-  border-radius:6px;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
-}
-.ok { background:#2ecc71; color:#000; }
-.no { background:#e74c3c; color:#fff; margin-left:6px; }
-.meta { font-size:13px; opacity:.7; }
-.log {
-  background:#222;
-  padding:8px;
-  margin-top:6px;
-  border-left:3px solid #2ecc71;
-  font-size:12px;
-}
-.error {
-  background:#c00;
-  padding:10px;
-  margin-top:10px;
-  border-radius:6px;
-  font-size:12px;
-}
-</style>
 </head>
 <body>
-
-<h2>💳 Заявки на пополнение</h2>
-<div id="deposit-list">Загрузка…</div>
 
 <h2>💸 Заявки на вывод</h2>
 <div id="withdraw-list">Загрузка…</div>
 
 <script>
-// === Вывод ошибок и логов прямо на страницу (для iPad) ===
-window.onerror = function(msg, url, line, col, error) {
-  document.body.innerHTML += `<div class="error">❌ JS Error:<br>${msg}<br>📍 ${line}:${col}</div>`;
-};
-
-const realConsoleLog = console.log;
-console.log = function(...args) {
-  document.body.innerHTML += `<div class="log">🟢 LOG: ${args.join(" ")}</div>`;
-  realConsoleLog.apply(console, args);
-};
-
-// === API и токен ===
-const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 const ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
 const ADMIN_TOKEN = "@smoke2323j228";
 
-// === Загрузка выводов ===
 async function loadWithdrawals() {
-  console.log("➡️ loadWithdrawals started");
-
   const list = document.getElementById("withdraw-list");
   list.innerText = "Загрузка…";
 
   try {
     const res = await fetch(ADMIN_WITHDRAWS_API, {
+      method: "GET",
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
-
-    console.log("Withdraw API status:", res.status);
 
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
 
-    console.log("Withdraw API response:", JSON.stringify(data));
-
     list.innerHTML = "";
-
     if (!Array.isArray(data) || data.length === 0) {
-      list.innerText = "Заявок на вывод нет";
+      list.innerText = "Заявок нет";
       return;
     }
 
     data.forEach(w => {
       const div = document.createElement("div");
-      div.className = "item";
-
-      let statusText = "⏳ В ожидании";
-      if (w.status === "success") statusText = "✅ Одобрено";
-      if (w.status === "rejected") statusText = "❌ Отклонено";
-
-      div.innerHTML = `
-        <div>
-          <b>${w.amount} VC</b>
-          <div class="meta">user_id: ${w.user_id}</div>
-          <div class="meta">реквизиты: ${w.requisites}</div>
-          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">${statusText}</div>
-        </div>
-        <div>
-          ${w.status === "waiting" ? `
-            <button class="ok" onclick="withdrawAction('${w.id}','approve')">Одобрить</button>
-            <button class="no" onclick="withdrawAction('${w.id}','reject')">Отказать</button>
-          ` : ""}
-        </div>
-      `;
-
+      div.innerHTML = `${w.user_id} → ${w.amount} VC (${w.status})`;
       list.appendChild(div);
     });
 
-  } catch(e) {
-    list.innerText = "❌ Ошибка загрузки выводов";
-    console.log("Withdraw error:", e.message);
+  } catch (e) {
+    list.innerText = "Ошибка загрузки";
   }
 }
 
-// === Действия по выводу ===
-window.withdrawAction = async (id, type) => {
-  console.log("Withdraw action:", id, type);
-
-  try {
-    const res = await fetch(ADMIN_WITHDRAWS_API, {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-admin-token": ADMIN_TOKEN
-      },
-      body: JSON.stringify({ id, action: type })
-    });
-
-    console.log("Withdraw action status:", res.status);
-
-    if (!res.ok) throw new Error(await res.text());
-    loadWithdrawals();
-
-  } catch(e) {
-    alert("❌ Ошибка действия по выводу");
-    console.log("Withdraw action error:", e.message);
-  }
-};
-
-// === Старт ===
 loadWithdrawals();
 </script>
 
