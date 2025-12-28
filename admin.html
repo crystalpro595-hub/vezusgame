@@ -42,11 +42,12 @@ button {
 <h2>💸 Заявки на вывод</h2>
 <div id="withdraw-list">Загрузка…</div>
 
-  window.onerror = function(msg, url, line, col, error) {
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+
+window.onerror = function(msg, url, line, col, error) {
   document.body.innerHTML += `<div style="background:#c00;padding:10px;margin-top:10px;border-radius:6px;font-size:12px;">
-    ❌ JS Error:<br>
-    ${msg}<br>
-    📍 ${line}:${col}
+    ❌ JS Error:<br>${msg}<br>📍 ${line}:${col}
   </div>`;
 };
 
@@ -56,8 +57,6 @@ console.log = function(...args) {
   </div>`;
 };
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
 const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 const ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
 const ADMIN_TOKEN = "@smoke2323j228";
@@ -65,17 +64,18 @@ const ADMIN_TOKEN = "@smoke2323j228";
 /* === Загрузка депозитов === */
 async function loadDeposits() {
   const list = document.getElementById("deposit-list");
+  list.innerText = "Загрузка…";
 
   try {
     const res = await fetch(ADMIN_DEPOSITS_API, {
-      headers: { "x-admin-token": "@smoke2323j228" }
+      headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
+    console.log("Deposit API status:", res.status);
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
 
     list.innerHTML = "";
-
     if (!data?.length) {
       list.innerText = "Заявок на пополнение нет";
       return;
@@ -84,25 +84,7 @@ async function loadDeposits() {
     data.forEach(d => {
       const div = document.createElement("div");
       div.className = "item";
-
-      let statusText = "⏳ В процессе";
-      if (d.status === "success") statusText = "✅ Успешно";
-      if (d.status === "rejected") statusText = "❌ Отказано";
-
-      div.innerHTML = `
-        <div>
-          <b>${d.amount_vc} VC</b>
-          <div class="meta">user_id: ${d.user_id}</div>
-          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-          <div class="meta">${statusText}</div>
-        </div>
-        <div>
-          ${d.status === "waiting" ? `
-            <button class="ok" onclick="depositAction('${d.id}','approve')">Одобрить</button>
-            <button class="no" onclick="depositAction('${d.id}','reject')">Отказать</button>
-          ` : ""}
-        </div>
-      `;
+      div.innerHTML = `<b>${d.amount_vc} VC</b> — статус: ${d.status}`;
       list.appendChild(div);
     });
 
@@ -115,17 +97,20 @@ async function loadDeposits() {
 /* === Загрузка выводов === */
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
+  list.innerText = "Загрузка…";
 
   try {
     const res = await fetch(ADMIN_WITHDRAWS_API, {
-      headers: { "x-admin-token": "@smoke2323j228" }
+      headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
+    console.log("Withdraw API status:", res.status);
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
 
-    list.innerHTML = "";
+    console.log("Withdraw API response:", JSON.stringify(data));
 
+    list.innerHTML = "";
     if (!Array.isArray(data) || data.length === 0) {
       list.innerText = "Заявок на вывод нет";
       return;
@@ -134,26 +119,7 @@ async function loadWithdrawals() {
     data.forEach(w => {
       const div = document.createElement("div");
       div.className = "item";
-
-      let statusText = "⏳ В ожидании";
-      if (w.status === "success") statusText = "✅ Одобрено";
-      if (w.status === "rejected") statusText = "❌ Отклонено";
-
-      div.innerHTML = `
-        <div>
-          <b>${w.amount} VC</b>
-          <div class="meta">user_id: ${w.user_id}</div>
-          <div class="meta">реквизиты: ${w.requisites}</div>
-          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">${statusText}</div>
-        </div>
-        <div>
-          ${w.status === "waiting" ? `
-            <button class="ok" onclick="withdrawAction('${w.id}','approve')">Одобрить</button>
-            <button class="no" onclick="withdrawAction('${w.id}','reject')">Отказать</button>
-          ` : ""}
-        </div>
-      `;
+      div.innerHTML = `<b>${w.amount} VC</b> — статус: ${w.status}`;
       list.appendChild(div);
     });
 
@@ -168,13 +134,11 @@ window.depositAction = async (id, type) => {
   try {
     const res = await fetch(ADMIN_DEPOSITS_API, {
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-admin-token": "@smoke2323j228"
-      },
+      headers:{ "Content-Type":"application/json","x-admin-token": ADMIN_TOKEN },
       body: JSON.stringify({ id, action: type })
     });
 
+    console.log("Deposit action:", type, "status:", res.status);
     if (!res.ok) throw new Error(await res.text());
     loadDeposits();
     loadWithdrawals();
@@ -190,13 +154,11 @@ window.withdrawAction = async (id, type) => {
   try {
     const res = await fetch(ADMIN_WITHDRAWS_API, {
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-admin-token": "@smoke2323j228"
-      },
+      headers:{ "Content-Type":"application/json","x-admin-token": ADMIN_TOKEN },
       body: JSON.stringify({ id, action: type })
     });
 
+    console.log("Withdraw action:", type, "status:", res.status);
     if (!res.ok) throw new Error(await res.text());
     loadWithdrawals();
     loadDeposits();
@@ -210,6 +172,7 @@ window.withdrawAction = async (id, type) => {
 /* === Старт загрузки === */
 loadDeposits();
 loadWithdrawals();
+
 </script>
 
 </body>
