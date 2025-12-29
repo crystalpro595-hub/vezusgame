@@ -30,44 +30,38 @@ button {
   cursor:pointer;
 }
 .ok { background:#2ecc71; color:#000; }
-.no { background:#e74c4c; color:#fff; margin-left:6px; }
+.no { background:#e74c3c; color:#fff; margin-left:6px; }
 .meta { font-size:13px; opacity:.7; }
 </style>
 </head>
 <body>
-
-<h2>💳 Заявки на пополнение</h2>
-<div id="deposit-list">Загрузка…</div>
 
 <h2>💸 Заявки на вывод</h2>
 <div id="withdraw-list">Загрузка…</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const SUPABASE_URL = "ciqyzrgiuvxmhxgladxu.supabase.co";
-const ADMIN_WITHDRAWS_API = `https://${SUPABASE_URL}/functions/v1/admin-withdraws`;
-const ADMIN_DEPOSITS_API = `https://${SUPABASE_URL}/functions/v1/admin-deposits`;
+const SUPABASE_HOST = "ciqyzrgiuvxmhxgladxu.supabase.co";
+const ADMIN_WITHDRAWS_API = `https://${SUPABASE_HOST}/functions/v1/admin-withdraws`;
 const ADMIN_TOKEN = "@smoke2323j228";
 
-// загружаем выводы
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
-  list.innerText = "Загрузка…";
 
   const res = await fetch(ADMIN_WITHDRAWS_API, {
     headers: { "x-admin-token": ADMIN_TOKEN }
   });
 
-  if (!res.ok) {
-    list.innerText = "❌ Ошибка загрузки выводов";
-    return;
-  }
-
   const data = await res.json();
   list.innerHTML = "";
 
-  if (!Array.isArray(data) || data.length === 0) {
-    list.innerText = "Заявок на вывод нет";
+  if (!Array.isArray(data)) {
+    list.innerText = "❌ API не вернул массив";
+    return;
+  }
+
+  if (data.length === 0) {
+    list.innerText = "Заявок нет";
     return;
   }
 
@@ -77,7 +71,7 @@ async function loadWithdrawals() {
     div.innerHTML = `
       <div>
         <b>${w.amount} VC</b>
-        <div class="meta">user_id: ${w.user_id}</div>
+        <div class="meta">user: ${w.user_id}</div>
         <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
         <div class="meta">статус: ${w.status}</div>
       </div>
@@ -92,7 +86,6 @@ async function loadWithdrawals() {
   });
 }
 
-// одобрить/отклонить вывод
 window.withdrawAction = async (id, type) => {
   await fetch(ADMIN_WITHDRAWS_API, {
     method:"POST",
@@ -106,7 +99,6 @@ window.withdrawAction = async (id, type) => {
 };
 
 loadWithdrawals();
-loadDeposits();
 </script>
 
 </body>
