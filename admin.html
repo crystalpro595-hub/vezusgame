@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Admin</title>
+<title>Админка</title>
 <style>
 body{background:#111;color:#fff;font-family:Arial;padding:20px}
 .card{background:#1e1e1e;padding:15px;border-radius:10px;margin-bottom:10px}
@@ -13,47 +13,102 @@ button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:po
 </head>
 <body>
 
+<h2>💰 Заявки на депозит</h2>
+<div id="deposits">Загрузка…</div>
+
 <h2>💸 Заявки на вывод</h2>
 <div id="withdraws">Загрузка…</div>
 
 <script>
-const API = ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws"; // ← СЮДА вставь URL своей Edge функции
-const TOKEN = "@smoke2323j228";
+/* === Логи и ошибки прямо на страницу === */
+window.onerror = function(msg, url, line, col, error) {
+  document.body.innerHTML += `<div style="background:#c00;padding:10px;margin-top:10px;border-radius:6px;font-size:12px;">
+    ❌ JS Error:<br>${msg}<br>📍 ${line}:${col}
+  </div>`;
+};
 
-async function load() {
+/* === Вставь сюда URL своей Edge функции === */
+const WITHDRAW_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
+
+const DEPOSIT_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
+const ADMIN_TOKEN = "@smoke2323j228";
+
+/* === Загрузка депозитов === */
+async function loadDeposits() {
+  const div = document.getElementById("deposits");
+  try {
+    const r = await fetch(DEPOSIT_API, { headers: { "x-admin-token": ADMIN_TOKEN }});
+    const d = await r.json();
+    if(!Array.isArray(d)){div.innerText="Ошибка данных";return}
+    if(!d.length){div.innerText="Нет заявок";return}
+    div.innerHTML="";
+    d.forEach(x=>{
+      div.innerHTML += `<div class="card">
+        <div><b>${x.amount_vc} VC</b></div>
+        <div>user: ${x.user_id}</div>
+        <div>status: ${x.status}</div>
+        <div>
+          <button class="ok" onclick="depositAction('${x.id}','approve')">Принять</button>
+          <button class="no" onclick="depositAction('${x.id}','reject')">Отказать</button>
+        </div>
+      </div>`;
+    })
+  } catch(e) {
+    div.innerText="Ошибка загрузки депозитов";
+  }
+}
+
+/* === Загрузка выводов === */
+async function loadWithdraws() {
   const div = document.getElementById("withdraws");
   try {
-    const r = await fetch(API, { headers: { "x-admin-token": TOKEN }});
+    const r = await fetch(WITHDRAW_API, { headers: { "x-admin-token": ADMIN_TOKEN }});
     const d = await r.json();
-    if(!Array.isArray(d)){div.innerText="Ошибка формата";return}
+    if(!Array.isArray(d)){div.innerText="Ошибка данных";return}
     if(!d.length){div.innerText="Нет заявок";return}
     div.innerHTML="";
     d.forEach(x=>{
       div.innerHTML += `<div class="card">
         <div><b>${x.amount} VC</b></div>
         <div>user: ${x.user_id}</div>
+        <div>реквизиты: ${x.requisites}</div>
         <div>status: ${x.status}</div>
         <div>
-          <button class="ok" onclick="act('${x.id}','approve')">Принять</button>
-          <button class="no" onclick="act('${x.id}','reject')">Отказать</button>
+          <button class="ok" onclick="withdrawAction('${x.id}','approve')">Принять</button>
+          <button class="no" onclick="withdrawAction('${x.id}','reject')">Отказать</button>
         </div>
       </div>`;
     })
   } catch(e) {
-    div.innerText="Ошибка загрузки";
+    div.innerText="Ошибка загрузки выводов";
   }
 }
 
-window.act = async (id,a)=>{
-  await fetch(API,{
+/* === Действия депозита === */
+window.depositAction = async (id,a)=>{
+  await fetch(DEPOSIT_API,{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-admin-token":TOKEN},
+    headers:{"Content-Type":"application/json","x-admin-token":ADMIN_TOKEN},
     body:JSON.stringify({id,action:a})
   });
-  load();
+  loadDeposits();
+  loadWithdraws();
 }
 
-load();
+/* === Действия вывода === */
+window.withdrawAction = async (id,a)=>{
+  await fetch(WITHDRAW_API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-admin-token":ADMIN_TOKEN},
+    body:JSON.stringify({id,action:a})
+  });
+  loadWithdraws();
+  loadDeposits();
+}
+
+/* === Старт === */
+loadDeposits();
+loadWithdraws();
 </script>
 
 </body>
