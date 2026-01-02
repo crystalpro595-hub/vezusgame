@@ -2,102 +2,53 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
+<title>Admin</title>
 <style>
-body {
-  background:#0f0f0f;
-  color:white;
-  font-family:sans-serif;
-  padding:20px;
-}
-.card {
-  background:#1a1a1a;
-  padding:14px;
-  border-radius:8px;
-  margin-bottom:12px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.btns button {
-  padding:6px 10px;
-  border-radius:6px;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
-}
-.approve { background:#4caf50; }
-.reject { background:#f44336; margin-left:6px; }
-.meta { font-size:12px; opacity:.6; margin-top:4px; }
+body{background:#111;color:#fff;font-family:Arial;padding:20px}
+.card{background:#1e1e1e;padding:15px;border-radius:10px;margin-bottom:10px}
+button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:pointer}
+.ok{background:#2ecc71;color:#000}
+.no{background:#e74c3c;color:#fff;margin-left:6px}
 </style>
 </head>
 <body>
 
-<h3>💰 Депозиты</h3>
-<div id="deposits">Loading…</div>
-
-<h3>💸 Выводы</h3>
-<div id="withdraws">Loading…</div>
+<h2>💸 Заявки на вывод</h2>
+<div id="withdraws">Загрузка…</div>
 
 <script>
-const depApi = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-const wdApi  = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
-const token  = "@smoke2323j228";
+const API = ADMIN_WITHDRAWS_API = "admin-withdraws function URL"; // ← СЮДА вставь URL своей Edge функции
+const TOKEN = "@smoke2323j228";
 
 async function load() {
-  // deposits
-  let r1 = await fetch(depApi, { headers:{ "x-admin-token": token }});
-  let d1 = await r1.json();
-  document.getElementById("deposits").innerHTML = "";
-  d1.forEach(x => {
-    document.getElementById("deposits").innerHTML += `
-    <div class="card">
-      <div>
-        <b>${x.amount_vc} VC</b>
-        <div class="meta">User: ${x.user_id}</div>
-        <div class="meta">${x.status}</div>
-      </div>
-      ${x.status === "waiting" ? `
-      <div class="btns">
-        <button class="approve" onclick="act('${x.id}','approve','dep')">✔ Одобрить</button>
-        <button class="reject"  onclick="act('${x.id}','reject','dep')">✖ Отклонить</button>
-      </div>` : ""}
-    </div>`;
-  });
-
-  // withdraws
+  const div = document.getElementById("withdraws");
   try {
-    let r2 = await fetch(wdApi, { headers:{ "x-admin-token": token }});
-    let d2 = await r2.json();
-    document.getElementById("withdraws").innerHTML = "";
-    d2.forEach(x => {
-      document.getElementById("withdraws").innerHTML += `
-      <div class="card">
+    const r = await fetch(API, { headers: { "x-admin-token": TOKEN }});
+    const d = await r.json();
+    if(!Array.isArray(d)){div.innerText="Ошибка формата";return}
+    if(!d.length){div.innerText="Нет заявок";return}
+    div.innerHTML="";
+    d.forEach(x=>{
+      div.innerHTML += `<div class="card">
+        <div><b>${x.amount} VC</b></div>
+        <div>user: ${x.user_id}</div>
+        <div>status: ${x.status}</div>
         <div>
-          <b>${x.amount} VC</b>
-          <div class="meta">User: ${x.user_id}</div>
-          <div class="meta">Req: ${x.requisites}</div>
-          <div class="meta">${x.status}</div>
+          <button class="ok" onclick="act('${x.id}','approve')">Принять</button>
+          <button class="no" onclick="act('${x.id}','reject')">Отказать</button>
         </div>
-        ${x.status === "waiting" ? `
-        <div class="btns">
-          <button class="approve" onclick="act('${x.id}','approve','wd')">✔ Одобрить</button>
-          <button class="reject"  onclick="act('${x.id}','reject','wd')">✖ Отклонить</button>
-        </div>` : ""}
       </div>`;
-    });
-  } catch {
-    document.getElementById("withdraws").innerText = "❌ Не удалось загрузить выводы (доступ запрещён)";
+    })
+  } catch(e) {
+    div.innerText="Ошибка загрузки";
   }
 }
 
-window.act = async (id, action, type) => {
-  let api = type === "dep" ? depApi : wdApi;
-  await fetch(api, {
+window.act = async (id,a)=>{
+  await fetch(API,{
     method:"POST",
-    headers:{ "Content-Type":"application/json", "x-admin-token": token },
-    body: JSON.stringify({ id, action })
+    headers:{"Content-Type":"application/json","x-admin-token":TOKEN},
+    body:JSON.stringify({id,action:a})
   });
   load();
 }
