@@ -2,77 +2,104 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Админка</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
 <style>
-  body { font-family: Arial, sans-serif; background:#0f0f0f; color:white; padding:20px }
-  table { width:100%; border-collapse:collapse; margin-top:10px; background:#1a1a1a }
-  th, td { border:1px solid #333; padding:10px; text-align:center }
-  button { padding:6px 14px; border:none; cursor:pointer; border-radius:4px; color:white }
-  .accept { background:#27ae60 }
-  .reject { background:#c0392b }
+body {
+  background:#0f0f0f;
+  color:white;
+  font-family:sans-serif;
+  padding:20px;
+}
+.card {
+  background:#1a1a1a;
+  padding:14px;
+  border-radius:8px;
+  margin-bottom:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.btns button {
+  padding:6px 10px;
+  border-radius:6px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+.approve { background:#4caf50; }
+.reject { background:#f44336; margin-left:6px; }
+.meta { font-size:12px; opacity:.6; margin-top:4px; }
 </style>
 </head>
 <body>
 
-<h2>💰 Заявки на депозит</h2>
-<table id="dep">
-<thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
-<tbody></tbody>
-</table>
+<h3>💰 Депозиты</h3>
+<div id="deposits">Loading…</div>
 
-<h2>🏦 Заявки на вывод</h2>
-<table id="wd">
-<thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
-<tbody></tbody>
-</table>
+<h3>💸 Выводы</h3>
+<div id="withdraws">Loading…</div>
 
 <script>
-const API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws"; // ← сюда вставляешь URL деплоя Edge Function
+const depApi = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
+const wdApi  = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
+const token  = "@smoke2323j228";
 
 async function load() {
-  const r = await fetch(API);
-  const j = await r.json();
-
-  // депозиты
-  const dep = document.querySelector("#dep tbody");
-  j.deposits.forEach(d => {
-    dep.innerHTML += `
-      <tr>
-        <td>${d.id}</td>
-        <td>${d.user_id}</td>
-        <td>${d.amount}</td>
-        <td>${d.status}</td>
-        <td>
-          <button class="accept" onclick="set('deposits','${d.id}','accepted')">Принять</button>
-          <button class="reject" onclick="set('deposits','${d.id}','rejected')">Отклонить</button>
-        </td>
-      </tr>`;
+  // deposits
+  let r1 = await fetch(depApi, { headers:{ "x-admin-token": token }});
+  let d1 = await r1.json();
+  document.getElementById("deposits").innerHTML = "";
+  d1.forEach(x => {
+    document.getElementById("deposits").innerHTML += `
+    <div class="card">
+      <div>
+        <b>${x.amount_vc} VC</b>
+        <div class="meta">User: ${x.user_id}</div>
+        <div class="meta">${x.status}</div>
+      </div>
+      ${x.status === "waiting" ? `
+      <div class="btns">
+        <button class="approve" onclick="act('${x.id}','approve','dep')">✔ Одобрить</button>
+        <button class="reject"  onclick="act('${x.id}','reject','dep')">✖ Отклонить</button>
+      </div>` : ""}
+    </div>`;
   });
 
-  // выводы
-  const wd = document.querySelector("#wd tbody");
-  j.withdrawals.forEach(w => {
-    wd.innerHTML += `
-      <tr>
-        <td>${w.id}</td>
-        <td>${w.user_id}</td>
-        <td>${w.amount}</td>
-        <td>${w.status}</td>
-        <td>
-          <button class="accept" onclick="set('withdrawals','${w.id}','accepted')">Принять</button>
-          <button class="reject" onclick="set('withdrawals','${w.id}','rejected')">Отклонить</button>
-        </td>
-      </tr>`;
-  });
+  // withdraws
+  try {
+    let r2 = await fetch(wdApi, { headers:{ "x-admin-token": token }});
+    let d2 = await r2.json();
+    document.getElementById("withdraws").innerHTML = "";
+    d2.forEach(x => {
+      document.getElementById("withdraws").innerHTML += `
+      <div class="card">
+        <div>
+          <b>${x.amount} VC</b>
+          <div class="meta">User: ${x.user_id}</div>
+          <div class="meta">Req: ${x.requisites}</div>
+          <div class="meta">${x.status}</div>
+        </div>
+        ${x.status === "waiting" ? `
+        <div class="btns">
+          <button class="approve" onclick="act('${x.id}','approve','wd')">✔ Одобрить</button>
+          <button class="reject"  onclick="act('${x.id}','reject','wd')">✖ Отклонить</button>
+        </div>` : ""}
+      </div>`;
+    });
+  } catch {
+    document.getElementById("withdraws").innerText = "❌ Не удалось загрузить выводы (доступ запрещён)";
+  }
 }
 
-async function set(table, id, status) {
-  await fetch(API, {
+window.act = async (id, action, type) => {
+  let api = type === "dep" ? depApi : wdApi;
+  await fetch(api, {
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ table, id, status })
+    headers:{ "Content-Type":"application/json", "x-admin-token": token },
+    body: JSON.stringify({ id, action })
   });
-  location.reload();
+  load();
 }
 
 load();
