@@ -4,34 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Админка</title>
-
 <style>
 body {
-  background:#111;
-  color:#fff;
-  font-family:Arial, sans-serif;
-  padding:20px;
-  display:flex;
-  gap:20px;
+  background:#111; color:#fff; font-family:Arial, sans-serif;
+  padding:20px; display:flex; gap:20px;
 }
-.column {
-  flex:1;
-}
+.column { flex:1; }
 .item {
-  background:#1e1e1e;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  background:#1e1e1e; padding:15px; border-radius:10px;
+  margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;
 }
 button {
-  padding:6px 12px;
-  border-radius:6px;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
+  padding:6px 12px; border-radius:6px; border:none;
+  font-weight:bold; cursor:pointer;
 }
 .ok { background:#2ecc71; color:#000; }
 .no { background:#e74c3c; color:#fff; margin-left:6px; }
@@ -42,34 +27,33 @@ button {
 
 <div class="column">
   <h2>💰 Заявки на депозит</h2>
-  <div id="deposit-list">Загрузка…</div>
+  <div id="deposit-list">⏳ Загрузка…</div>
 </div>
 
 <div class="column">
   <h2>🏦 Заявки на вывод</h2>
-  <div id="withdraw-list">Загрузка…</div>
+  <div id="withdraw-list">⏳ Загрузка…</div>
 </div>
 
 <script>
 const ADMIN_TOKEN = "@smoke2323j228";
+const DEPOSIT_API = "/functions/v1/admin-deposits";
+const WITHDRAW_API = "/functions/v1/admin-withdraws";
 
+/* Загрузка депозитов */
 async function loadDeposits() {
   const list = document.getElementById("deposit-list");
-  list.innerHTML = "⏳ Загружаем депозиты…";
-
   try {
-    const res = await fetch("/functions/v1/admin-deposits", {
+    const res = await fetch(DEPOSIT_API, {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-
     list.innerHTML = "";
-    if (!data?.length) {
-      list.innerText = "Нет заявок на депозит";
+    if (!data.length) {
+      list.innerText = "Нет заявок";
       return;
     }
-
     data.forEach(d => {
       const div = document.createElement("div");
       div.className = "item";
@@ -89,30 +73,26 @@ async function loadDeposits() {
       `;
       list.appendChild(div);
     });
-
   } catch(e) {
     list.innerText = "❌ Ошибка загрузки депозитов";
     console.error(e);
   }
 }
 
+/* Загрузка выводов */
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
-  list.innerHTML = "⏳ Загружаем выводы…";
-
   try {
-    const res = await fetch("/functions/v1/admin-withdraws", {
+    const res = await fetch(WITHDRAW_API, {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-
     list.innerHTML = "";
-    if (!data?.length) {
-      list.innerText = "Нет заявок на вывод";
+    if (!data.length) {
+      list.innerText = "Нет заявок";
       return;
     }
-
     data.forEach(w => {
       const div = document.createElement("div");
       div.className = "item";
@@ -132,37 +112,43 @@ async function loadWithdrawals() {
       `;
       list.appendChild(div);
     });
-
   } catch(e) {
     list.innerText = "❌ Ошибка загрузки выводов";
     console.error(e);
   }
 }
 
+/* Действие по депозиту */
 window.depositAction = async (id, action) => {
-  await fetch("/functions/v1/admin-deposits", {
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      "x-admin-token": ADMIN_TOKEN
-    },
-    body: JSON.stringify({ id, action })
-  });
-  loadDeposits();
+  try {
+    await fetch(DEPOSIT_API, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-token":ADMIN_TOKEN },
+      body: JSON.stringify({ id, action })
+    });
+    loadDeposits();
+  } catch(e) {
+    alert("Ошибка действия");
+  }
 };
 
+/* Действие по выводу */
 window.withdrawAction = async (id, action) => {
-  await fetch("/functions/v1/admin-withdraws", {
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      "x-admin-token": ADMIN_TOKEN
-    },
-    body: JSON.stringify({ id, action })
-  });
-  loadWithdrawals();
+  try {
+    await fetch(WITHDRAW_API, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-token":ADMIN_TOKEN },
+      body: JSON.stringify({ id, action })
+    });
+    loadWithdrawals();
+  } catch(e) {
+    alert("Ошибка действия");
+  }
 };
 
 loadDeposits();
 loadWithdrawals();
 </script>
+
+</body>
+</html>
