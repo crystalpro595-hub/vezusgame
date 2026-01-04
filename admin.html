@@ -5,147 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Админка</title>
 <style>
-body {
-  background:#111; color:#fff; font-family:Arial, sans-serif;
-  padding:20px; display:flex; gap:20px;
-}
+body { background:#111; color:#fff; font-family:Arial; padding:20px; display:flex; gap:20px; }
 .column { flex:1; }
-.item {
-  background:#1e1e1e; padding:15px; border-radius:10px;
-  margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;
-}
-button {
-  padding:6px 12px; border-radius:6px; border:none;
-  font-weight:bold; cursor:pointer;
-}
+.item { background:#1e1e1e; padding:15px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; }
+button { padding:6px 12px; border-radius:6px; border:none; font-weight:bold; cursor:pointer; }
 .ok { background:#2ecc71; color:#000; }
 .no { background:#e74c3c; color:#fff; margin-left:6px; }
-.meta { font-size:13px; opacity:.7; }
+.meta { font-size:12px; opacity:.6; }
 </style>
 </head>
 <body>
 
 <div class="column">
-  <h2>💰 Заявки на депозит</h2>
-  <div id="deposit-list">⏳ Загрузка…</div>
+  <h2>💰 Депозиты</h2>
+  <div id="deposit-list">⏳</div>
 </div>
 
 <div class="column">
-  <h2>🏦 Заявки на вывод</h2>
-  <div id="withdraw-list">⏳ Загрузка…</div>
+  <h2>🏦 Выводы</h2>
+  <div id="withdraw-list">⏳</div>
 </div>
 
 <script>
-const ADMIN_TOKEN = "@smoke2323j228";
-const DEPOSIT_API = "/functions/v1/admin-deposits";
-const WITHDRAW_API = "/functions/v1/admin-withdraws";
+const TOKEN = "@smoke2323j228";
+const DEPOSIT_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
+const WITHDRAW_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
 
-/* Загрузка депозитов */
+/* Депозиты (оставляем как есть) */
 async function loadDeposits() {
   const list = document.getElementById("deposit-list");
   try {
-    const res = await fetch(DEPOSIT_API, {
-      headers: { "x-admin-token": ADMIN_TOKEN }
-    });
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
+    const r = await fetch(DEPOSIT_API, { headers: { "x-admin-token": TOKEN }});
+    if (!r.ok) throw 1;
+    const d = await r.json();
     list.innerHTML = "";
-    if (!data.length) {
-      list.innerText = "Нет заявок";
-      return;
-    }
-    data.forEach(d => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `
-        <div>
-          <b>${d.amount} VC</b>
-          <div class="meta">user_id: ${d.user_id}</div>
-          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-          <div class="meta">Статус: ${d.status}</div>
-        </div>
-        <div>
-          ${d.status === "waiting" ? `
-            <button class="ok" onclick="depositAction('${d.id}','approve')">Одобрить</button>
-            <button class="no" onclick="depositAction('${d.id}','reject')">Отказать</button>
-          ` : ""}
-        </div>
-      `;
-      list.appendChild(div);
-    });
-  } catch(e) {
-    list.innerText = "❌ Ошибка загрузки депозитов";
-    console.error(e);
-  }
+    d.forEach(x => list.innerHTML += `<div class="item"><div><b>${x.amount}</b><div class="meta">${x.status}</div></div></div>`);
+  } catch { list.innerText = "❌ депозиты не грузят"; }
 }
 
-/* Загрузка выводов */
+/* Выводы (отправляем токен как Authorization Bearer!) */
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
   try {
-    const res = await fetch(WITHDRAW_API, {
-      headers: { "x-admin-token": ADMIN_TOKEN }
+    const r = await fetch(WITHDRAW_API, {
+      headers: { "Authorization": "Bearer " + TOKEN }
     });
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
+    if (!r.ok) throw 1;
+    const d = await r.json();
     list.innerHTML = "";
-    if (!data.length) {
-      list.innerText = "Нет заявок";
-      return;
-    }
-    data.forEach(w => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `
-        <div>
-          <b>${w.amount} VC</b>
-          <div class="meta">user_id: ${w.user_id}</div>
-          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">Статус: ${w.status}</div>
-        </div>
-        <div>
-          ${w.status === "waiting" ? `
-            <button class="ok" onclick="withdrawAction('${w.id}','approve')">Одобрить</button>
-            <button class="no" onclick="withdrawAction('${w.id}','reject')">Отказать</button>
-          ` : ""}
-        </div>
-      `;
-      list.appendChild(div);
-    });
-  } catch(e) {
-    list.innerText = "❌ Ошибка загрузки выводов";
-    console.error(e);
-  }
+    d.forEach(x => list.innerHTML += `<div class="item"><div><b>${x.amount}</b><div class="meta">${x.status}</div></div></div>`);
+  } catch { list.innerText = "❌ выводы не грузят"; }
 }
 
-/* Действие по депозиту */
-window.depositAction = async (id, action) => {
-  try {
-    await fetch(DEPOSIT_API, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json", "x-admin-token":ADMIN_TOKEN },
-      body: JSON.stringify({ id, action })
-    });
-    loadDeposits();
-  } catch(e) {
-    alert("Ошибка действия");
-  }
-};
-
-/* Действие по выводу */
-window.withdrawAction = async (id, action) => {
-  try {
-    await fetch(WITHDRAW_API, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json", "x-admin-token":ADMIN_TOKEN },
-      body: JSON.stringify({ id, action })
-    });
-    loadWithdrawals();
-  } catch(e) {
-    alert("Ошибка действия");
-  }
-};
-
+/* Старт */
 loadDeposits();
 loadWithdrawals();
 </script>
