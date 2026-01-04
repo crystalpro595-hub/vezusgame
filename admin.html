@@ -53,6 +53,49 @@ button {
 <script>
 const ADMIN_TOKEN = "@smoke2323j228";
 
+async function loadDeposits() {
+  const list = document.getElementById("deposit-list");
+  list.innerHTML = "⏳ Загружаем депозиты…";
+
+  try {
+    const res = await fetch("/functions/v1/admin-deposits", {
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+
+    list.innerHTML = "";
+    if (!data?.length) {
+      list.innerText = "Нет заявок на депозит";
+      return;
+    }
+
+    data.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div>
+          <b>${d.amount} VC</b>
+          <div class="meta">user_id: ${d.user_id}</div>
+          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+          <div class="meta">Статус: ${d.status}</div>
+        </div>
+        <div>
+          ${d.status === "waiting" ? `
+            <button class="ok" onclick="depositAction('${d.id}','approve')">Одобрить</button>
+            <button class="no" onclick="depositAction('${d.id}','reject')">Отказать</button>
+          ` : ""}
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+  } catch(e) {
+    list.innerText = "❌ Ошибка загрузки депозитов";
+    console.error(e);
+  }
+}
+
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
   list.innerHTML = "⏳ Загружаем выводы…";
@@ -61,12 +104,10 @@ async function loadWithdrawals() {
     const res = await fetch("/functions/v1/admin-withdraws", {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
-
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
 
     list.innerHTML = "";
-
     if (!data?.length) {
       list.innerText = "Нет заявок на вывод";
       return;
@@ -75,7 +116,6 @@ async function loadWithdrawals() {
     data.forEach(w => {
       const div = document.createElement("div");
       div.className = "item";
-
       div.innerHTML = `
         <div>
           <b>${w.amount} VC</b>
@@ -99,7 +139,19 @@ async function loadWithdrawals() {
   }
 }
 
-async function withdrawAction(id, action) {
+window.depositAction = async (id, action) => {
+  await fetch("/functions/v1/admin-deposits", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "x-admin-token": ADMIN_TOKEN
+    },
+    body: JSON.stringify({ id, action })
+  });
+  loadDeposits();
+};
+
+window.withdrawAction = async (id, action) => {
   await fetch("/functions/v1/admin-withdraws", {
     method:"POST",
     headers:{
@@ -109,10 +161,8 @@ async function withdrawAction(id, action) {
     body: JSON.stringify({ id, action })
   });
   loadWithdrawals();
-}
+};
 
+loadDeposits();
 loadWithdrawals();
 </script>
-
-</body>
-</html>
