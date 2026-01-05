@@ -14,7 +14,9 @@ body {
   display:flex;
   gap:20px;
 }
-.column { flex:1; }
+.column {
+  flex:1;
+}
 .item {
   background:#1e1e1e;
   padding:15px;
@@ -40,34 +42,37 @@ button {
 
 <div class="column">
   <h2>💰 Заявки на депозит</h2>
-  <div id="deposit-list">Загрузка…</div>
+  <div id="deposit-list">⏳ Загрузка…</div>
 </div>
 
 <div class="column">
   <h2>🏦 Заявки на вывод</h2>
-  <div id="withdraw-list">Загрузка…</div>
+  <div id="withdraw-list">⏳ Загрузка…</div>
 </div>
 
 <script>
+// === API и токен ===
 const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
 const ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
 const ADMIN_TOKEN = "@smoke2323j228";
 
-/* === Загрузка депозитов === */
+// === Загрузка депозитов ===
 async function loadDeposits() {
   const list = document.getElementById("deposit-list");
-  list.innerText = "Загрузка…";
+  list.innerHTML = "⏳ Загрузка…";
 
   try {
     const res = await fetch(ADMIN_DEPOSITS_API, {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
-    list.innerHTML = "";
+    if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
 
-    if (!data?.length) {
-      list.innerText = "Заявок нет";
+    list.innerHTML = "";
+
+    if (!Array.isArray(data) || data.length === 0) {
+      list.innerText = "Заявок на депозит нет";
       return;
     }
 
@@ -79,12 +84,11 @@ async function loadDeposits() {
           <b>${d.amount_vc} VC</b>
           <div class="meta">user: ${d.user_id}</div>
           <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-          <div class="meta">status: ${d.status}</div>
         </div>
         <div>
           ${d.status === "waiting" ? `
-            <button class="ok" onclick="depositAction('${d.id}','approve')">Принять</button>
-            <button class="no" onclick="depositAction('${d.id}','reject')">Отклонить</button>
+            <button class="ok" onclick="depositAction('${d.id}','approve')">Одобрить</button>
+            <button class="no" onclick="depositAction('${d.id}','reject')">Отказать</button>
           ` : ""}
         </div>
       `;
@@ -92,25 +96,27 @@ async function loadDeposits() {
     });
 
   } catch(e) {
-    list.innerText = "Ошибка загрузки";
+    list.innerText = "❌ Ошибка загрузки депозитов";
   }
 }
 
-/* === Загрузка выводов === */
+// === Загрузка выводов ===
 async function loadWithdrawals() {
   const list = document.getElementById("withdraw-list");
-  list.innerText = "Загрузка…";
+  list.innerHTML = "⏳ Загрузка…";
 
   try {
     const res = await fetch(ADMIN_WITHDRAWS_API, {
       headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
-    list.innerHTML = "";
+    if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
 
+    list.innerHTML = "";
+
     if (!Array.isArray(data) || data.length === 0) {
-      list.innerText = "Заявок нет";
+      list.innerText = "Заявок на вывод нет";
       return;
     }
 
@@ -123,12 +129,11 @@ async function loadWithdrawals() {
           <div class="meta">user: ${w.user_id}</div>
           <div class="meta">реквизиты: ${w.requisites}</div>
           <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">status: ${w.status}</div>
         </div>
         <div>
           ${w.status === "waiting" ? `
-            <button class="ok" onclick="withdrawAction('${w.id}','approve')">Принять</button>
-            <button class="no" onclick="withdrawAction('${w.id}','reject')">Отклонить</button>
+            <button class="ok" onclick="withdrawAction('${w.id}','approve')">Одобрить</button>
+            <button class="no" onclick="withdrawAction('${w.id}','reject')">Отказать</button>
           ` : ""}
         </div>
       `;
@@ -136,33 +141,41 @@ async function loadWithdrawals() {
     });
 
   } catch(e) {
-    list.innerText = "Ошибка загрузки";
+    list.innerText = "❌ Ошибка загрузки выводов";
   }
 }
 
-/* === Действия по депозитам === */
+// === Действия по депозитам ===
 window.depositAction = async (id, action) => {
-  await fetch(ADMIN_DEPOSITS_API, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json", "x-admin-token": ADMIN_TOKEN },
-    body: JSON.stringify({ id, action })
-  });
-  loadDeposits();
-  loadWithdrawals();
+  try {
+    const res = await fetch(ADMIN_DEPOSITS_API, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-token": ADMIN_TOKEN },
+      body: JSON.stringify({ id, action })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    loadDeposits();
+  } catch(e) {
+    alert("❌ Ошибка действия по депозиту");
+  }
 };
 
-/* === Действия по выводам === */
+// === Действия по выводам ===
 window.withdrawAction = async (id, action) => {
-  await fetch(ADMIN_WITHDRAWS_API, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json", "x-admin-token": ADMIN_TOKEN },
-    body: JSON.stringify({ id, action })
-  });
-  loadWithdrawals();
-  loadDeposits();
+  try {
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-token": ADMIN_TOKEN },
+      body: JSON.stringify({ id, action })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    loadWithdrawals();
+  } catch(e) {
+    alert("❌ Ошибка действия по выводу");
+  }
 };
 
-/* === Старт === */
+// === Старт загрузки ===
 loadDeposits();
 loadWithdrawals();
 </script>
