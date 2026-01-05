@@ -2,159 +2,161 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8"/>
-<title>Админ панель — депозиты и выводы</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Админка</title>
+
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  table { margin-top: 10px; width: 100%; border-collapse: collapse; }
-  th, td { padding: 8px; border: 1px solid #ccc; text-align: center; }
-  button { padding: 5px 10px; cursor: pointer; }
-  .section { margin-bottom: 40px; }
-  #log, #dep-log { margin-top: 10px; color: red; font-weight: bold; }
+body { font-family: Arial, sans-serif; background:#111; color:white; margin:0; padding:20px; }
+.container { display:flex; gap:20px; }
+.column { flex:1; background:#222; padding:15px; border-radius:6px; min-height:300px; }
+.item { background:#333; padding:10px; margin:8px 0; border-radius:4px; }
+button { padding:6px 10px; border:none; border-radius:4px; cursor:pointer; font-weight:bold; }
+.approve { background:#2ecc71; color:black; }
+.reject { background:#e74c3c; color:white; margin-left:6px; }
+h2 { margin-bottom:15px; }
+.meta { font-size:13px; opacity:.7; margin-top:4px; }
 </style>
 </head>
 <body>
 
-<div class="section">
-  <h2>Заявки на дддепозит</h2>
-  <div id="dep-log"></div>
-  <table>
-    <thead>
-      <tr><th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr>
-    </thead>
-    <tbody id="dep-list"></tbody>
-  </table>
-</div>
+<div class="container">
+  <div class="column">
+    <h2>Заявки на вывод</h2>
+    <div id="withdraw-list">Загрузка…</div>
+  </div>
 
-<div class="section">
-  <h2>Заявки на вывод</h2>
-  <div id="log"></div>
-  <table>
-    <thead>
-      <tr><th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr>
-    </thead>
-    <tbody id="list"></tbody>
-  </table>
+  <div class="column">
+    <h2>Заявки на депозит</h2>
+    <div id="deposit-list">Загрузка…</div>
+  </div>
 </div>
 
 <script>
-const TOKEN = "@smoke2323j228";
+const SUPABASE_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/";
+const ADMIN_TOKEN = "@smoke2323j228";
 
-const DEP_ENDPOINT = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-const WITH_ENDPOINT = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
-
-// ---------- LOAD DEPOSITS ----------
-async function loadDeposits() {
-  try {
-    const res = await fetch(DEP_ENDPOINT, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-token": TOKEN
-      }
-    });
-
-    if (!res.ok) throw await res.text();
-
-    const data = await res.json();
-    document.getElementById("dep-log").innerText = "Loaded deposits: " + data.length;
-
-    const box = document.getElementById("dep-list");
-    box.innerHTML = "";
-
-    data.forEach(d => {
-      box.innerHTML += `
-        <tr>
-          <td>${d.id}</td>
-          <td>${d.user_id}</td>
-          <td>${d.amount}</td>
-          <td>${d.status}</td>
-          <td>${d.created_at}</td>
-          <td>
-            <button onclick="depAct('${d.id}','approve')">Approve</button>
-            <button onclick="depAct('${d.id}','reject')">Reject</button>
-          </td>
-        </tr>`;
-    });
-
-    if (data.length === 0) {
-      box.innerHTML = `<tr><td colspan="6">Заявок нет</td></tr>`;
-    }
-
-  } catch(e) {
-    document.getElementById("dep-log").innerText = "Ошибка загрузки депозитов: " + e;
-  }
-}
-
-async function depAct(id, action) {
-  await fetch(DEP_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-token": TOKEN
-    },
-    body: JSON.stringify({id, action})
-  });
-  loadDeposits();
-}
-
-// ---------- LOAD WITHDRAWS ----------
+// Загрузка выводов
 async function loadWithdraws() {
+  const list = document.getElementById("withdrawals-list");
   try {
-    const res = await fetch(WITH_ENDPOINT, {
+    const res = await fetch(SUPABASE_API + "admin-withdraws", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-token": TOKEN
-      }
+      headers: { "x-admin-token": ADMIN_TOKEN }
     });
 
-    if (!res.ok) throw await res.text();
+    if (!res.ok) throw new Error(await res.text());
 
     const data = await res.json();
-    document.getElementById("log").innerText = "Loaded withdraws: " + data.length;
+    list.innerHTML = "";
 
-    const box = document.getElementById("list");
-    box.innerHTML = "";
+    if (!data.length) {
+      list.innerText = "Заявок нет";
+      return;
+    }
 
     data.forEach(w => {
-      box.innerHTML += `
-        <tr>
-          <td>${w.id}</td>
-          <td>${w.user_id}</td>
-          <td>${w.amount}</td>
-          <td>${w.status}</td>
-          <td>${w.created_at}</td>
-          <td>
-            <button onclick="withAct('${w.id}','approve')">Approve</button>
-            <button onclick="withAct('${w.id}','reject')">Reject</button>
-          </td>
-        </tr>`;
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div>
+          <b>${w.amount} VC</b>
+          <div class="meta">user_id: ${w.user_id}</div>
+          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+          <div class="meta">status: ${w.status}</div>
+        </div>
+        <div>
+          ${w.status === "waiting" ? `
+            <button class="approve" onclick="withdrawAction('${w.id}', 'approve')">Одобрить</button>
+            <button class="reject" onclick="withdrawAction('${w.id}', 'reject')">Отказать</button>
+          ` : ""}
+        </div>
+      `;
+      list.appendChild(div);
     });
 
-    if (data.length === 0) {
-      box.innerHTML = `<tr><td colspan="6">Заявок нет</td></tr>`;
-    }
-
   } catch(e) {
-    document.getElementById("log").innerText = "Ошибка загрузки выводов: " + e;
+    list.innerText = "❌ Ошибка загрузки выводов";
   }
 }
 
-async function withAct(id, action) {
-  await fetch(WITH_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-token": TOKEN
-    },
-    body: JSON.stringify({id, action})
-  });
-  loadWithdraws();
+// Загрузка депозитов
+async function loadDeposits() {
+  const list = document.getElementById("deposit-list");
+  try {
+    const res = await fetch(SUPABASE_API + "admin-deposits", {
+      method: "GET",
+      headers: { "x-admin-token": ADMIN_TOKEN }
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+
+    const data = await res.json();
+    list.innerHTML = "";
+
+    if (!data.length) {
+      list.innerText = "Заявок нет";
+      return;
+    }
+
+    data.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div>
+          <b>${d.amount_vc} VC</b>
+          <div class="meta">user_id: ${d.user_id}</div>
+          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+          <div class="meta">status: ${d.status}</div>
+        </div>
+        <div>
+          ${d.status === "waiting" ? `
+            <button class="approve" onclick="depositAction('${d.id}', 'approve')">Одобрить</button>
+            <button class="reject" onclick="depositAction('${d.id}', 'reject')">Отказать</button>
+          ` : ""}
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+  } catch(e) {
+    list.innerText = "❌ Ошибка загрузки депозитов";
+  }
 }
 
-// ---------- INIT ----------
+// Действия выводов
+window.withdrawAction = async (id, type) => {
+  try {
+    const res = await fetch(SUPABASE_API + "admin-withdraws", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-token": ADMIN_TOKEN },
+      body: JSON.stringify({ id, action: type })
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+    loadWithdrawals();
+  } catch {
+    alert("❌ Ошибка действия по выводу");
+  }
+};
+
+// Действия депозитов
+window.depositAction = async (id, type) => {
+  try {
+    const res = await fetch(SUPABASE_API + "admin-deposits", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-token": ADMIN_TOKEN },
+      body: JSON.stringify({ id, action: type })
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+    loadDeposits();
+  } catch {
+    alert("❌ Ошибка действия по депозиту");
+  }
+};
+
+loadWithdrawals();
 loadDeposits();
-loadWithdraws();
 </script>
 
 </body>
