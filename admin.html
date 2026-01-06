@@ -3,83 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <title>Админка</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-body { background:#111; color:#fff; font-family:Arial; display:flex; gap:20px; padding:20px; }
-.column { flex:1; }
-.card { background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; }
-button { padding:6px 12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; }
-.approve { background:#2ecc71; color:#000; }
-.reject { background:#e74c3c; color:#fff; margin-left:6px; }
-.small { font-size:12px; opacity:.6; }
+body{background:#000;color:#fff;font-family:Arial;padding:20px;display:flex;gap:20px}
+.col{flex:1}
+.item{background:#111;padding:10px;margin-bottom:10px;border-radius:6px}
 </style>
 </head>
 <body>
 
-<div class="column"><h2>Заявки на депозит</h2><div id="deposits">Загрузка…</div></div>
-<div class="column"><h2>Заявки на вывод</h2><div id="withdrawals">Загрузка…</div></div>
+<div class="col">
+  <h2>Депозиты</h2>
+  <div id="deposits">Загрузка...</div>
+</div>
+
+<div class="col">
+  <h2>Выводы</h2>
+  <div id="withdraws">Загрузка...</div>
+</div>
 
 <script>
 const ADMIN_TOKEN = "@smoke2323j228";
-const SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro"; // ❗ Вставить сюда ключ из Supabase
 
-const DEPOSIT_EDGE = "admin-deposits";
-const WITHDRAW_EDGE = "admin-withdraws";
-
-async function load(edge, boxId) {
-  const box = document.getElementById(boxId);
-  try {
-    const r = await fetch(`https://${SERVICE_ROLE_KEY.split(".")[0]}.supabase.co/functions/v1/${edge}`, {
-      headers: {
-        "Authorization": "Bearer " + SERVICE_ROLE_KEY,
-        "x-admin-token": ADMIN_TOKEN
-      }
+// депозитов ты грузил без edge и оно работало — оставим обычный запрос
+async function loadDeposits(){
+  const box = document.getElementById("deposits");
+  try{
+    const r = await fetch("/rest/v1/deposits?status=eq.waiting", {
+      headers:{ apikey: ADMIN_TOKEN }
     });
-    if (!r.ok) throw await r.text();
     const d = await r.json();
-    box.innerHTML = "";
-    if (!d.length) return box.innerText = "Заявок нет";
-
-    d.forEach(x => {
-      box.innerHTML += `
-      <div class="card">
-        <div>
-          <b>${x.amount} VC</b>
-          <div class="small">user: ${x.user_id}</div>
-          <div class="small">status: ${x.status}</div>
-          <div class="small">${new Date(x.created_at).toLocaleString()}</div>
-        </div>
-        <div>
-          ${x.status === "waiting" ? `
-          <button class="approve" onclick="action('${edge}','${x.id}','approve')">Принять</button>
-          <button class="reject" onclick="action('${edge}','${x.id}','reject')">Отклонить</button>
-          ` : ""}
-        </div>
-      </div>`;
-    });
-
-  } catch(e) {
-    box.innerText = "Ошибка загрузки";
+    box.innerHTML = d.map(x=>`
+      <div class="item">
+        <b>${x.amount_vc} VC</b><br>
+        user: ${x.user_id}<br>
+        status: ${x.status}
+      </div>`).join("");
+  }catch(e){
+    box.innerHTML = "Ошибка загрузки депозитов";
   }
 }
 
-async function action(edge, id, action) {
-  const r = await fetch(`https://${SERVICE_ROLE_KEY.split(".")[0]}.supabase.co/functions/v1/${edge}`, {
-    method:"POST",
-    headers: {
-      "Content-Type":"application/json",
-      "Authorization": "Bearer " + SERVICE_ROLE_KEY,
-      "x-admin-token": ADMIN_TOKEN
-    },
-    body: JSON.stringify({ id, action })
-  });
-  if (r.ok) load(edge, edge.includes("deposits") ? "deposits" : "withdrawals");
-  else alert("Ошибка действия");
+// выводы ты грузишь через Edge — починим только их
+async function loadWithdraws(){
+  const box = document.getElementById("withdraws");
+  try{
+    const r = await fetch("/functions/v1/admin-withdraws", {
+      headers:{ "x-admin-token": ADMIN_TOKEN }
+    });
+    const w = await r.json();
+    if(!w.length) return box.innerHTML = "Заявок нет";
+    box.innerHTML = w.map(x=>`
+      <div class="item">
+        <b>${x.amount} VC</b><br>
+        user: ${x.user_id}<br>
+        status: ${x.status}
+      </div>`).join("");
+  }catch(e){
+    box.innerHTML = "Ошибка загрузки выводов";
+  }
 }
 
-load(DEPOSIT_EDGE, "deposits");
-load(WITHDRAW_EDGE, "withdrawals");
+loadDeposits();
+loadWithdraws();
 </script>
 
 </body>
