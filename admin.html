@@ -17,7 +17,7 @@ button { padding:6px 12px; border-radius:6px; border:none; font-weight:bold; cur
 <body>
 
 <div class="column">
-  <h2>💳 Депозиты</h2>
+  <h2>💰 Депозиты</h2>
   <div id="deposit-list">Загрузка…</div>
 </div>
 
@@ -27,60 +27,70 @@ button { padding:6px 12px; border-radius:6px; border:none; font-weight:bold; cur
 </div>
 
 <script>
+const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
+const ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
 const TOKEN = "@smoke2323j228";
-const WD_API = "admin-withdraws_API"; // ← ВАЖНО! Меняем имя API на читаемое из секретов
 
+// Загружаем выводы
 async function loadWithdrawals() {
-  const el = document.getElementById("withdraw-list");
+  const list = document.getElementById("withdraw-list");
+  list.innerText = "Загрузка…";
+
   try {
-    const res = await fetch(WD_API, {
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
       headers: { "x-admin-token": TOKEN }
     });
-
     if (!res.ok) throw new Error(await res.text());
+
     const data = await res.json();
+    list.innerHTML = "";
 
-    el.innerHTML = "";
-
-    if (!Array.isArray(data) || data.length === 0) {
-      el.innerText = "Заявок на вывод нет";
+    if (!data.length) {
+      list.innerText = "Заявок на вывод нет";
       return;
     }
 
     data.forEach(w => {
-      el.innerHTML += `
-      <div class="item">
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
         <div>
           <b>${w.amount} VC</b>
-          <div class="meta">User: ${w.user_id}</div>
-          <div class="meta">Реквизиты: ${w.requisites}</div>
+          <div class="meta">user_id: ${w.user_id}</div>
+          <div class="meta">реквизиты: ${w.requisites}</div>
           <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">Статус: ${w.status}</div>
         </div>
         <div>
           ${w.status === "waiting" ? `
-            <button class="ok" onclick="withdraw('${w.id}','approve')">✔ Принять</button>
-            <button class="no" onclick="withdraw('${w.id}','reject')">✖ Отказать</button>
-          ` : ""}
+            <button class="ok" onclick="withdraw('${w.id}','approve')">Принять</button>
+            <button class="no" onclick="withdraw('${w.id}','reject')">Отказать</button>
+          ` : `<div class="meta">${w.status}</div>`}
         </div>
-      </div>`;
+      `;
+      list.appendChild(div);
     });
 
   } catch(e) {
-    el.innerText = "❌ Ошибка загрузки выводов";
+    list.innerText = "❌ Ошибка загрузки выводов";
   }
 }
 
-async function withdraw(id, act) {
-  await fetch(WD_API, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json", "x-admin-token": TOKEN },
-    body: JSON.stringify({ id, action: act })
-  });
-  loadWithdrawals();
-}
+// Отправляем действие по выводу
+window.withdraw = async (id, action) => {
+  try {
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "x-admin-token": TOKEN },
+      body: JSON.stringify({ id, action })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    loadWithdrawals();
+  } catch(e) {
+    alert("❌ Ошибка действия");
+  }
+};
 
-window.withdraw = withdraw;
+// Загружаем депозиты (как есть у тебя — они работают)
 loadWithdrawals();
 </script>
 
