@@ -17,12 +17,12 @@ button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:po
 <body>
 
 <div class="column">
-<h2>💰 Депозиты</h2>
+<h2>Депозиты</h2>
 <div id="deposit-list">Загрузка...</div>
 </div>
 
 <div class="column">
-<h2>🏦 Выводы</h2>
+<h2>Выводы</h2>
 <div id="withdraw-list">Загрузка...</div>
 </div>
 
@@ -51,26 +51,23 @@ async function loadWithdrawals(){
   const list=document.getElementById("withdraw-list");
   try{
     const r=await fetch(ADMIN_WITHDRAWS_API,{headers:{"x-admin-token":ADMIN_TOKEN}});
-    if(!r.ok) throw new Error("HTTP "+r.status);
     const d=await r.json();
     list.innerHTML="";
     d.forEach(x=>{
       list.innerHTML+=`<div class="item">
         <div>
           <b>${x.amount}</b>
-          <div class="meta">${x.user_id}</div>
-          <div class="meta">${x.address}</div>
-          <div class="meta">${x.requisites ?? ""}</div>
-          <div class="meta">status: ${x.status}</div>
+          <div class="meta">User: ${x.user_id}</div>
+          <div class="meta">Address: ${x.address}</div>
+          <div class="meta">Status: ${x.status}</div>
         </div>
-        <div><button class="ok" onclick="withdrawAction('${x.id}','approve')">OK</button>
-        <button class="no" onclick="withdrawAction('${x.id}','reject')">NO</button></div>
+        <div>
+          <button class="ok" onclick="withdrawAction('${x.id}','approve')">OK</button>
+          <button class="no" onclick="withdrawAction('${x.id}','reject')">NO</button>
+        </div>
       </div>`;
     });
-
-    if(d.length===0) list.innerText="Список выводов пуст";
-
-  }catch(e){list.innerText="Ошибка загрузки выводов: "+e.message;}
+  }catch{list.innerText="Ошибка загрузки выводов";}
 }
 
 window.depositAction=async(id,a)=>{
