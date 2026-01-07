@@ -168,36 +168,40 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.getElementById("confirm-withdraw").onclick = async () => {
-    const amount = parseFloat(document.getElementById("withdraw-wallet").value);
-    const requisites = document.getElementById("withdraw-wallet").value.trim();
+  const amount = parseFloat(document.getElementById("withdraw-amount").value);
+  const requisites = document.getElementById("withdraw-wallet").value.trim();
+  const address = requisites; // берём тот же адрес как кошелёк
 
-    if (!amount || amount <= 0) {
-      alert("Введите сумму");
-      return;
-    }
-    if (!requisites) {
-      alert("Введите реквизиты");
-      return;
-    }
+  if (!amount || amount <= 0) {
+    alert("Введите сумму");
+    return;
+  }
+  if (!requisites) {
+    alert("Введите реквизиты");
+    return;
+  }
 
-    const { error } = await supabase.from("withdrawals").insert({
-      user_id: window.USER_ID,
-      amount,
-      requisites,
-      status: "pending",
-      created_at: new Date().toISOString()
-    });
+  const { error } = await supabase.from("withdrawals").insert({
+    user_id: window.USER_ID,
+    amount,
+    requisites,
+    address,
+    status: "pending",
+    created_at: new Date().toISOString()
+  });
 
-    if (error) {
-      console.error(error);
-      alert("Ошибка отправки заявки: " + error.message);
-      return;
-    }
+  if (error) {
+    console.error(error);
+    alert("Ошибка отправки заявки: " + error.message);
+    return;
+  }
 
-    document.getElementById("withdraw-wallet").value = "";
-    closePopup("popup-withdraw");
-    alert("Заявка на вывод отправлена");
-  };
+  document.getElementById("withdraw-amount").value = "";
+  document.getElementById("withdraw-wallet").value = "";
+  document.getElementById("withdraw-wallet").value = "";
+  closePopup("popup-withdraw");
+  alert("Заявка на вывод отправлена");
+};
 
   initUser();
 });
