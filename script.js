@@ -77,72 +77,68 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
 
   async function loadHistory() {
-  const list = document.getElementById("history-list");
-  list.innerHTML = "";
+    const list = document.getElementById("history-list");
+    list.innerHTML = "";
 
-  // Загружаем пополнения
-  const { data: dep } = await supabase
-    .from("deposits")
-    .select("amount_vc, status, created_at")
-    .eq("user_id", window.USER_ID)
-    .order("created_at", { ascending: false });
+    const { data: dep } = await supabase
+      .from("deposits")
+      .select("amount_vc, status, created_at")
+      .eq("user_id", window.USER_ID)
+      .order("created_at", { ascending: false });
 
-  // Загружаем выводы
-  const { data: wd } = await supabase
-    .from("withdrawals")
-    .select("amount, requisites, status, created_at")
-    .eq("user_id", window.USER_ID)
-    .order("created_at", { ascending: false });
+    const { data: wd } = await supabase
+      .from("withdrawals")
+      .select("amount, requisites, status, created_at")
+      .eq("user_id", window.USER_ID)
+      .order("created_at", { ascending: false });
 
-  // Если вообще нет операций
-  if (!dep?.length && !wd?.length) {
-    list.innerHTML = "<div class='meta'>Операций пока нет</div>";
-    return;
+    if (!dep?.length && !wd?.length) {
+      list.innerHTML = "<div class='meta'>Операций пока нет</div>";
+      return;
+    }
+
+    dep?.forEach(d => {
+      let statusText = "⏳ В ожидании";
+      if (d.status === "success") statusText = "✅ Успешно";
+      if (d.status === "rejected") statusText = "❌ Отказано";
+
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = `
+        <div>
+          <b>➕ Пополнение</b>
+          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+        </div>
+        <div style="text-align:right">
+          <b>${d.amount_vc} VC</b><br>
+          <span>${statusText}</span>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+
+    wd?.forEach(w => {
+      let statusText = "⏳ В ожидании";
+      if (w.status === "success") statusText = "✅ Успешно";
+      if (w.status === "rejected") statusText = "❌ Отказано";
+      if (w.status === "pending") statusText = "⏳ В обработке";
+
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = `
+        <div>
+          <b>💸 Вывод</b>
+          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+          <div class="meta">${w.requisites}</div>
+        </div>
+        <div style="text-align:right">
+          <b>${w.amount} VC</b><br>
+          <span>${statusText}</span>
+        </div>
+      `;
+      list.appendChild(item);
+    });
   }
-
-  // Рендер пополнений
-  dep?.forEach(d => {
-    let statusText = "⏳ В ожидании";
-    if (d.status === "success") statusText = "✅ Успешно";
-    if (d.status === "rejected") statusText = "❌ Отказано";
-
-    const item = document.createElement("div");
-    item.className = "item";
-    item.innerHTML = `
-      <div>
-        <b>➕ Пополнение</b>
-        <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-      </div>
-      <div style="text-align:right">
-        <b>${d.amount_vc} VC</b><br>
-        <span>${statusText}</span>
-      </div>
-    `;
-    list.appendChild(item);
-  });
-
-  // Рендер выводов
-  wd?.forEach(w => {
-    let statusText = "⏳ В ожидании";
-    if (w.status === "success") statusText = "✅ Успешно";
-    if (w.status === "rejected") statusText = "❌ Отказано";
-
-    const item = document.createElement("div");
-    item.className = "item";
-    item.innerHTML = `
-      <div>
-        <b>💸 Вывод</b>
-        <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-        <div class="meta">${w.requisites}</div>
-      </div>
-      <div style="text-align:right">
-        <b>${w.amount} VC</b><br>
-        <span>${statusText}</span>
-      </div>
-    `;
-    list.appendChild(item);
-  });
-}
 
   document.getElementById("to-payment").onclick = () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
@@ -159,10 +155,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const { error } = await supabase.from("deposits").insert({
       user_id: window.USER_ID,
       amount_vc: amount,
-      status: "waiting"
+      status: "waiting",
+      created_at: new Date().toISOString()
     });
     if (error) {
-      alert("Ошибка создания заявки");
+      alert("Ошибка создания заявки: " + error.message);
       return;
     }
     closePopup("popup-payment");
@@ -171,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.getElementById("confirm-withdraw").onclick = async () => {
-    const amount = parseFloat(document.getElementById("withdraw-amount").value);
+    const amount = parseFloat(document.getElementById("withdraw-wallet").value);
     const requisites = document.getElementById("withdraw-wallet").value.trim();
 
     if (!amount || amount <= 0) {
@@ -187,16 +184,16 @@ document.addEventListener("DOMContentLoaded", () => {
       user_id: window.USER_ID,
       amount,
       requisites,
-      status: "waiting"
+      status: "pending",
+      created_at: new Date().toISOString()
     });
 
     if (error) {
       console.error(error);
-      alert("Ошибка отправки заявки");
+      alert("Ошибка отправки заявки: " + error.message);
       return;
     }
 
-    document.getElementById("withdraw-amount").value = "";
     document.getElementById("withdraw-wallet").value = "";
     closePopup("popup-withdraw");
     alert("Заявка на вывод отправлена");
@@ -204,4 +201,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initUser();
 });
-  
