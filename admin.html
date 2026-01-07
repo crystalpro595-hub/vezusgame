@@ -17,12 +17,12 @@ button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:po
 <body>
 
 <div class="column">
-<h2>Депозиты</h2>
+<h2>💰 Депозиты</h2>
 <div id="deposit-list">Загрузка...</div>
 </div>
 
 <div class="column">
-<h2>Выводы</h2>
+<h2>🏦 Выводы</h2>
 <div id="withdraw-list">Загрузка...</div>
 </div>
 
@@ -37,6 +37,7 @@ async function loadDeposits(){
     const r=await fetch(ADMIN_DEPOSITS_API,{headers:{"x-admin-token":ADMIN_TOKEN}});
     const d=await r.json();
     list.innerHTML="";
+    if(!d.length) return list.innerText="Заявок нет";
     d.forEach(x=>{
       list.innerHTML+=`<div class="item">
         <div><b>${x.amount_vc}</b><div class="meta">${x.user_id}</div></div>
@@ -44,7 +45,7 @@ async function loadDeposits(){
         <button class="no" onclick="depositAction('${x.id}','reject')">NO</button></div>
       </div>`;
     });
-  }catch{list.innerText="Ошибка загрузки депозитов";}
+  }catch{list.innerText="Ошибка загрузки";}
 }
 
 async function loadWithdrawals(){
@@ -53,13 +54,13 @@ async function loadWithdrawals(){
     const r=await fetch(ADMIN_WITHDRAWS_API,{headers:{"x-admin-token":ADMIN_TOKEN}});
     const d=await r.json();
     list.innerHTML="";
+    if(!d.length) return list.innerText="Заявок нет";
     d.forEach(x=>{
       list.innerHTML+=`<div class="item">
         <div>
           <b>${x.amount}</b>
-          <div class="meta">User: ${x.user_id}</div>
-          <div class="meta">Address: ${x.address}</div>
-          <div class="meta">Status: ${x.status}</div>
+          <div class="meta">${x.user_id}</div>
+          <div class="meta">${x.address}</div>
         </div>
         <div>
           <button class="ok" onclick="withdrawAction('${x.id}','approve')">OK</button>
@@ -67,7 +68,7 @@ async function loadWithdrawals(){
         </div>
       </div>`;
     });
-  }catch{list.innerText="Ошибка загрузки выводов";}
+  }catch{list.innerText="Ошибка загрузки";}
 }
 
 window.depositAction=async(id,a)=>{
