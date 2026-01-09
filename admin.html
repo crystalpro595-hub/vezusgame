@@ -2,168 +2,154 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
+<title>Админка — Выводы</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <style>
-body{font-family:sans-serif;background:#111;color:#fff;margin:0;padding:20px}
-.item{display:flex;justify-content:space-between;background:#1a1a1a;padding:12px;border-radius:8px;margin-bottom:10px}
-button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer}
-.ok{background:#2ecc71;color:#000}
-.no{background:#e74c3c;color:#000}
-.meta{font-size:13px;color:#888;margin-top:4px}
-#withdraw-list, #deposit-list, #history-list{margin-top:15px}
-.section{margin-bottom:30px}
+body {
+  margin:0;
+  font-family:Inter, sans-serif;
+  background:#0a0a0f;
+  color:#fff;
+  padding:30px;
+}
+h1 {
+  font-size:26px;
+  margin-bottom:20px;
+}
+.card {
+  background:#14141c;
+  border:1px solid #222;
+  padding:18px;
+  border-radius:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
+  animation:fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.info {
+  line-height:1.5;
+}
+.meta {
+  font-size:13px;
+  color:#888;
+}
+.btns {
+  display:flex;
+  gap:8px;
+  flex-direction:column;
+}
+button {
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+  transition:0.2s;
+}
+.approve {
+  background:#2dff9d;
+  color:#000;
+}
+.reject {
+  background:#ff4d6d;
+  color:#000;
+}
+button:hover {
+  opacity:0.8;
+  transform:scale(1.03);
+}
+#list {
+  margin-top:10px;
+}
+.empty {
+  font-size:15px;
+  color:#666;
+  margin-top:20px;
+}
 </style>
 </head>
 <body>
 
-<h2>🔐 Админ панель</h2>
-
-<div class="section">
-  <h3>💸 Заявки на вывод</h3>
-  <div id="withdraw-list">Загрузка...</div>
-</div>
-
-<div class="section">
-  <h3>📥 История (пополнения + выводы)</h3>
-  <div id="history-list"></div>
-</div>
+<h1>💸 Заявки на вывод</h1>
+<div id="list">Загрузка...</div>
 
 <script>
 const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
 
-// 🔥 ВСТАВЬ СЮДА СВОЙ SERVICE_ROLE КЛЮЧ
-const SERVICE_ROLE = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTQ1ODMwMiwiZXhwIjoyMDgxMDM0MzAyfQ.muYuEoKV63vDFs4s3lxEwHZJc1r3z06GcQNKlLAauEg";
+// ❗ ВСТАВЬ SERVICE_ROLE КЛЮЧ СЮДА
+const SERVICE_ROLE = "ВСТАВЬ_SERVICE_ROLE_КЛЮЧ_СЮДА";
 
-const ADMIN_TOKEN = "my_admin_secret_token"; // можно заменить на свой
+// ❗ Этот токен должен совпадать с тем, что проверяет твой Edge
+const ADMIN_TOKEN = "my_admin_secret_token";
 
-const ADMIN_WITHDRAWS_API = SUPABASE_URL + "/functions/v1/admin-withdraws";
+const EDGE_URL = SUPABASE_URL + "/functions/v1/admin-withdraws";
 
-async function loadWithdrawals(){
-  const list = document.getElementById("withdraw-list");
-  try{
-    const res = await fetch(ADMIN_WITHDRAWS_API, {
-      method: "GET",
-      headers: {
-        "Authorization": "Bearer " + SERVICE_ROLE,
-        "x-admin-token": ADMIN_TOKEN
-      }
-    });
-
-    if(res.status === 401){
-      list.innerText = "⛔ Ошибка 401 — Нет доступа. Проверь ключ.";
-      return;
-    }
-
-    const data = await res.json();
-    list.innerHTML = "";
-
-    if(!Array.isArray(data) || data.length === 0){
-      list.innerText = "Заявок нет";
-      return;
-    }
-
-    data.forEach(w => {
-      list.innerHTML += `
-      <div class="item">
-        <div>
-          <b>Сумма:</b> ${w.amount} VC
-          <div class="meta"><b>User ID:</b> ${w.user_id}</div>
-          <div class="meta"><b>Кошелёк:</b> ${w.address}</div>
-          <div class="meta"><b>Статус:</b> ${w.status}</div>
-          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-        </div>
-        <div>
-          <button class="ok" onclick="withdrawAction('${w.id}', 'approve')">OK</button>
-          <button class="no" onclick="withdrawAction('${w.id}', 'reject')">NO</button>
-        </div>
-      </div>`;
-    });
-
-  } catch(e){
-    console.error(e);
-    list.innerText = "Ошибка загрузки";
-  }
-}
-
-async function withdrawAction(id, action){
-  try{
-    const res = await fetch(ADMIN_WITHDRAWS_API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + SERVICE_ROLE,
-        "x-admin-token": ADMIN_TOKEN
-      },
-      body: JSON.stringify({ id, action })
-    });
-
-    const result = await res.json();
-    if(result.error){
-      alert("Ошибка: " + result.error);
-      return;
-    }
-
-    alert("Успешно обновлено");
-    loadWithdrawals();
-  } catch(e){
-    console.error(e);
-    alert("Ошибка запроса");
-  }
-}
-
-async function loadHistory(){
-  const list = document.getElementById("history-list");
+async function load() {
+  const list = document.getElementById("list");
   list.innerHTML = "";
 
-  // Загружаем депозиты
-  const depRes = await fetch(SUPABASE_URL + "/rest/v1/deposits?select=amount_vc,status,created_at", {
-    headers: { "apikey": SERVICE_ROLE, "Authorization": "Bearer " + SERVICE_ROLE }
+  const res = await fetch(EDGE_URL, {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + SERVICE_ROLE,
+      "x-admin-token": ADMIN_TOKEN
+    }
   });
-  const dep = await depRes.json();
 
-  // Загружаем выводы
-  const wdRes = await fetch(SUPABASE_URL + "/rest/v1/withdrawals?select=amount,address,status,created_at", {
-    headers: { "apikey": SERVICE_ROLE, "Authorization": "Bearer " + SERVICE_ROLE }
-  });
-  const wd = await wdRes.json();
-
-  if(!dep.length && !wd.length){
-    list.innerHTML = "<div class='meta'>Операций пока нет</div>";
+  if (res.status === 401) {
+    list.innerHTML = "<div class='empty'>⛔ Ошибка 401 — доступ запрещён. Проверь ключ и токен.</div>";
     return;
   }
 
-  dep.forEach(d => {
-    list.innerHTML += `
-    <div class="item">
-      <div>
-        <b>➕ Пополнение</b>
-        <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-      </div>
-      <div style="text-align:right">
-        <b>${d.amount_vc} VC</b><br>
-        <span>${d.status}</span>
-      </div>
-    </div>`;
-  });
+  const data = await res.json();
 
-  wd.forEach(w => {
+  if (!Array.isArray(data) || data.length === 0) {
+    list.innerHTML = "<div class='empty'>Заявок пока нет</div>";
+    return;
+  }
+
+  data.forEach(w => {
     list.innerHTML += `
-    <div class="item">
-      <div>
-        <b>💸 Вывод</b>
-        <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-        <div class="meta">${w.address}</div>
+    <div class="card">
+      <div class="info">
+        <b>Сумма:</b> ${w.amount} VC<br>
+        <span class="meta">Кошелёк:</span> ${w.address}<br>
+        <span class="meta">Статус:</span> ${w.status}<br>
+        <span class="meta">${new Date(w.created_at).toLocaleString()}</span>
       </div>
-      <div style="text-align:right">
-        <b>${w.amount} VC</b><br>
-        <span>${w.status}</span>
+      <div class="btns">
+        <button class="approve" onclick="action('${w.id}','approve')">Принять</button>
+        <button class="reject" onclick="action('${w.id}','reject')">Отказать</button>
       </div>
     </div>`;
   });
 }
 
-loadWithdrawals();
-loadHistory();
+async function action(id, act) {
+  const res = await fetch(EDGE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + SERVICE_ROLE,
+      "x-admin-token": ADMIN_TOKEN
+    },
+    body: JSON.stringify({ id: id, action: act })
+  });
+
+  const r = await res.json();
+  if (r.error) {
+    alert("Ошибка: " + r.error);
+    return;
+  }
+  alert("Статус обновлён");
+  load();
+}
+
+load();
 </script>
 
 </body>
