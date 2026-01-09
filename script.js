@@ -1,11 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro"; // твой anon ключ уже есть, можешь вставить свой
+  const SUPABASE_KEY = "ВАШ_ANON_KEY"; // оставь свой ключ
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const tg = window.Telegram.WebApp;
   tg.expand();
+
+  // Очищаем кеш схемы, чтобы клиент увидел новые колонки
+  localStorage.removeItem("supabase-schema-cache");
 
   if (!tg.initDataUnsafe?.user) {
     alert("Открой через Telegram");
@@ -22,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .single();
 
     if (!user) {
-      const { data: newUser } = await supabase
+      const { data: newUser, error } = await supabase
         .from("users")
         .insert({
           telegram_id: tgUser.id,
@@ -33,6 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
         .select()
         .single();
 
+      if (error) {
+        alert("Ошибка создания пользователя: " + error.message);
+        return;
+      }
+
+      // Создаём баланс
       await supabase.from("balances").insert({ user_id: newUser.id, balance: 0 });
       user = newUser;
     }
@@ -62,11 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("wallet-open").onclick = () => openPopup("popup-wallet");
   document.getElementById("close-wallet").onclick = () => closePopup("popup-wallet");
 
-  document.getElementById("open-deposit").onclick = () => openPopup("popup-deposit");
-  document.getElementById("close-deposit").onclick = () => closePopup("popup-deposit");
-
-  document.getElementById("close-payment").onclick = () => closePopup("popup-payment");
-
   document.getElementById("open-withdraw").onclick = () => openPopup("popup-withdraw");
   document.getElementById("close-withdraw").onclick = () => closePopup("popup-withdraw");
 
@@ -80,48 +84,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById("history-list");
     list.innerHTML = "";
 
-    const { data: dep } = await supabase
-      .from("deposits")
-      .select("amount_vc, status, created_at")
-      .eq("user_id", window.USER_ID)
-      .order("created_at", { ascending: false });
-
     const { data: wd } = await supabase
-      .from("withdrawals") // ← исправлено под твою таблицу
-      .select("amount, address, status, created_at")
+      .from("withdrawals")
+      .select("amount, requisites, address, status, created_at")
       .eq("user_id", window.USER_ID)
       .order("created_at", { ascending: false });
 
-    if (!dep?.length && !wd?.length) {
+    if (!wd?.length) {
       list.innerHTML = "<div class='meta'>Операций пока нет</div>";
       return;
     }
 
-    dep?.forEach(d => {
-      let statusText = "⏳ В ожидании";
-      if (d.status === "success") statusText = "✅ Успешно";
-      if (d.status === "rejected") statusText = "❌ Отказано";
-
-      const item = document.createElement("div");
-      item.className = "item";
-      item.innerHTML = `
-        <div>
-          <b>➕ Пополнение</b>
-          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-        </div>
-        <div style="text-align:right">
-          <b>${d.amount_vc} VC</b><br>
-          <span>${statusText}</span>
-        </div>
-      `;
-      list.appendChild(item);
-    });
-
-    wd?.forEach(w => {
+    wd.forEach(w => {
       let statusText = "⏳ В ожидании";
       if (w.status === "success") statusText = "✅ Успешно";
       if (w.status === "rejected") statusText = "❌ Отказано";
-      if (w.status === "pending") statusText = "⏳ В обработке";
+      if (w.status === "waiting") statusText = "⏳ На рассмотрении";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -129,7 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <div>
           <b>💸 Вывод</b>
           <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">${w.address}</div>  <!-- ← вывод адреса кошелька -->
+          <div class="meta">Кошелёк: ${w.address}</div>
+          <div class="meta">Реквизиты: ${w.requisites}</div>
         </div>
         <div style="text-align:right">
           <b>${w.amount} VC</b><br>
@@ -140,57 +119,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.getElementById("to-payment").onclick = () => {
-    const amount = parseInt(document.getElementById("deposit-amount").value);
-    if (!amount || amount < 100) {
-      alert("Минимум 100 ₽");
-      return;
-    }
-    document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
-    openPopup("popup-payment");
-  };
-
-  document.getElementById("confirm-paid").onclick = async () => {
-    const amount = parseInt(document.getElementById("deposit-amount").value);
-    const { error } = await supabase.from("deposits").insert({
-      user_id: window.USER_ID,
-      amount_vc: amount,
-      status: "waiting",
-      created_at: new Date().toISOString()
-    });
-    if (error) {
-      alert("Ошибка создания заявки: " + error.message);
-      return;
-    }
-    closePopup("popup-payment");
-    closePopup("popup-deposit");
-    alert("Заявка отправлена. Ждите подтверждения.");
-  };
-
   document.getElementById("confirm-withdraw").onclick = async () => {
     const amount = parseFloat(document.getElementById("withdraw-amount").value);
-    const wallet = document.getElementById("withdraw-wallet").value.trim();
+    const requisites = document.getElementById("withdraw-wallet").value.trim();
+    const address = requisites;
 
     if (!amount || amount <= 0) {
       alert("Введите сумму");
       return;
     }
-    if (!wallet) {
-      alert("Введите адрес кошелька");
+    if (!requisites) {
+      alert("Введите реквизиты / адрес кошелька");
       return;
     }
 
-    // Отправка в таблицу `withdrawals` с обязательным полем `address`
     const { error } = await supabase.from("withdrawals").insert({
       user_id: window.USER_ID,
       amount,
-      address: wallet, // ← ключевое исправление
+      requisites,
+      address,
       status: "waiting",
       created_at: new Date().toISOString()
     });
 
     if (error) {
-      console.error(error);
       alert("Ошибка отправки заявки: " + error.message);
       return;
     }
@@ -198,8 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("withdraw-amount").value = "";
     document.getElementById("withdraw-wallet").value = "";
     closePopup("popup-withdraw");
-    alert("Заявка на вывод отправлена");
+    alert("Заявка на вывод отправлена. Ждите подтверждения.");
   };
 
+  // Запуск
   initUser();
 });
