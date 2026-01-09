@@ -2,154 +2,158 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Админка — Выводы</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админка</title>
 <style>
 body {
-  margin:0;
-  font-family:Inter, sans-serif;
   background:#0a0a0f;
   color:#fff;
+  font-family:Inter,Arial,sans-serif;
   padding:30px;
+  display:flex;
+  gap:20px;
 }
-h1 {
-  font-size:26px;
-  margin-bottom:20px;
+.column {
+  flex:1;
 }
 .card {
   background:#14141c;
   border:1px solid #222;
-  padding:18px;
+  padding:16px;
   border-radius:12px;
+  margin-bottom:12px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:12px;
   box-shadow:0 2px 8px rgba(0,0,0,0.3);
-  animation:fadeIn 0.3s ease-in;
+  animation:fade 0.25s ease-in;
 }
-@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
-.info {
-  line-height:1.5;
-}
-.meta {
-  font-size:13px;
-  color:#888;
-}
-.btns {
-  display:flex;
-  gap:8px;
-  flex-direction:column;
-}
+@keyframes fade {from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.meta {font-size:12px;color:#888;margin-top:4px}
 button {
-  padding:8px 14px;
+  padding:7px 13px;
   border:none;
-  border-radius:8px;
+  border-radius:7px;
   font-weight:600;
   cursor:pointer;
-  font-size:14px;
+  font-size:13px;
   transition:0.2s;
 }
-.approve {
-  background:#2dff9d;
-  color:#000;
-}
-.reject {
-  background:#ff4d6d;
-  color:#000;
-}
-button:hover {
-  opacity:0.8;
-  transform:scale(1.03);
-}
-#list {
-  margin-top:10px;
-}
-.empty {
-  font-size:15px;
-  color:#666;
-  margin-top:20px;
-}
+.ok {background:#2dff9d;color:#000}
+.no {background:#ff4d6d;color:#000}
+button:hover{opacity:0.8;transform:scale(1.03)}
+.btns{display:flex;flex-direction:column;gap:6px}
 </style>
 </head>
 <body>
 
-<h1>💸 Заявки на вывод</h1>
-<div id="list">Загрузка...</div>
+<div class="column">
+  <h2>💰 Депозиты</h2>
+  <div id="deposits">Загрузка...</div>
+</div>
+
+<div class="column">
+  <h2>💸 Выводы</h2>
+  <div id="withdraws">Загрузка...</div>
+</div>
 
 <script>
-const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
+const ADMIN_TOKEN = "@smoke2323j228"; // твой токен как раньше
 
-// ❗ ВСТАВЬ SERVICE_ROLE КЛЮЧ СЮДА
-const SERVICE_ROLE = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
+const DEP_API = "/functions/v1/admin-deposits";
+const WD_API  = "/functions/v1/admin-withdraws";
 
-// ❗ Этот токен должен совпадать с тем, что проверяет твой Edge
-const ADMIN_TOKEN = "my_admin_secret_token";
+async function loadDeposits() {
+  const el = document.getElementById("deposits");
+  el.innerHTML = "";
 
-const EDGE_URL = SUPABASE_URL + "/functions/v1/admin-withdraws";
-
-async function load() {
-  const list = document.getElementById("list");
-  list.innerHTML = "";
-
-  const res = await fetch(EDGE_URL, {
+  const r = await fetch(DEP_API, {
     method: "GET",
-    headers: {
-      "Authorization": "Bearer " + SERVICE_ROLE,
-      "x-admin-token": ADMIN_TOKEN
-    }
+    headers: { "x-admin-token": ADMIN_TOKEN }
   });
 
-  if (res.status === 401) {
-    list.innerHTML = "<div class='empty'>⛔ Ошибка 401 — доступ запрещён. Проверь ключ и токен.</div>";
-    return;
-  }
+  if (r.status === 401) return el.innerHTML = "<div>⛔ 401 — Нет доступа</div>";
 
-  const data = await res.json();
+  const data = await r.json();
 
-  if (!Array.isArray(data) || data.length === 0) {
-    list.innerHTML = "<div class='empty'>Заявок пока нет</div>";
-    return;
-  }
+  if (!data.length) return el.innerHTML = "<div>Заявок нет</div>";
 
-  data.forEach(w => {
-    list.innerHTML += `
+  data.forEach(d => {
+    el.innerHTML += `
     <div class="card">
-      <div class="info">
-        <b>Сумма:</b> ${w.amount} VC<br>
-        <span class="meta">Кошелёк:</span> ${w.address}<br>
-        <span class="meta">Статус:</span> ${w.status}<br>
-        <span class="meta">${new Date(w.created_at).toLocaleString()}</span>
+      <div>
+        <b>${d.amount_vc} VC</b>
+        <div class="meta">${d.user_id}</div>
+        <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+        <div class="meta">Статус: ${d.status}</div>
       </div>
       <div class="btns">
-        <button class="approve" onclick="action('${w.id}','approve')">Принять</button>
-        <button class="reject" onclick="action('${w.id}','reject')">Отказать</button>
+        <button class="ok" onclick="depAction('${d.id}','approve')">OK</button>
+        <button class="no" onclick="depAction('${d.id}','reject')">NO</button>
       </div>
     </div>`;
   });
 }
 
-async function action(id, act) {
-  const res = await fetch(EDGE_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + SERVICE_ROLE,
-      "x-admin-token": ADMIN_TOKEN
-    },
-    body: JSON.stringify({ id: id, action: act })
+async function loadWithdraws() {
+  const el = document.getElementById("withdraws");
+  el.innerHTML = "";
+
+  const r = await fetch(WD_API, {
+    method: "GET",
+    headers: { "x-admin-token": ADMIN_TOKEN }
   });
 
-  const r = await res.json();
-  if (r.error) {
-    alert("Ошибка: " + r.error);
-    return;
-  }
-  alert("Статус обновлён");
-  load();
+  if (r.status === 401) return el.innerHTML = "<div>⛔ 401 — Нет доступа</div>";
+
+  const data = await r.json();
+
+  if (!data.length) return el.innerHTML = "<div>Заявок нет</div>";
+
+  data.forEach(w => {
+    el.innerHTML += `
+    <div class="card">
+      <div>
+        <b>${w.amount} VC</b>
+        <div class="meta">${w.address}</div>
+        <div class="meta">${w.user_id}</div>
+        <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+        <div class="meta">Статус: ${w.status}</div>
+      </div>
+      <div class="btns">
+        <button class="ok" onclick="wdAction('${w.id}','approve')">OK</button>
+        <button class="no" onclick="wdAction('${w.id}','reject')">NO</button>
+      </div>
+    </div>`;
+  });
 }
 
-load();
+window.depAction = async (id, act) => {
+  const r = await fetch(DEP_API, {
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-admin-token":ADMIN_TOKEN},
+    body:JSON.stringify({id, action: act})
+  });
+  const j = await r.json();
+  if (j.error) return alert("Ошибка: " + j.error);
+  alert("Готово");
+  loadDeposits();
+};
+
+window.wdAction = async (id, act) => {
+  const r = await fetch(WD_API, {
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-admin-token":ADMIN_TOKEN},
+    body:JSON.stringify({id, action: act})
+  });
+  const j = await r.json();
+  if (j.error) return alert("Ошибка: " + j.error);
+  alert("Готово");
+  loadWithdraws();
+};
+
+loadDeposits();
+loadWithdraws();
 </script>
 
 </body>
