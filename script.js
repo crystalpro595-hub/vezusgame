@@ -1,9 +1,9 @@
-// ОЧИСТКА КЕША СХЕМЫ — обязательно первой!
+// Очищаем кеш схемы, чтобы SDK увидел новые колонки
 localStorage.removeItem("supabase-schema-cache");
 
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-  const SUPABASE_KEY = "ВАШ_ANON_KEY"; // вставь сюда свой ключ anon (который работает)
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .select()
         .single();
+
+      if (!newUser) return alert("Ошибка создания пользователя");
 
       await supabase.from("balances").insert({ user_id: newUser.id, balance: 0 });
       user = newUser;
@@ -101,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     dep?.forEach(d => {
       const s = d.status === "success" ? "✅ Успешно" :
-                d.status === "rejected" ? "❌ Отказано" : "⏳ На рассмотрении";
+                d.status === "rejected" ? "❌ Отказано" : "⏳ В ожидании";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -119,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     wd?.forEach(w => {
       const s = w.status === "success" ? "✅ Успешно" :
-                w.status === "rejected" ? "❌ Отказано" : "⏳ На рассмотрении";
+                w.status === "rejected" ? "❌ Отказано" : "⏳ В ожидании";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -140,22 +142,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("to-payment").onclick = () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
-    if (!amount || amount < 100) {
-      alert("Минимум 100 ₽");
-      return;
-    }
+    if (!amount || amount < 100) return alert("Минимум 100 ₽");
+
     document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
     openPopup("popup-payment");
   };
 
   document.getElementById("confirm-paid").onclick = async () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
+
     const { error } = await supabase.from("deposits").insert({
       user_id: window.USER_ID,
       amount_vc: amount,
       status: "waiting",
       created_at: new Date().toISOString()
     });
+
     if (error) return alert("Ошибка: " + error.message);
 
     closePopup("popup-payment");
@@ -174,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
       user_id: window.USER_ID,
       amount,
       requisites,
-      address: requisites, // теперь колонка точно есть
+      address: requisites,
       status: "waiting",
       created_at: new Date().toISOString()
     });
