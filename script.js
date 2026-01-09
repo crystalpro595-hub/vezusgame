@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro"; // твой anon ключ уже есть, можешь вставить свой
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .order("created_at", { ascending: false });
 
     const { data: wd } = await supabase
-      .from("withdrawals")
-      .select("amount, requisites, status, created_at")
+      .from("withdrawals") // ← исправлено под твою таблицу
+      .select("amount, address, status, created_at")
       .eq("user_id", window.USER_ID)
       .order("created_at", { ascending: false });
 
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div>
           <b>💸 Вывод</b>
           <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">${w.requisites}</div>
+          <div class="meta">${w.address}</div>  <!-- ← вывод адреса кошелька -->
         </div>
         <div style="text-align:right">
           <b>${w.amount} VC</b><br>
@@ -168,40 +168,38 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.getElementById("confirm-withdraw").onclick = async () => {
-  const amount = parseFloat(document.getElementById("withdraw-amount").value);
-  const requisites = document.getElementById("withdraw-wallet").value.trim();
-  const address = requisites; // берём тот же адрес как кошелёк
+    const amount = parseFloat(document.getElementById("withdraw-amount").value);
+    const wallet = document.getElementById("withdraw-wallet").value.trim();
 
-  if (!amount || amount <= 0) {
-    alert("Введите сумму");
-    return;
-  }
-  if (!requisites) {
-    alert("Введите реквизиты");
-    return;
-  }
+    if (!amount || amount <= 0) {
+      alert("Введите сумму");
+      return;
+    }
+    if (!wallet) {
+      alert("Введите адрес кошелька");
+      return;
+    }
 
-  const { error } = await supabase.from("withdrawals").insert({
-    user_id: window.USER_ID,
-    amount,
-    requisites,
-    address,
-    status: "pending",
-    created_at: new Date().toISOString()
-  });
+    // Отправка в таблицу `withdrawals` с обязательным полем `address`
+    const { error } = await supabase.from("withdrawals").insert({
+      user_id: window.USER_ID,
+      amount,
+      address: wallet, // ← ключевое исправление
+      status: "waiting",
+      created_at: new Date().toISOString()
+    });
 
-  if (error) {
-    console.error(error);
-    alert("Ошибка отправки заявки: " + error.message);
-    return;
-  }
+    if (error) {
+      console.error(error);
+      alert("Ошибка отправки заявки: " + error.message);
+      return;
+    }
 
-  document.getElementById("withdraw-amount").value = "";
-  document.getElementById("withdraw-wallet").value = "";
-  document.getElementById("withdraw-wallet").value = "";
-  closePopup("popup-withdraw");
-  alert("Заявка на вывод отправлена");
-};
+    document.getElementById("withdraw-amount").value = "";
+    document.getElementById("withdraw-wallet").value = "";
+    closePopup("popup-withdraw");
+    alert("Заявка на вывод отправлена");
+  };
 
   initUser();
 });
