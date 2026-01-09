@@ -2,87 +2,168 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Админка</title>
+<title>Admin Panel</title>
 <style>
-body{background:#111;color:#fff;font-family:Arial;padding:20px;display:flex;gap:20px}
-.column{flex:1}
-.item{background:#1e1e1e;padding:15px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between}
-button{padding:6px 12px;border-radius:6px;border:none;font-weight:bold;cursor:pointer}
+body{font-family:sans-serif;background:#111;color:#fff;margin:0;padding:20px}
+.item{display:flex;justify-content:space-between;background:#1a1a1a;padding:12px;border-radius:8px;margin-bottom:10px}
+button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer}
 .ok{background:#2ecc71;color:#000}
-.no{background:#e74c3c;color:#fff;margin-left:6px}
-.meta{font-size:12px;opacity:.7}
+.no{background:#e74c3c;color:#000}
+.meta{font-size:13px;color:#888;margin-top:4px}
+#withdraw-list, #deposit-list, #history-list{margin-top:15px}
+.section{margin-bottom:30px}
 </style>
 </head>
 <body>
 
-<div class="column">
-<h2>💰 Депозиты</h2>
-<div id="deposit-list">Загрузка...</div>
+<h2>🔐 Админ панель</h2>
+
+<div class="section">
+  <h3>💸 Заявки на вывод</h3>
+  <div id="withdraw-list">Загрузка...</div>
 </div>
 
-<div class="column">
-<h2>🏦 Выводы</h2>
-<div id="withdraw-list">Загрузка...</div>
+<div class="section">
+  <h3>📥 История (пополнения + выводы)</h3>
+  <div id="history-list"></div>
 </div>
 
 <script>
-const ADMIN_TOKEN = "@smoke2323j228";
-const ADMIN_DEPOSITS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-deposits";
-const ADMIN_WITHDRAWS_API = "https://ciqyzrgiuvxmhxgladxu.supabase.co/functions/v1/admin-withdraws";
+const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
 
-async function loadDeposits(){
-  const list=document.getElementById("deposit-list");
-  try{
-    const r=await fetch(ADMIN_DEPOSITS_API,{headers:{"x-admin-token":ADMIN_TOKEN}});
-    const d=await r.json();
-    list.innerHTML="";
-    if(!d.length) return list.innerText="Заявок нет";
-    d.forEach(x=>{
-      list.innerHTML+=`<div class="item">
-        <div><b>${x.amount_vc}</b><div class="meta">${x.user_id}</div></div>
-        <div><button class="ok" onclick="depositAction('${x.id}','approve')">OK</button>
-        <button class="no" onclick="depositAction('${x.id}','reject')">NO</button></div>
-      </div>`;
-    });
-  }catch{list.innerText="Ошибка загрузки";}
-}
+// 🔥 ВСТАВЬ СЮДА СВОЙ SERVICE_ROLE КЛЮЧ
+const SERVICE_ROLE = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTQ1ODMwMiwiZXhwIjoyMDgxMDM0MzAyfQ.muYuEoKV63vDFs4s3lxEwHZJc1r3z06GcQNKlLAauEg";
+
+const ADMIN_TOKEN = "my_admin_secret_token"; // можно заменить на свой
+
+const ADMIN_WITHDRAWS_API = SUPABASE_URL + "/functions/v1/admin-withdraws";
 
 async function loadWithdrawals(){
-  const list=document.getElementById("withdraw-list");
+  const list = document.getElementById("withdraw-list");
   try{
-    const r=await fetch(ADMIN_WITHDRAWS_API,{headers:{"x-admin-token":ADMIN_TOKEN}});
-    const d=await r.json();
-    list.innerHTML="";
-    if(!d.length) return list.innerText="Заявок нет";
-    d.forEach(x=>{
-      list.innerHTML+=`<div class="item">
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + SERVICE_ROLE,
+        "x-admin-token": ADMIN_TOKEN
+      }
+    });
+
+    if(res.status === 401){
+      list.innerText = "⛔ Ошибка 401 — Нет доступа. Проверь ключ.";
+      return;
+    }
+
+    const data = await res.json();
+    list.innerHTML = "";
+
+    if(!Array.isArray(data) || data.length === 0){
+      list.innerText = "Заявок нет";
+      return;
+    }
+
+    data.forEach(w => {
+      list.innerHTML += `
+      <div class="item">
         <div>
-          <b>${x.amount}</b>
-          <div class="meta">${x.user_id}</div>
-          <div class="meta">${x.address}</div>
+          <b>Сумма:</b> ${w.amount} VC
+          <div class="meta"><b>User ID:</b> ${w.user_id}</div>
+          <div class="meta"><b>Кошелёк:</b> ${w.address}</div>
+          <div class="meta"><b>Статус:</b> ${w.status}</div>
+          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
         </div>
         <div>
-          <button class="ok" onclick="withdrawAction('${x.id}','approve')">OK</button>
-          <button class="no" onclick="withdrawAction('${x.id}','reject')">NO</button>
+          <button class="ok" onclick="withdrawAction('${w.id}', 'approve')">OK</button>
+          <button class="no" onclick="withdrawAction('${w.id}', 'reject')">NO</button>
         </div>
       </div>`;
     });
-  }catch{list.innerText="Ошибка загрузки";}
+
+  } catch(e){
+    console.error(e);
+    list.innerText = "Ошибка загрузки";
+  }
 }
 
-window.depositAction=async(id,a)=>{
-  await fetch(ADMIN_DEPOSITS_API,{method:"POST",headers:{"Content-Type":"application/json","x-admin-token":ADMIN_TOKEN},body:JSON.stringify({id,action:a})});
-  loadDeposits();
+async function withdrawAction(id, action){
+  try{
+    const res = await fetch(ADMIN_WITHDRAWS_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + SERVICE_ROLE,
+        "x-admin-token": ADMIN_TOKEN
+      },
+      body: JSON.stringify({ id, action })
+    });
+
+    const result = await res.json();
+    if(result.error){
+      alert("Ошибка: " + result.error);
+      return;
+    }
+
+    alert("Успешно обновлено");
+    loadWithdrawals();
+  } catch(e){
+    console.error(e);
+    alert("Ошибка запроса");
+  }
 }
 
-window.withdrawAction=async(id,a)=>{
-  await fetch(ADMIN_WITHDRAWS_API,{method:"POST",headers:{"Content-Type":"application/json","x-admin-token":ADMIN_TOKEN},body:JSON.stringify({id,action:a})});
-  loadWithdrawals();
+async function loadHistory(){
+  const list = document.getElementById("history-list");
+  list.innerHTML = "";
+
+  // Загружаем депозиты
+  const depRes = await fetch(SUPABASE_URL + "/rest/v1/deposits?select=amount_vc,status,created_at", {
+    headers: { "apikey": SERVICE_ROLE, "Authorization": "Bearer " + SERVICE_ROLE }
+  });
+  const dep = await depRes.json();
+
+  // Загружаем выводы
+  const wdRes = await fetch(SUPABASE_URL + "/rest/v1/withdrawals?select=amount,address,status,created_at", {
+    headers: { "apikey": SERVICE_ROLE, "Authorization": "Bearer " + SERVICE_ROLE }
+  });
+  const wd = await wdRes.json();
+
+  if(!dep.length && !wd.length){
+    list.innerHTML = "<div class='meta'>Операций пока нет</div>";
+    return;
+  }
+
+  dep.forEach(d => {
+    list.innerHTML += `
+    <div class="item">
+      <div>
+        <b>➕ Пополнение</b>
+        <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
+      </div>
+      <div style="text-align:right">
+        <b>${d.amount_vc} VC</b><br>
+        <span>${d.status}</span>
+      </div>
+    </div>`;
+  });
+
+  wd.forEach(w => {
+    list.innerHTML += `
+    <div class="item">
+      <div>
+        <b>💸 Вывод</b>
+        <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+        <div class="meta">${w.address}</div>
+      </div>
+      <div style="text-align:right">
+        <b>${w.amount} VC</b><br>
+        <span>${w.status}</span>
+      </div>
+    </div>`;
+  });
 }
 
-loadDeposits();
 loadWithdrawals();
+loadHistory();
 </script>
 
 </body>
