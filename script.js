@@ -1,14 +1,14 @@
+// ОЧИСТКА КЕША СХЕМЫ — обязательно первой!
+localStorage.removeItem("supabase-schema-cache");
+
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro"; // оставь свой рабочий ключ
+  const SUPABASE_KEY = "ВАШ_ANON_KEY"; // вставь сюда свой ключ anon (который работает)
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const tg = window.Telegram.WebApp;
   tg.expand();
-
-  // Чистим кеш схемы, чтобы новые колонки подтянулись
-  localStorage.removeItem("supabase-schema-cache");
 
   if (!tg.initDataUnsafe?.user) {
     alert("Открой через Telegram");
@@ -67,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("open-deposit").onclick = () => openPopup("popup-deposit");
   document.getElementById("close-deposit").onclick = () => closePopup("popup-deposit");
-
   document.getElementById("close-payment").onclick = () => closePopup("popup-payment");
 
   document.getElementById("open-withdraw").onclick = () => openPopup("popup-withdraw");
@@ -101,10 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     dep?.forEach(d => {
-      let s = "⏳ В ожидании";
-      if (d.status === "success") s = "✅ Успешно";
-      if (d.status === "rejected") s = "❌ Отказано";
-      if (d.status === "waiting") s = "⏳ На рассмотрении";
+      const s = d.status === "success" ? "✅ Успешно" :
+                d.status === "rejected" ? "❌ Отказано" : "⏳ На рассмотрении";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -116,16 +113,13 @@ document.addEventListener("DOMContentLoaded", () => {
         <div style="text-align:right">
           <b>${d.amount_vc} VC</b><br>
           <span>${s}</span>
-        </div>
-      `;
+        </div>`;
       list.appendChild(item);
     });
 
     wd?.forEach(w => {
-      let s = "⏳ В ожидании";
-      if (w.status === "success") s = "✅ Успешно";
-      if (w.status === "rejected") s = "❌ Отказано";
-      if (w.status === "waiting") s = "⏳ На рассмотрении";
+      const s = w.status === "success" ? "✅ Успешно" :
+                w.status === "rejected" ? "❌ Отказано" : "⏳ На рассмотрении";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -139,8 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div style="text-align:right">
           <b>${w.amount} VC</b><br>
           <span>${s}</span>
-        </div>
-      `;
+        </div>`;
       list.appendChild(item);
     });
   }
@@ -163,11 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
       status: "waiting",
       created_at: new Date().toISOString()
     });
-
-    if (error) {
-      alert("Ошибка создания заявки: " + error.message);
-      return;
-    }
+    if (error) return alert("Ошибка: " + error.message);
 
     closePopup("popup-payment");
     closePopup("popup-deposit");
@@ -177,35 +166,25 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("confirm-withdraw").onclick = async () => {
     const amount = parseFloat(document.getElementById("withdraw-amount").value);
     const requisites = document.getElementById("withdraw-wallet").value.trim();
-    const address = requisites;
 
-    if (!amount || amount <= 0) {
-      alert("Введите сумму");
-      return;
-    }
-    if (!requisites) {
-      alert("Введите адрес кошелька");
-      return;
-    }
+    if (!amount || amount <= 0) return alert("Введите сумму");
+    if (!requisites) return alert("Введите реквизиты");
 
     const { error } = await supabase.from("withdrawals").insert({
       user_id: window.USER_ID,
       amount,
       requisites,
-      address,
+      address: requisites, // теперь колонка точно есть
       status: "waiting",
       created_at: new Date().toISOString()
     });
 
-    if (error) {
-      alert("Ошибка отправки заявки: " + error.message);
-      return;
-    }
+    if (error) return alert("Ошибка: " + error.message);
 
     document.getElementById("withdraw-amount").value = "";
     document.getElementById("withdraw-wallet").value = "";
     closePopup("popup-withdraw");
-    alert("Заявка на вывод отправлена. Ждите обработки.");
+    alert("Заявка на вывод отправлена");
   };
 
   initUser();
