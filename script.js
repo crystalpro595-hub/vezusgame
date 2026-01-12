@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const { data: dep } = await supabase
       .from("deposits")
-      .select("amount_vc, status, created_at")
+      .select("amount, status, created_at")
       .eq("user_id", window.USER_ID)
       .order("created_at", { ascending: false });
 
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
         </div>
         <div style="text-align:right">
-          <b>${d.amount_vc} VC</b><br>
+          <b>${d.amount} VC</b><br>
           <span>${s}</span>
         </div>`;
       list.appendChild(item);
