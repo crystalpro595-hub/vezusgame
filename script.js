@@ -102,8 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     dep?.forEach(d => {
-      const s = d.status === "success" ? "✅ Успешно" :
-                d.status === "rejected" ? "❌ Отказано" : "⏳ В ожидании";
+      const s =
+  d.status === "approved" ? "✅ Успешно" :
+  d.status === "rejected" ? "❌ Отказано" :
+  "⏳ В ожидании";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -120,8 +122,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     wd?.forEach(w => {
-      const s = w.status === "success" ? "✅ Успешно" :
-                w.status === "rejected" ? "❌ Отказано" : "⏳ В ожидании";
+      const s =
+  d.status === "approved" ? "✅ Успешно" :
+  d.status === "rejected" ? "❌ Отказано" :
+  "⏳ В ожидании";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -152,11 +156,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
 
     const { error } = await supabase.from("deposits").insert({
-      user_id: window.USER_ID,
-      amount_vc: amount,
-      status: "waiting",
-      created_at: new Date().toISOString()
-    });
+  user_id: window.USER_ID,
+  amount: amount,
+  status: "pending"
+});
 
     if (error) return alert("Ошибка: " + error.message);
 
@@ -173,13 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!requisites) return alert("Введите реквизиты");
 
     const { error } = await supabase.from("withdrawals").insert({
-      user_id: window.USER_ID,
-      amount,
-      requisites,
-      address: requisites,
-      status: "waiting",
-      created_at: new Date().toISOString()
-    });
+  user_id: window.USER_ID,
+  amount: amount,
+  address: requisites,
+  status: "pending"
+});
 
     if (error) return alert("Ошибка: " + error.message);
 
