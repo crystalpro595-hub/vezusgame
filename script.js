@@ -94,16 +94,15 @@ document.addEventListener("DOMContentLoaded", () => {
       .eq("user_id", window.USER_ID)
       .order("created_at", { ascending: false });
 
-    const { data: wd } = await supabase
-      .from("withdrawals")
-      .select("amount, address, status, created_at")
-      .eq("user_id", window.USER_ID)
-      .order("created_at", { ascending: false });
+    const { data: wd, error: wdError } = await supabase
+  .from("withdrawals")
+  .select("amount, address, status, created_at")
+  .eq("user_id", window.USER_ID)
+  .order("created_at", { ascending: false });
 
-    if (!dep?.length && !wd?.length) {
-      list.innerHTML = "<div class='meta'>Операций пока нет</div>";
-      return;
-    }
+if (wdError) {
+  console.error("Withdrawals error:", wdError);
+}
 
     dep?.forEach(d => {
       const s =
