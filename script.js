@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const { data: wd } = await supabase
       .from("withdrawals")
-      .select("amount, requisites, address, status, created_at")
+      .select("amount, address, status, created_at")
       .eq("user_id", window.USER_ID)
       .order("created_at", { ascending: false });
 
