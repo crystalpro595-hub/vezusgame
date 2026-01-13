@@ -1,4 +1,4 @@
-// Очищаем кеш схемы, чтобы SDK увидел новые колонки
+// Очищаем кеш схемы
 localStorage.removeItem("supabase-schema-cache");
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -38,7 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!newUser) return alert("Ошибка создания пользователя");
 
-      await supabase.from("balances").insert({ user_id: newUser.id, balance: 0 });
+      await supabase.from("balances").insert({
+        user_id: newUser.id,
+        balance: 0
+      });
+
       user = newUser;
     }
 
@@ -103,9 +107,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     dep?.forEach(d => {
       const s =
-  d.status === "approved" ? "✅ Успешно" :
-  d.status === "rejected" ? "❌ Отказано" :
-  "⏳ В ожидании";
+        d.status === "approved" ? "✅ Успешно" :
+        d.status === "rejected" ? "❌ Отказано" :
+        "⏳ В ожидании";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -123,9 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     wd?.forEach(w => {
       const s =
-  d.status === "approved" ? "✅ Успешно" :
-  d.status === "rejected" ? "❌ Отказано" :
-  "⏳ В ожидании";
+        w.status === "approved" ? "✅ Успешно" :
+        w.status === "rejected" ? "❌ Отказано" :
+        "⏳ В ожидании";
 
       const item = document.createElement("div");
       item.className = "item";
@@ -133,8 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div>
           <b>💸 Вывод</b>
           <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">Кошелёк: ${w.address}</div>
-          <div class="meta">Реквизиты: ${w.requisites}</div>
+          <div class="meta">Реквизиты: ${w.address}</div>
         </div>
         <div style="text-align:right">
           <b>${w.amount} VC</b><br>
@@ -156,18 +159,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
 
     const { error } = await supabase.from("deposits").insert({
-  user_id: window.USER_ID,
-  amount: amount,
-  status: "pending"
-});
+      user_id: window.USER_ID,
+      amount,
+      status: "pending"
+    });
 
-    if (error) return alert("Ошибка: " + error.message);
+    if (error) return alert(error.message);
 
     closePopup("popup-payment");
     closePopup("popup-deposit");
-    alert("Заявка отправлена. Ждите подтверждения.");
+    alert("Заявка отправлена");
   };
 
+  /* ========= ВЫВОД ========= */
   document.getElementById("confirm-withdraw").onclick = async () => {
     const amount = parseFloat(document.getElementById("withdraw-amount").value);
     const requisites = document.getElementById("withdraw-wallet").value.trim();
@@ -175,36 +179,34 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!amount || amount <= 0) return alert("Введите сумму");
     if (!requisites) return alert("Введите реквизиты");
 
-    const { error } = // получаем баланс
-const { data: bal } = await supabase
-  .from("balances")
-  .select("balance")
-  .eq("user_id", window.USER_ID)
-  .single();
+    const { data: bal } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
 
-if (!bal || bal.balance < amount) {
-  return alert("Недостаточно средств");
-}
+    if (!bal || bal.balance < amount) {
+      return alert("Недостаточно средств");
+    }
 
-// списываем сразу
-await supabase.rpc("increment_balance", {
-  uid: window.USER_ID,
-  amount_value: -amount,
-});
+    // списываем сразу
+    await supabase
+      .from("balances")
+      .update({ balance: bal.balance - amount })
+      .eq("user_id", window.USER_ID);
 
-// создаём заявку
-await supabase.from("withdrawals").insert({
-  user_id: window.USER_ID,
-  amount,
-  address: requisites,
-  status: "pending"
-});
+    // создаём заявку
+    const { error } = await supabase.from("withdrawals").insert({
+      user_id: window.USER_ID,
+      amount,
+      address: requisites,
+      status: "pending"
+    });
 
-    if (error) return alert("Ошибка: " + error.message);
+    if (error) return alert(error.message);
 
-    document.getElementById("withdraw-amount").value = "";
-    document.getElementById("withdraw-wallet").value = "";
     closePopup("popup-withdraw");
+    loadBalance();
     alert("Заявка на вывод отправлена");
   };
 
