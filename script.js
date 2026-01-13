@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const tgUser = tg.initDataUnsafe.user;
 
+  /* ================= INIT USER ================= */
+
   async function initUser() {
     let { data: user } = await supabase
       .from("users")
@@ -36,7 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .select()
         .single();
 
-      if (!newUser) return alert("Ошибка создания пользователя");
+      if (!newUser) {
+        alert("Ошибка создания пользователя");
+        return;
+      }
 
       await supabase.from("balances").insert({
         user_id: newUser.id,
@@ -50,8 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
     loadBalance();
 
     const name = `${tgUser.first_name}${tgUser.last_name ? " " + tgUser.last_name : ""}`;
-    document.getElementById("profile-user").innerText = `👤 ${name} | TG ID: ${tgUser.id}`;
+    document.getElementById("profile-user").innerText =
+      `👤 ${name} | TG ID: ${tgUser.id}`;
   }
+
+  /* ================= BALANCE ================= */
 
   async function loadBalance() {
     const { data } = await supabase
@@ -64,6 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("top-balance").innerText = `БАЛАНС: ${balance} VC`;
     document.getElementById("profile-balance").innerText = `Баланс: ${balance} VC`;
   }
+
+  /* ================= POPUPS ================= */
 
   const openPopup = id => document.getElementById(id).style.display = "flex";
   const closePopup = id => document.getElementById(id).style.display = "none";
@@ -84,25 +94,28 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
 
+  /* ================= HISTORY ================= */
+
   async function loadHistory() {
     const list = document.getElementById("history-list");
     list.innerHTML = "";
 
     const { data: dep } = await supabase
       .from("deposits")
+      .select("amount, status, created_at")
+      .eq("user_id", window.USER_ID)
+      .order("created_at", { ascending: false });
+
+    const { data: wd } = await supabase
+      .from("withdrawals")
       .select("id, amount, address, status, created_at")
       .eq("user_id", window.USER_ID)
       .order("created_at", { ascending: false });
 
-    const { data: wd, error: wdError } = await supabase
-  .from("withdrawals")
-  .select("amount, address, status, created_at")
-  .eq("user_id", window.USER_ID)
-  .order("created_at", { ascending: false });
-
-if (wdError) {
-  console.error("Withdrawals error:", wdError);
-}
+    if (!dep?.length && !wd?.length) {
+      list.innerHTML = "<div class='meta'>Операций пока нет</div>";
+      return;
+    }
 
     dep?.forEach(d => {
       const s =
@@ -128,38 +141,75 @@ if (wdError) {
       const s =
         w.status === "approved" ? "✅ Успешно" :
         w.status === "rejected" ? "❌ Отказано" :
+        w.status === "cancelled" ? "❌ Отменено" :
         "⏳ В ожидании";
+
+      const canCancel =
+        w.status === "pending"
+          ? `<button class="cancel-btn" data-id="${w.id}" data-amount="${w.amount}">Отменить</button>`
+          : "";
 
       const item = document.createElement("div");
       item.className = "item";
-      const canCancel = w.status === "pending"
-  ? `<button class="cancel-btn" data-id="${w.id}" data-amount="${w.amount}">Отменить</button>`
-  : "";
+      item.innerHTML = `
+        <div>
+          <b>💸 Вывод</b>
+          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+          <div class="meta">Реквизиты: ${w.address}</div>
+          ${canCancel}
+        </div>
+        <div style="text-align:right">
+          <b>${w.amount} VC</b><br>
+          <span>${s}</span>
+        </div>`;
+      list.appendChild(item);
+    });
 
-item.innerHTML = `
-  <div>
-    <b>💸 Вывод</b>
-    <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-    <div class="meta">Реквизиты: ${w.address}</div>
-    ${canCancel}
-  </div>
-  <div style="text-align:right">
-    <b>${w.amount} VC</b><br>
-    <span>${s}</span>
-  </div>`;
+    document.querySelectorAll(".cancel-btn").forEach(btn => {
+      btn.onclick = () => {
+        cancelWithdrawal(btn.dataset.id, parseFloat(btn.dataset.amount));
+      };
+    });
+  }
 
-     document.querySelectorAll(".cancel-btn").forEach(btn => {
-  btn.onclick = () => {
-    const id = btn.dataset.id;
-    const amount = parseFloat(btn.dataset.amount);
-    cancelWithdrawal(id, amount);
-  };
-});
+  /* ================= CANCEL WITHDRAW ================= */
+
+  async function cancelWithdrawal(id, amount) {
+    if (!confirm("Отменить заявку на вывод?")) return;
+
+    const { error } = await supabase
+      .from("withdrawals")
+      .update({ status: "cancelled" })
+      .eq("id", id)
+      .eq("user_id", window.USER_ID)
+      .eq("status", "pending");
+
+    if (error) {
+      alert("Ошибка отмены");
+      return;
+    }
+
+    const { data: bal } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
+
+    await supabase
+      .from("balances")
+      .update({ balance: bal.balance + amount })
+      .eq("user_id", window.USER_ID);
+
+    loadBalance();
+    loadHistory();
+    alert("Заявка отменена, средства возвращены");
+  }
+
+  /* ================= DEPOSIT ================= */
 
   document.getElementById("to-payment").onclick = () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
     if (!amount || amount < 100) return alert("Минимум 100 ₽");
-
     document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
     openPopup("popup-payment");
   };
@@ -179,41 +229,9 @@ item.innerHTML = `
     closePopup("popup-deposit");
     alert("Заявка отправлена");
   };
-async function cancelWithdrawal(withdrawalId, amount) {
-  const confirmCancel = confirm("Отменить заявку на вывод?");
-  if (!confirmCancel) return;
 
-  // меняем статус заявки
-  const { error: updErr } = await supabase
-    .from("withdrawals")
-    .update({ status: "cancelled" })
-    .eq("id", withdrawalId)
-    .eq("user_id", window.USER_ID)
-    .eq("status", "pending");
+  /* ================= WITHDRAW ================= */
 
-  if (updErr) {
-    alert("Не удалось отменить вывод");
-    return;
-  }
-
-  // возвращаем деньги
-  const { data: bal } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
-
-  await supabase
-    .from("balances")
-    .update({ balance: bal.balance + amount })
-    .eq("user_id", window.USER_ID);
-
-  loadBalance();
-  loadHistory();
-  alert("Заявка отменена, средства возвращены");
-}
-  
-  /* ========= ВЫВОД ========= */
   document.getElementById("confirm-withdraw").onclick = async () => {
     const amount = parseFloat(document.getElementById("withdraw-amount").value);
     const requisites = document.getElementById("withdraw-wallet").value.trim();
@@ -231,13 +249,11 @@ async function cancelWithdrawal(withdrawalId, amount) {
       return alert("Недостаточно средств");
     }
 
-    // списываем сразу
     await supabase
       .from("balances")
       .update({ balance: bal.balance - amount })
       .eq("user_id", window.USER_ID);
 
-    // создаём заявку
     const { error } = await supabase.from("withdrawals").insert({
       user_id: window.USER_ID,
       amount,
