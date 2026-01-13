@@ -175,9 +175,27 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!amount || amount <= 0) return alert("Введите сумму");
     if (!requisites) return alert("Введите реквизиты");
 
-    const { error } = await supabase.from("withdrawals").insert({
+    const { error } = // получаем баланс
+const { data: bal } = await supabase
+  .from("balances")
+  .select("balance")
+  .eq("user_id", window.USER_ID)
+  .single();
+
+if (!bal || bal.balance < amount) {
+  return alert("Недостаточно средств");
+}
+
+// списываем сразу
+await supabase.rpc("increment_balance", {
+  uid: window.USER_ID,
+  amount_value: -amount,
+});
+
+// создаём заявку
+await supabase.from("withdrawals").insert({
   user_id: window.USER_ID,
-  amount: amount,
+  amount,
   address: requisites,
   status: "pending"
 });
