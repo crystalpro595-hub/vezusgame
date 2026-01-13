@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const { data: dep } = await supabase
       .from("deposits")
-      .select("amount, status, created_at")
+      .select("id, amount, address, status, created_at")
       .eq("user_id", window.USER_ID)
       .order("created_at", { ascending: false });
 
@@ -132,19 +132,29 @@ if (wdError) {
 
       const item = document.createElement("div");
       item.className = "item";
-      item.innerHTML = `
-        <div>
-          <b>💸 Вывод</b>
-          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">Реквизиты: ${w.address}</div>
-        </div>
-        <div style="text-align:right">
-          <b>${w.amount} VC</b><br>
-          <span>${s}</span>
-        </div>`;
-      list.appendChild(item);
-    });
-  }
+      const canCancel = w.status === "pending"
+  ? `<button class="cancel-btn" data-id="${w.id}" data-amount="${w.amount}">Отменить</button>`
+  : "";
+
+item.innerHTML = `
+  <div>
+    <b>💸 Вывод</b>
+    <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
+    <div class="meta">Реквизиты: ${w.address}</div>
+    ${canCancel}
+  </div>
+  <div style="text-align:right">
+    <b>${w.amount} VC</b><br>
+    <span>${s}</span>
+  </div>`;
+
+     document.querySelectorAll(".cancel-btn").forEach(btn => {
+  btn.onclick = () => {
+    const id = btn.dataset.id;
+    const amount = parseFloat(btn.dataset.amount);
+    cancelWithdrawal(id, amount);
+  };
+});
 
   document.getElementById("to-payment").onclick = () => {
     const amount = parseInt(document.getElementById("deposit-amount").value);
@@ -169,7 +179,40 @@ if (wdError) {
     closePopup("popup-deposit");
     alert("Заявка отправлена");
   };
+async function cancelWithdrawal(withdrawalId, amount) {
+  const confirmCancel = confirm("Отменить заявку на вывод?");
+  if (!confirmCancel) return;
 
+  // меняем статус заявки
+  const { error: updErr } = await supabase
+    .from("withdrawals")
+    .update({ status: "cancelled" })
+    .eq("id", withdrawalId)
+    .eq("user_id", window.USER_ID)
+    .eq("status", "pending");
+
+  if (updErr) {
+    alert("Не удалось отменить вывод");
+    return;
+  }
+
+  // возвращаем деньги
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
+
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance + amount })
+    .eq("user_id", window.USER_ID);
+
+  loadBalance();
+  loadHistory();
+  alert("Заявка отменена, средства возвращены");
+}
+  
   /* ========= ВЫВОД ========= */
   document.getElementById("confirm-withdraw").onclick = async () => {
     const amount = parseFloat(document.getElementById("withdraw-amount").value);
