@@ -119,13 +119,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const history = [];
 
-// депозиты
+    // депозиты
 dep?.forEach(d => {
   history.push({
     type: "deposit",
     amount: d.amount,
     status: d.status,
-    created_at: d.created_at
+    created_at: new Date(d.created_at).getTime()
   });
 });
 
@@ -137,14 +137,12 @@ wd?.forEach(w => {
     amount: w.amount,
     address: w.address,
     status: w.status,
-    created_at: w.created_at
+    created_at: new Date(w.created_at).getTime()
   });
 });
 
-// сортировка по дате (новые сверху)
-history.sort((a, b) =>
-  new Date(b.created_at) - new Date(a.created_at)
-);
+// сортировка
+history.sort((a, b) => b.created_at - a.created_at);
 
 // рендер
 history.forEach(item => {
