@@ -1,20 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("SCRIPT LOADED");
+
+  /* ================= CONFIG ================= */
+
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const tg = window.Telegram.WebApp;
-  tg.expand();
-
-  if (!tg.initDataUnsafe?.user) {
+  const tg = window.Telegram?.WebApp;
+  if (!tg?.initDataUnsafe?.user) {
     alert("Открой через Telegram");
     return;
   }
 
+  tg.expand();
   const tgUser = tg.initDataUnsafe.user;
 
-  /* ================= INIT USER ================= */
+  /* ================= HELPERS ================= */
+
+  const $ = id => document.getElementById(id);
+
+  const onClick = (id, fn) => {
+    const el = $(id);
+    if (el) el.onclick = fn;
+  };
+
+  const openPopup = id => {
+    const el = $(id);
+    if (el) el.style.display = "flex";
+  };
+
+  const closePopup = id => {
+    const el = $(id);
+    if (el) el.style.display = "none";
+  };
+
+  /* ================= USER INIT ================= */
 
   async function initUser() {
     let { data: user } = await supabase
@@ -24,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .single();
 
     if (!user) {
-      const { data: newUser } = await supabase
+      const { data: newUser, error } = await supabase
         .from("users")
         .insert({
           telegram_id: tgUser.id,
@@ -35,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .select()
         .single();
 
-      if (!newUser) {
+      if (error || !newUser) {
         alert("Ошибка создания пользователя");
         return;
       }
@@ -49,28 +72,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.USER_ID = user.id;
-    loadBalance();
 
-    const name = `${tgUser.first_name}${tgUser.last_name ? " " + tgUser.last_name : ""}`;
-    document.getElementById("profile-user").innerText =
-      `👤 ${name} | TG ID: ${tgUser.id}`;
+    const name =
+      tgUser.first_name +
+      (tgUser.last_name ? " " + tgUser.last_name : "");
+
+    if ($("profile-user")) {
+      $("profile-user").innerText = `👤 ${name} | TG ID: ${tgUser.id}`;
+    }
+
+    loadBalance();
   }
 
-  /* ===== КОНВЕРТАЦИЯ ₽ → VC ===== */
-const depositInput = document.getElementById("deposit-amount");
-const vcEstimate = document.getElementById("vc-estimate");
-
-if (depositInput && vcEstimate) {
-  depositInput.addEventListener("input", () => {
-    const rub = parseFloat(depositInput.value) || 0;
-
-    // КУРС: 1 ₽ = 1 VC
-    const vc = Math.floor(rub);
-
-    vcEstimate.innerText = `${vc} VC`;
-  });
-}
-  
   /* ================= BALANCE ================= */
 
   async function loadBalance() {
@@ -81,312 +94,127 @@ if (depositInput && vcEstimate) {
       .single();
 
     const balance = data?.balance ?? 0;
-    document.getElementById("top-balance").innerText = `БАЛАНС: ${balance} VC`;
-    document.getElementById("profile-balance").innerText = `Баланс: ${balance} VC`;
-    document.getElementById("wallet-balance-live").innerText = `${balance} VC`;
+
+    if ($("top-balance"))
+      $("top-balance").innerText = `БАЛАНС: ${balance} VC`;
+
+    if ($("profile-balance"))
+      $("profile-balance").innerText = `Баланс: ${balance} VC`;
+
+    if ($("wallet-balance-live"))
+      $("wallet-balance-live").innerText = `${balance} VC`;
+
+    if ($("game-balance"))
+      $("game-balance").innerText = `${balance} VC`;
+  }
+
+  /* ================= CONVERT ₽ → VC ================= */
+
+  if ($("deposit-amount") && $("vc-estimate")) {
+    $("deposit-amount").addEventListener("input", () => {
+      const rub = parseFloat($("deposit-amount").value) || 0;
+      $("vc-estimate").innerText = `${Math.floor(rub)} VC`;
+    });
   }
 
   /* ================= POPUPS ================= */
 
-  const openPopup = id => document.getElementById(id).style.display = "flex";
-  const closePopup = id => document.getElementById(id).style.display = "none";
+  onClick("wallet-open", () => openPopup("popup-wallet"));
+  onClick("close-wallet", () => closePopup("popup-wallet"));
 
-  document.getElementById("wallet-open").onclick = () => openPopup("popup-wallet");
-  document.getElementById("close-wallet").onclick = () => closePopup("popup-wallet");
+  onClick("open-deposit", () => openPopup("popup-deposit"));
+  onClick("close-deposit", () => closePopup("popup-deposit"));
+  onClick("close-payment", () => closePopup("popup-payment"));
 
-  document.getElementById("open-deposit").onclick = () => openPopup("popup-deposit");
-  document.getElementById("close-deposit").onclick = () => closePopup("popup-deposit");
-  document.getElementById("close-payment").onclick = () => closePopup("popup-payment");
+  onClick("open-withdraw", () => openPopup("popup-withdraw"));
+  onClick("close-withdraw", () => closePopup("popup-withdraw"));
 
-  document.getElementById("open-withdraw").onclick = () => openPopup("popup-withdraw");
-  document.getElementById("close-withdraw").onclick = () => closePopup("popup-withdraw");
-
-  document.getElementById("btn-profile").onclick = () => {
+  onClick("btn-profile", () => {
     openPopup("popup-profile");
     loadHistory();
-  };
-  document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
-// открыть бонусы
-document.getElementById("btn-bonus").onclick = () => {
-  openPopup("popup-bonus");
-};
+  });
+  onClick("close-profile", () => closePopup("popup-profile"));
 
-// закрыть бонусы
-document.getElementById("close-bonus").onclick = () => {
-  closePopup("popup-bonus");
-};
+  onClick("btn-bonus", () => openPopup("popup-bonus"));
+  onClick("close-bonus", () => closePopup("popup-bonus"));
 
-// временные действия
-document.getElementById("open-promo").onclick = () => {
-  alert("🎟 Скоро будет промокод");
-};
+  onClick("btn-game", () => {
+    openPopup("popup-game");
+    loadBalance();
+  });
+  onClick("close-game", () => closePopup("popup-game"));
 
-document.getElementById("open-referral").onclick = () => {
-  alert("👥 Скоро будет реферальная система");
-};
-
-document.getElementById("open-giveaway").onclick = () => {
-  alert("🎁 Скоро будут розыгрыши");
-};
-
-// открыть игры
-document.getElementById("btn-game").onclick = () => {
-  openPopup("popup-game");
-  document.getElementById("game-balance").innerText =
-    document.getElementById("top-balance").innerText.replace("БАЛАНС: ", "");
-};
-
-// закрыть игры
-document.getElementById("close-game").onclick = () => {
-  closePopup("popup-game");
-};
-  
   /* ================= HISTORY ================= */
 
   async function loadHistory() {
-    const list = document.getElementById("history-list");
+    const list = $("history-list");
+    if (!list) return;
+
     list.innerHTML = "";
 
     const { data: dep } = await supabase
       .from("deposits")
-      .select("amount, status, created_at")
-      .eq("user_id", window.USER_ID)
-      .order("created_at", { ascending: false });
+      .select("*")
+      .eq("user_id", window.USER_ID);
 
     const { data: wd } = await supabase
       .from("withdrawals")
-      .select("id, amount, address, status, created_at")
-      .eq("user_id", window.USER_ID)
-      .order("created_at", { ascending: false });
+      .select("*")
+      .eq("user_id", window.USER_ID);
 
-    if (!dep?.length && !wd?.length) {
+    const history = [];
+
+    dep?.forEach(d =>
+      history.push({
+        type: "deposit",
+        amount: d.amount,
+        status: d.status,
+        time: new Date(d.created_at).getTime()
+      })
+    );
+
+    wd?.forEach(w =>
+      history.push({
+        type: "withdraw",
+        id: w.id,
+        amount: w.amount,
+        address: w.address,
+        status: w.status,
+        time: new Date(w.created_at).getTime()
+      })
+    );
+
+    history.sort((a, b) => b.time - a.time);
+
+    if (!history.length) {
       list.innerHTML = "<div class='meta'>Операций пока нет</div>";
       return;
     }
 
-    const history = [];
+    history.forEach(item => {
+      const el = document.createElement("div");
+      el.className = "item";
 
-    // депозиты
-dep?.forEach(d => {
-  history.push({
-    type: "deposit",
-    amount: d.amount,
-    status: d.status,
-    created_at: new Date(d.created_at).getTime()
-  });
-});
+      el.innerHTML = `
+        <div>
+          <b>${item.type === "deposit" ? "➕ Пополнение" : "💸 Вывод"}</b>
+          <div class="meta">${new Date(item.time).toLocaleString()}</div>
+          ${item.address ? `<div class="meta">${item.address}</div>` : ""}
+        </div>
+        <div style="text-align:right">
+          <b>${item.amount} VC</b><br>
+          <span>${item.status}</span>
+        </div>
+      `;
 
-// выводы
-wd?.forEach(w => {
-  history.push({
-    type: "withdraw",
-    id: w.id,
-    amount: w.amount,
-    address: w.address,
-    status: w.status,
-    created_at: new Date(w.created_at).getTime()
-  });
-});
-
-// сортировка
-history.sort((a, b) => b.created_at - a.created_at);
-
-// рендер
-history.forEach(item => {
-  if (item.type === "deposit") {
-    const s =
-      item.status === "approved" ? "✅ Успешно" :
-      item.status === "rejected" ? "❌ Отказано" :
-      "⏳ В ожидании";
-
-    const el = document.createElement("div");
-    el.className = "item";
-    el.innerHTML = `
-      <div>
-        <b>➕ Пополнение</b>
-        <div class="meta">${new Date(item.created_at).toLocaleString()}</div>
-      </div>
-      <div style="text-align:right">
-        <b>${item.amount} VC</b><br>
-        <span>${s}</span>
-      </div>`;
-    list.appendChild(el);
+      list.appendChild(el);
+    });
   }
 
-  if (item.type === "withdraw") {
-    const s =
-      item.status === "approved" ? "✅ Успешно" :
-      item.status === "rejected" ? "❌ Отказано" :
-      item.status === "cancelled" ? "❌ Отменено" :
-      "⏳ В ожидании";
+  /* ================= GAME ================= */
 
-    const canCancel =
-      item.status === "pending"
-        ? `<button class="cancel-btn" data-id="${item.id}" data-amount="${item.amount}">Отменить</button>`
-        : "";
-
-    const el = document.createElement("div");
-    el.className = "item";
-    el.innerHTML = `
-      <div>
-        <b>💸 Вывод</b>
-        <div class="meta">${new Date(item.created_at).toLocaleString()}</div>
-        <div class="meta">Реквизиты: ${item.address}</div>
-        ${canCancel}
-      </div>
-      <div style="text-align:right">
-        <b>${item.amount} VC</b><br>
-        <span>${s}</span>
-      </div>`;
-    list.appendChild(el);
-  }
-});
-
-// навешиваем кнопки отмены
-document.querySelectorAll(".cancel-btn").forEach(btn => {
-  btn.onclick = () => {
-    cancelWithdrawal(btn.dataset.id, parseFloat(btn.dataset.amount));
-  };
-});
-
-  /* ================= CANCEL WITHDRAW ================= */
-
-  async function cancelWithdrawal(id, amount) {
-    if (!confirm("Отменить заявку на вывод?")) return;
-
-    const { error } = await supabase
-      .from("withdrawals")
-      .update({ status: "cancelled" })
-      .eq("id", id)
-      .eq("user_id", window.USER_ID)
-      .eq("status", "pending");
-
-    if (error) {
-      alert("Ошибка отмены");
-      return;
-    }
-
-    const { data: bal } = await supabase
-      .from("balances")
-      .select("balance")
-      .eq("user_id", window.USER_ID)
-      .single();
-
-    await supabase
-      .from("balances")
-      .update({ balance: bal.balance + amount })
-      .eq("user_id", window.USER_ID);
-
-    loadBalance();
-    loadHistory();
-    alert("Заявка отменена, средства возвращены");
-  }
-
-  /* ================= DEPOSIT ================= */
-
-  document.getElementById("to-payment").onclick = () => {
-    const amount = parseInt(document.getElementById("deposit-amount").value);
-    if (!amount || amount < 100) return alert("Минимум 100 ₽");
-    document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
-    openPopup("popup-payment");
-  };
-
-  document.getElementById("confirm-paid").onclick = async () => {
-  const amount = parseInt(document.getElementById("deposit-amount").value);
-
-  if (!amount || amount < 100) {
-    alert("Минимум 100 ₽");
-    return;
-  }
-
-  const { error } = await supabase.from("deposits").insert({
-    user_id: window.USER_ID,
-    amount: amount,
-    status: "pending"
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  // закрываем попапы
-  closePopup("popup-payment");
-  closePopup("popup-deposit");
-
-  // показываем анимацию успеха
-  openPopup("popup-success");
-
-  setTimeout(() => {
-    closePopup("popup-success");
-  }, 2500);
-};
-
-  /* ================= WITHDRAW ================= */
-
-  document.getElementById("confirm-withdraw").onclick = async () => {
-  const amount = parseFloat(document.getElementById("withdraw-amount").value);
-  const requisites = document.getElementById("withdraw-wallet").value.trim();
-
-  if (!amount || amount <= 0) {
-    alert("Введите сумму");
-    return;
-  }
-
-  if (!requisites) {
-    alert("Введите реквизиты");
-    return;
-  }
-
-  const { data: bal } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
-
-  if (!bal || bal.balance < amount) {
-    alert("Недостаточно средств");
-    return;
-  }
-
-  // списываем баланс
-  await supabase
-    .from("balances")
-    .update({ balance: bal.balance - amount })
-    .eq("user_id", window.USER_ID);
-
-  // создаём заявку
-  const { error } = await supabase.from("withdrawals").insert({
-    user_id: window.USER_ID,
-    amount: amount,
-    address: requisites,
-    status: "pending"
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  // закрываем попап вывода
-  closePopup("popup-withdraw");
-
-  // обновляем баланс
-  loadBalance();
-
-  // показываем красивое подтверждение
-  openPopup("popup-success");
-
-  setTimeout(() => {
-    closePopup("popup-success");
-  }, 2500);
-};
-
-      /* ================= GAME: DICE 50/50 ================= */
-
-  document.getElementById("open-dice").onclick = async () => {
+  onClick("open-dice", async () => {
     const bet = prompt("Введите ставку (VC)");
-
     const amount = parseInt(bet);
     if (!amount || amount <= 0) return;
 
@@ -401,28 +229,26 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
       return;
     }
 
-    // списываем ставку
     await supabase
       .from("balances")
       .update({ balance: bal.balance - amount })
       .eq("user_id", window.USER_ID);
 
-    const win = Math.random() < 0.5;
-
-    if (win) {
+    if (Math.random() < 0.5) {
       await supabase
         .from("balances")
         .update({ balance: bal.balance + amount * 2 })
         .eq("user_id", window.USER_ID);
 
-      alert("🎉 Победа! + " + amount + " VC");
+      alert("🎉 Победа!");
     } else {
       alert("😢 Проигрыш");
     }
 
     loadBalance();
-  };
+  });
 
-  /* ================= INIT ================= */
+  /* ================= START ================= */
+
   initUser();
 });
