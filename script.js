@@ -294,7 +294,7 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
 
   setTimeout(() => {
     closePopup("popup-success");
-  }, 1500);
+  }, 2500);
 };
 
   /* ================= WITHDRAW ================= */
@@ -354,7 +354,7 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
 
   setTimeout(() => {
     closePopup("popup-success");
-  }, 1500);
+  }, 2500);
 };
   
   initUser();
