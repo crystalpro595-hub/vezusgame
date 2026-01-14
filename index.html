@@ -368,21 +368,40 @@ body.show #site {
 </div>
 
 <div class="popup" id="popup-deposit">
-  <div class="box">
-    <div class="title">💰 Пополнение — СБП</div>
-    <div style="color:#ccc;margin-bottom:10px;">
-        Минимальная сумма: <b>100 ₽</b><br>
-        Курс: <b>1₽ → 1 VC</b><br>
-        Номер для перевода: <b>+7 990 151 05 97</b>
+  <div class="deposit-box">
+
+    <div class="deposit-header">
+      <span>💰 Пополнение — СБП</span>
+      <button id="close-deposit">✖</button>
     </div>
-    <div class="input-row">
-        <input id="deposit-amount" type="number" placeholder="Сумма в ₽">
-        <div class="vc-note" id="vc-estimate">0 VC</div>
+
+    <div class="deposit-body">
+
+      <div class="deposit-info">
+        Минимум: <b>100 ₽</b><br>
+        Курс: <b>1 ₽ = 1 VC</b><br>
+        Перевод на номер:<br>
+        <b>+7 990 151 05 97</b>
+      </div>
+
+      <div class="deposit-row">
+        <input
+          id="deposit-amount"
+          type="number"
+          placeholder="Сумма в ₽"
+          min="100"
+        />
+        <div class="deposit-vc" id="vc-estimate">0 VC</div>
+      </div>
+
+      <button class="deposit-btn" id="to-payment">
+        🚀 Перейти к оплате
+      </button>
+
     </div>
-    <a class="action btn-deposit" id="to-payment">Перейти к оплате</a>
-    <a class="action btn-cancel" id="close-deposit">Отмена</a>
+
   </div>
-</div>      
+</div>
 
   <div class="popup" id="popup-payment">
   <div class="box">
