@@ -117,53 +117,92 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    dep?.forEach(d => {
-      const s =
-        d.status === "approved" ? "✅ Успешно" :
-        d.status === "rejected" ? "❌ Отказано" :
-        "⏳ В ожидании";
+    const history = [];
 
-      const item = document.createElement("div");
-      item.className = "item";
-      item.innerHTML = `
-        <div>
-          <b>➕ Пополнение</b>
-          <div class="meta">${new Date(d.created_at).toLocaleString()}</div>
-        </div>
-        <div style="text-align:right">
-          <b>${d.amount} VC</b><br>
-          <span>${s}</span>
-        </div>`;
-      list.appendChild(item);
-    });
+// депозиты
+dep?.forEach(d => {
+  history.push({
+    type: "deposit",
+    amount: d.amount,
+    status: d.status,
+    created_at: d.created_at
+  });
+});
 
-    wd?.forEach(w => {
-      const s =
-        w.status === "approved" ? "✅ Успешно" :
-        w.status === "rejected" ? "❌ Отказано" :
-        w.status === "cancelled" ? "❌ Отменено" :
-        "⏳ В ожидании";
+// выводы
+wd?.forEach(w => {
+  history.push({
+    type: "withdraw",
+    id: w.id,
+    amount: w.amount,
+    address: w.address,
+    status: w.status,
+    created_at: w.created_at
+  });
+});
 
-      const canCancel =
-        w.status === "pending"
-          ? `<button class="cancel-btn" data-id="${w.id}" data-amount="${w.amount}">Отменить</button>`
-          : "";
+// сортировка по дате (новые сверху)
+history.sort((a, b) =>
+  new Date(b.created_at) - new Date(a.created_at)
+);
 
-      const item = document.createElement("div");
-      item.className = "item";
-      item.innerHTML = `
-        <div>
-          <b>💸 Вывод</b>
-          <div class="meta">${new Date(w.created_at).toLocaleString()}</div>
-          <div class="meta">Реквизиты: ${w.address}</div>
-          ${canCancel}
-        </div>
-        <div style="text-align:right">
-          <b>${w.amount} VC</b><br>
-          <span>${s}</span>
-        </div>`;
-      list.appendChild(item);
-    });
+// рендер
+history.forEach(item => {
+  if (item.type === "deposit") {
+    const s =
+      item.status === "approved" ? "✅ Успешно" :
+      item.status === "rejected" ? "❌ Отказано" :
+      "⏳ В ожидании";
+
+    const el = document.createElement("div");
+    el.className = "item";
+    el.innerHTML = `
+      <div>
+        <b>➕ Пополнение</b>
+        <div class="meta">${new Date(item.created_at).toLocaleString()}</div>
+      </div>
+      <div style="text-align:right">
+        <b>${item.amount} VC</b><br>
+        <span>${s}</span>
+      </div>`;
+    list.appendChild(el);
+  }
+
+  if (item.type === "withdraw") {
+    const s =
+      item.status === "approved" ? "✅ Успешно" :
+      item.status === "rejected" ? "❌ Отказано" :
+      item.status === "cancelled" ? "❌ Отменено" :
+      "⏳ В ожидании";
+
+    const canCancel =
+      item.status === "pending"
+        ? `<button class="cancel-btn" data-id="${item.id}" data-amount="${item.amount}">Отменить</button>`
+        : "";
+
+    const el = document.createElement("div");
+    el.className = "item";
+    el.innerHTML = `
+      <div>
+        <b>💸 Вывод</b>
+        <div class="meta">${new Date(item.created_at).toLocaleString()}</div>
+        <div class="meta">Реквизиты: ${item.address}</div>
+        ${canCancel}
+      </div>
+      <div style="text-align:right">
+        <b>${item.amount} VC</b><br>
+        <span>${s}</span>
+      </div>`;
+    list.appendChild(el);
+  }
+});
+
+// навешиваем кнопки отмены
+document.querySelectorAll(".cancel-btn").forEach(btn => {
+  btn.onclick = () => {
+    cancelWithdrawal(btn.dataset.id, parseFloat(btn.dataset.amount));
+  };
+});
 
     document.querySelectorAll(".cancel-btn").forEach(btn => {
       btn.onclick = () => {
