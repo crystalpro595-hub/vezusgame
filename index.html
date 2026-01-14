@@ -304,6 +304,76 @@ body.show #site {
 .deposit-btn:active {
   transform: scale(0.97);
 }
+
+/* ===== PAYMENT POPUP ===== */
+.payment-box {
+  width: 92%;
+  max-width: 380px;
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 16px;
+  color: #fff;
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.payment-header button {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.payment-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.payment-info {
+  background: #020617;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.payment-info b {
+  color: #22c55e;
+}
+
+.payment-warning {
+  font-size: 13px;
+  color: #fbbf24;
+  background: rgba(251,191,36,.08);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.payment-btn {
+  margin-top: 4px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.payment-btn:active {
+  transform: scale(.97);
+}
     
 </style>
 </head>
@@ -404,17 +474,33 @@ body.show #site {
 </div>
 
   <div class="popup" id="popup-payment">
-  <div class="box">
-    <div class="title">Оплата — СБП</div>
-    <div style="margin-bottom:5px;">
-        Переведите: <b id="pay-amount-text">0 ₽</b>
+  <div class="payment-box">
+
+    <div class="payment-header">
+      <span>💳 Оплата — СБП</span>
+      <button id="close-payment">✖</button>
     </div>
-    <div style="margin-bottom:5px;">
-        На номер: <b>+7 990 151 05 97</b>
+
+    <div class="payment-body">
+
+      <div class="payment-info">
+        Переведите сумму:<br>
+        <b id="pay-amount-text">0 ₽</b><br><br>
+
+        На номер:<br>
+        <b>+7 990 151 05 97</b>
+      </div>
+
+      <div class="payment-warning">
+        ⚠️ После оплаты нажмите кнопку ниже и дождитесь подтверждения
+      </div>
+
+      <button class="payment-btn" id="confirm-paid">
+        ✅ Я оплатил
+      </button>
+
     </div>
-    <img id="qr-image" style="width:220px;height:220px;background:#fff;border-radius:10px;padding:6px;margin-bottom:10px" alt="qr">
-    <a class="action btn-deposit" id="confirm-paid">Я оплатил</a>
-    <a class="action btn-cancel" id="close-payment">Отмена</a>
+
   </div>
 </div>
 
