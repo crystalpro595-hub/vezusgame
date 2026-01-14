@@ -59,6 +59,21 @@ document.addEventListener("DOMContentLoaded", () => {
       `👤 ${name} | TG ID: ${tgUser.id}`;
   }
 
+  /* ===== КОНВЕРТАЦИЯ ₽ → VC ===== */
+const depositInput = document.getElementById("deposit-amount");
+const vcEstimate = document.getElementById("vc-estimate");
+
+if (depositInput && vcEstimate) {
+  depositInput.addEventListener("input", () => {
+    const rub = parseFloat(depositInput.value) || 0;
+
+    // КУРС: 1 ₽ = 1 VC
+    const vc = Math.floor(rub);
+
+    vcEstimate.innerText = `${vc} VC`;
+  });
+}
+  
   /* ================= BALANCE ================= */
 
   async function loadBalance() {
