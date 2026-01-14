@@ -236,13 +236,6 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   };
 });
 
-    document.querySelectorAll(".cancel-btn").forEach(btn => {
-      btn.onclick = () => {
-        cancelWithdrawal(btn.dataset.id, parseFloat(btn.dataset.amount));
-      };
-    });
-  }
-
   /* ================= CANCEL WITHDRAW ================= */
 
   async function cancelWithdrawal(id, amount) {
