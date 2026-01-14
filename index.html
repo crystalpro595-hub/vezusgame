@@ -420,6 +420,97 @@ body.show #site {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* === PROFILE POPUP === */
+.profile-box {
+  width: 92%;
+  max-width: 760px;
+  background: linear-gradient(180deg, #0c0c0c, #050505);
+  border-radius: 22px;
+  padding: 0;
+  border: 2px solid #1e1e1e;
+  box-shadow: 0 0 40px rgba(0,162,255,.25);
+  overflow: hidden;
+}
+
+/* header */
+.profile-header {
+  background: linear-gradient(90deg, #0080ff, #003c7a);
+  padding: 20px;
+  position: relative;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.profile-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0,0,0,.3);
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* body */
+.profile-body {
+  padding: 20px;
+}
+
+.profile-user {
+  font-weight: 700;
+  opacity: .85;
+  margin-bottom: 8px;
+}
+
+.profile-balance {
+  background: linear-gradient(45deg, #00c6ff, #0072ff);
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,162,255,.5);
+  margin-bottom: 18px;
+}
+
+/* history */
+.profile-history-title {
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.profile-history {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.profile-history .item {
+  background: #0b0b0b;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #1c1c1c;
+}
+
+/* cancel button */
+.cancel-btn {
+  margin-top: 8px;
+  background: #ff4d4d;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
     
 </style>
 </head>
@@ -567,17 +658,24 @@ body.show #site {
 </div>
 
 <div class="popup" id="popup-profile">
-  <div class="box">
-    <div class="title">Профиль</div>
+  <div class="popup-box profile-box">
+    <div class="profile-header">
+  <h2>👤 Профиль</h2>
+  <button class="profile-close" id="close-profile">✖</button>
+</div>
 
-    <div id="profile-user" style="margin-bottom:6px;opacity:.8;"></div>
+<div class="profile-body">
+  <div class="profile-user" id="profile-user"></div>
 
-    <div id="profile-balance" style="margin-bottom:10px;">Баланс: 0 VC</div>
+  <div class="profile-balance" id="profile-balance">
+    Баланс: 0 VC
+  </div>
 
-    <div style="font-weight:900;margin-top:10px">История операций</div>
-    <div id="history-list" class="list"></div>
+  <div class="profile-history-title">📜 История операций</div>
+  <div id="history-list" class="profile-history"></div>
+</div>
 
-    <a class="action btn-cancel" id="close-profile">Закрыть</a>
+    <button class="profile-close" id="close-profile">✖</button>
   </div>
 </div>
 
