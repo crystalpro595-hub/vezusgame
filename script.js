@@ -300,40 +300,62 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   /* ================= WITHDRAW ================= */
 
   document.getElementById("confirm-withdraw").onclick = async () => {
-    const amount = parseFloat(document.getElementById("withdraw-amount").value);
-    const requisites = document.getElementById("withdraw-wallet").value.trim();
+  const amount = parseFloat(document.getElementById("withdraw-amount").value);
+  const requisites = document.getElementById("withdraw-wallet").value.trim();
 
-    if (!amount || amount <= 0) return alert("Введите сумму");
-    if (!requisites) return alert("Введите реквизиты");
+  if (!amount || amount <= 0) {
+    alert("Введите сумму");
+    return;
+  }
 
-    const { data: bal } = await supabase
-      .from("balances")
-      .select("balance")
-      .eq("user_id", window.USER_ID)
-      .single();
+  if (!requisites) {
+    alert("Введите реквизиты");
+    return;
+  }
 
-    if (!bal || bal.balance < amount) {
-      return alert("Недостаточно средств");
-    }
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
 
-    await supabase
-      .from("balances")
-      .update({ balance: bal.balance - amount })
-      .eq("user_id", window.USER_ID);
+  if (!bal || bal.balance < amount) {
+    alert("Недостаточно средств");
+    return;
+  }
 
-    const { error } = await supabase.from("withdrawals").insert({
-      user_id: window.USER_ID,
-      amount,
-      address: requisites,
-      status: "pending"
-    });
+  // списываем баланс
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance - amount })
+    .eq("user_id", window.USER_ID);
 
-    if (error) return alert(error.message);
+  // создаём заявку
+  const { error } = await supabase.from("withdrawals").insert({
+    user_id: window.USER_ID,
+    amount: amount,
+    address: requisites,
+    status: "pending"
+  });
 
-    closePopup("popup-withdraw");
-    loadBalance();
-    alert("Заявка на вывод отправлена");
-  };
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
+  // закрываем попап вывода
+  closePopup("popup-withdraw");
+
+  // обновляем баланс
+  loadBalance();
+
+  // показываем красивое подтверждение
+  openPopup("popup-success");
+
+  setTimeout(() => {
+    closePopup("popup-success");
+  }, 1500);
+};
+  
   initUser();
 });
