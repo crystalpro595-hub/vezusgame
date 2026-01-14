@@ -267,28 +267,25 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   };
 
   document.getElementById("confirm-paid").onclick = async () => {
-    const amount = parseInt(document.getElementById("deposit-amount").value);
+  const amount = parseInt(document.getElementById("deposit-amount").value);
 
-    const { error } = await supabase.from("deposits").insert({
-      user_id: window.USER_ID,
-      amount,
-      status: "pending"
-    });
+  const { error } = await supabase.from("deposits").insert({
+    user_id: window.USER_ID,
+    amount,
+    status: "pending"
+  });
 
-    if (error) return alert(error.message);
-
-    closePopup("popup-payment");
-    closePopup("popup-deposit");
-    alert("Заявка отправлена");
-  };
+  if (error) return alert(error.message);
 
   closePopup("popup-payment");
+  closePopup("popup-deposit");
 
-openPopup("popup-success");
+  openPopup("popup-success");
 
-setTimeout(() => {
-  closePopup("popup-success");
-}, 1500);
+  setTimeout(() => {
+    closePopup("popup-success");
+  }, 1500);
+};
 
   /* ================= WITHDRAW ================= */
 
