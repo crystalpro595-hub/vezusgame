@@ -382,45 +382,47 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   }, 2500);
 };
 
-    document.getElementById("open-dice").onclick = async () => {
-  const bet = prompt("Введите ставку (VC)");
+      /* ================= GAME: DICE 50/50 ================= */
 
-  const amount = parseInt(bet);
-  if (!amount || amount <= 0) return;
+  document.getElementById("open-dice").onclick = async () => {
+    const bet = prompt("Введите ставку (VC)");
 
-  const { data: bal } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
+    const amount = parseInt(bet);
+    if (!amount || amount <= 0) return;
 
-  if (!bal || bal.balance < amount) {
-    alert("Недостаточно средств");
-    return;
-  }
+    const { data: bal } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
 
-  // списываем ставку
-  await supabase
-    .from("balances")
-    .update({ balance: bal.balance - amount })
-    .eq("user_id", window.USER_ID);
+    if (!bal || bal.balance < amount) {
+      alert("Недостаточно средств");
+      return;
+    }
 
-  const win = Math.random() < 0.5;
-
-  if (win) {
+    // списываем ставку
     await supabase
       .from("balances")
-      .update({ balance: bal.balance + amount * 2 })
+      .update({ balance: bal.balance - amount })
       .eq("user_id", window.USER_ID);
 
-    alert("🎉 Победа! + " + amount + " VC");
-  } else {
-    alert("😢 Проигрыш");
-  }
+    const win = Math.random() < 0.5;
 
-  loadBalance();
-};
-    
-  
+    if (win) {
+      await supabase
+        .from("balances")
+        .update({ balance: bal.balance + amount * 2 })
+        .eq("user_id", window.USER_ID);
+
+      alert("🎉 Победа! + " + amount + " VC");
+    } else {
+      alert("😢 Проигрыш");
+    }
+
+    loadBalance();
+  };
+
+  /* ================= INIT ================= */
   initUser();
 });
