@@ -576,42 +576,33 @@ body.show #site {
   color: #fff;
 }
 
-.bonus-body {
+.bonus-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.bonus-btn {
+.bonus-item {
   display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 14px;
-
-  background: #1c1c1e;
-  border-radius: 14px;
   padding: 14px;
-  border: none;
+  border-radius: 14px;
+  background: #111;
+  border: 1px solid #222;
   color: #fff;
   cursor: pointer;
-
-  transition: 0.2s;
+  text-align: left;
 }
 
-.bonus-btn span {
-  font-size: 28px;
+.bonus-item:hover {
+  background: #181818;
 }
 
-.bonus-btn b {
-  font-size: 15px;
-}
-
-.bonus-btn .meta {
-  font-size: 12px;
-  opacity: 0.6;
-}
-
-.bonus-btn:hover {
-  background: #2a2a2d;
+.bonus-icon {
+  font-size: 26px;
+  width: 40px;
+  text-align: center;
 }
     
 </style>
@@ -798,45 +789,44 @@ body.show #site {
   </div>
 </div>
 
-<div class="popup" id="popup-bonus">
-  <div class="popup-card">
+<div id="popup-bonus" class="popup">
+  <div class="popup-box">
 
     <div class="popup-header">
       <span>🎁 Бонусы</span>
       <button id="close-bonus">✕</button>
     </div>
 
-    <div class="popup-body bonus-body">
+    <div class="bonus-list">
 
-      <button class="bonus-btn" id="open-promo">
-        <span>🎟</span>
+      <button class="bonus-item" id="open-promo">
+        <div class="bonus-icon">🎟</div>
         <div>
           <b>Промокод</b>
-          <div class="meta">Ввести бонус-код</div>
+          <div class="meta">Активируй код и получи бонус</div>
         </div>
       </button>
 
-      <button class="bonus-btn" id="open-referral">
-        <span>👥</span>
+      <button class="bonus-item" id="open-referral">
+        <div class="bonus-icon">👥</div>
         <div>
           <b>Реферальная система</b>
-          <div class="meta">Приглашай друзей</div>
+          <div class="meta">Приглашай друзей и зарабатывай</div>
         </div>
       </button>
 
-      <button class="bonus-btn" id="open-giveaway">
-        <span>🎁</span>
+      <button class="bonus-item" id="open-giveaway">
+        <div class="bonus-icon">🎁</div>
         <div>
           <b>Розыгрыши</b>
-          <div class="meta">Участвуй и выигрывай</div>
+          <div class="meta">Участвуй и выигрывай призы</div>
         </div>
       </button>
 
     </div>
-
   </div>
 </div>
-
+    
 <!-- popup вывода -->
 <div class="popup" id="popup-withdraw">
   <div class="popup-box withdraw-box">
