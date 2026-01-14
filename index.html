@@ -576,34 +576,43 @@ body.show #site {
   color: #fff;
 }
 
-.bonus-list {
+.bonus-body {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.bonus-item {
+.bonus-btn {
   display: flex;
-  gap: 12px;
   align-items: center;
-  padding: 14px;
+  gap: 14px;
+
+  background: #1c1c1e;
   border-radius: 14px;
-  background: #111;
-  border: 1px solid #222;
+  padding: 14px;
+  border: none;
   color: #fff;
   cursor: pointer;
-  text-align: left;
+
+  transition: 0.2s;
 }
 
-.bonus-item:hover {
-  background: #181818;
+.bonus-btn span {
+  font-size: 28px;
 }
 
-.bonus-icon {
-  font-size: 26px;
-  width: 40px;
-  text-align: center;
-}    
+.bonus-btn b {
+  font-size: 15px;
+}
+
+.bonus-btn .meta {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.bonus-btn:hover {
+  background: #2a2a2d;
+}
     
 </style>
 </head>
@@ -789,41 +798,42 @@ body.show #site {
   </div>
 </div>
 
-<div id="popup-bonus" class="popup">
-  <div class="popup-box">
+<div class="popup" id="popup-bonus">
+  <div class="popup-card">
 
     <div class="popup-header">
       <span>🎁 Бонусы</span>
       <button id="close-bonus">✕</button>
     </div>
 
-    <div class="bonus-list">
+    <div class="popup-body bonus-body">
 
-      <button class="bonus-item" id="open-promo">
-        <div class="bonus-icon">🎟</div>
+      <button class="bonus-btn" id="open-promo">
+        <span>🎟</span>
         <div>
           <b>Промокод</b>
-          <div class="meta">Активируй код и получи бонус</div>
+          <div class="meta">Ввести бонус-код</div>
         </div>
       </button>
 
-      <button class="bonus-item" id="open-referral">
-        <div class="bonus-icon">👥</div>
+      <button class="bonus-btn" id="open-referral">
+        <span>👥</span>
         <div>
           <b>Реферальная система</b>
-          <div class="meta">Приглашай друзей и зарабатывай</div>
+          <div class="meta">Приглашай друзей</div>
         </div>
       </button>
 
-      <button class="bonus-item" id="open-giveaway">
-        <div class="bonus-icon">🎁</div>
+      <button class="bonus-btn" id="open-giveaway">
+        <span>🎁</span>
         <div>
           <b>Розыгрыши</b>
-          <div class="meta">Участвуй и выигрывай призы</div>
+          <div class="meta">Участвуй и выигрывай</div>
         </div>
       </button>
 
     </div>
+
   </div>
 </div>
 
