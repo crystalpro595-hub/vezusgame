@@ -297,14 +297,38 @@ body.show #site {
 
 <!-- popup вывода -->
 <div class="popup" id="popup-withdraw">
-  <div class="box">
-    <div class="title">Вывод средств</div>
+  <div class="popup-box withdraw-box">
 
-    <input id="withdraw-amount" placeholder="Сумма VC" type="number" />
-    <input id="withdraw-wallet" placeholder="Кошелёк / реквизиты" />
+    <div class="popup-header">
+      <span>💸 Вывод средств</span>
+      <button id="close-withdraw">✖</button>
+    </div>
 
-    <button class="action" id="confirm-withdraw">Отправить заявку</button>
-    <a class="action btn-cancel" id="close-withdraw">Закрыть</a>
+    <div class="withdraw-body">
+      <label>Сумма вывода</label>
+      <input
+        type="number"
+        id="withdraw-amount"
+        placeholder="Введите сумму"
+        min="1"
+      />
+
+      <label>Реквизиты</label>
+      <input
+        type="text"
+        id="withdraw-wallet"
+        placeholder="Карта / кошелёк / реквизиты"
+      />
+
+      <div class="withdraw-hint">
+        ⚠️ Средства списываются сразу после отправки заявки
+      </div>
+
+      <button class="withdraw-btn" id="confirm-withdraw">
+        🚀 Отправить заявку
+      </button>
+    </div>
+
   </div>
 </div>
     
