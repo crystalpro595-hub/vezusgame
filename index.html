@@ -605,29 +605,6 @@ body.show #site {
   text-align: center;
 }
 
-.game-body {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.game-balance {
-  background: #1c1c1e;
-  padding: 12px;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.game-btn {
-  background: linear-gradient(135deg, #6a5cff, #8f7bff);
-  border: none;
-  border-radius: 14px;
-  padding: 14px;
-  font-size: 16px;
-  color: #fff;
-  cursor: pointer;
-}
-    
 </style>
 </head>
 <body>
@@ -886,27 +863,6 @@ body.show #site {
   </div>
 </div>
 
-<div class="popup" id="popup-game">
-  <div class="popup-box">
-
-    <div class="popup-header">
-      <span>🎮 Игры</span>
-      <button id="close-game">✕</button>
-    </div>
-
-    <div class="game-body">
-      <div class="game-balance">
-        Баланс: <b id="game-balance">0 VC</b>
-      </div>
-
-      <button class="game-btn" id="open-dice">
-        🎲 Рандом 50 / 50
-      </button>
-    </div>
-
-  </div>
-</div>
-    
 <!-- === POPUPS END === -->
 
 <!-- Snow container -->
@@ -915,7 +871,7 @@ body.show #site {
  <!-- Подключаем supabase CDN и внешний скрипт -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="script.js" defer></script>
+<script src="script.js"></script>
 <script>
 /* === ПОКАЗ САЙТА ПОСЛЕ ПРЕЛОАДЕРА === */
 window.addEventListener("load", () => {
