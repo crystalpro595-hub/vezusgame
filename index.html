@@ -374,6 +374,52 @@ body.show #site {
 .payment-btn:active {
   transform: scale(.97);
 }
+
+/* === SUCCESS ANIMATION === */
+.success-box {
+  background: linear-gradient(180deg, #0fae5f, #0a7a3d);
+  padding: 40px 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(15,174,95,.6);
+  animation: popIn .4s ease;
+}
+
+.checkmark {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #fff;
+  color: #0fae5f;
+  font-size: 60px;
+  font-weight: 900;
+  line-height: 90px;
+  margin: 0 auto 20px;
+  animation: scaleCheck .5s ease;
+}
+
+.success-title {
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.success-text {
+  font-size: 16px;
+  opacity: .9;
+}
+
+/* animations */
+@keyframes scaleCheck {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes popIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
     
 </style>
 </head>
@@ -501,6 +547,15 @@ body.show #site {
 
     </div>
 
+  </div>
+</div>
+
+    <!-- Анимация подтверждения оплаты -->
+<div class="popup" id="popup-success">
+  <div class="success-box">
+    <div class="checkmark">✓</div>
+    <div class="success-title">Платёж принят</div>
+    <div class="success-text">Заявка отправлена и ожидает подтверждения</div>
   </div>
 </div>
 
