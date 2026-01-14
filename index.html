@@ -760,41 +760,41 @@ body.show #site {
   </div>
 </div>
 
-<div class="popup" id="popup-bonus">
-  <div class="box">
-    <div class="title">🎁 Бонусы</div>
+<div id="popup-bonus" class="popup">
+  <div class="popup-box">
 
-    <a class="action btn-deposit" id="bonus-promocode">🎟 Ввести промокод</a>
-    <a class="action btn-deposit" id="bonus-referral">👥 Пригласить друга</a>
+    <div class="popup-header">
+      <span>🎁 Бонусы</span>
+      <button id="close-bonus">✕</button>
+    </div>
 
-    <a class="action btn-cancel" id="close-bonus">Закрыть</a>
-  </div>
-</div>
+    <div class="bonus-list">
 
-<div class="popup" id="popup-promocode">
-  <div class="box">
-    <div class="title">🎟 Промокод</div>
+      <button class="bonus-item" id="open-promo">
+        <div class="bonus-icon">🎟</div>
+        <div>
+          <b>Промокод</b>
+          <div class="meta">Активируй код и получи бонус</div>
+        </div>
+      </button>
 
-  <input id="promo-input" placeholder="Введите промокод" style="width:85%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff">
+      <button class="bonus-item" id="open-referral">
+        <div class="bonus-icon">👥</div>
+        <div>
+          <b>Реферальная система</b>
+          <div class="meta">Приглашай друзей и зарабатывай</div>
+        </div>
+      </button>
 
-    <a class="action btn-deposit" id="activate-promo">Активировать</a>
-    <a class="action btn-cancel" id="close-promocode">Закрыть</a>
-  </div>
-</div>
+      <button class="bonus-item" id="open-giveaway">
+        <div class="bonus-icon">🎁</div>
+        <div>
+          <b>Розыгрыши</b>
+          <div class="meta">Участвуй и выигрывай призы</div>
+        </div>
+      </button>
 
-<div class="popup" id="popup-referral">
-  <div class="box">
-    <div class="title">👥 Пригласить друга</div>
-
-    <div style="margin-bottom:10px;">Ваш код:</div>
-    <div id="ref-code" style="font-size:26px;font-weight:900;margin-bottom:14px;"></div>
-
-    <a class="action btn-deposit" id="copy-ref">Скопировать ссылку</a>
-
-    <div style="margin-top:20px;font-weight:900">Статистика</div>
-    <div id="ref-stats" class="meta" style="margin-top:6px;"></div>
-
-    <a class="action btn-cancel" id="close-referral">Закрыть</a>
+    </div>
   </div>
 </div>
 
