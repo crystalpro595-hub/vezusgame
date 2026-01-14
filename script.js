@@ -282,6 +282,14 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
     alert("Заявка отправлена");
   };
 
+  closePopup("popup-payment");
+
+openPopup("popup-success");
+
+setTimeout(() => {
+  closePopup("popup-success");
+}, 1500);
+
   /* ================= WITHDRAW ================= */
 
   document.getElementById("confirm-withdraw").onclick = async () => {
