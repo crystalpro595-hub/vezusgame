@@ -128,18 +128,6 @@ document.getElementById("open-referral").onclick = () => {
 document.getElementById("open-giveaway").onclick = () => {
   alert("🎁 Скоро будут розыгрыши");
 };
-
-// открыть игры
-document.getElementById("btn-game").onclick = () => {
-  openPopup("popup-game");
-  document.getElementById("game-balance").innerText =
-    document.getElementById("top-balance").innerText.replace("БАЛАНС: ", "");
-};
-
-// закрыть игры
-document.getElementById("close-game").onclick = () => {
-  closePopup("popup-game");
-};
   
   /* ================= HISTORY ================= */
 
