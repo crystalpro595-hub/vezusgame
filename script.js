@@ -86,6 +86,7 @@ if (depositInput && vcEstimate) {
     const balance = data?.balance ?? 0;
     document.getElementById("top-balance").innerText = `БАЛАНС: ${balance} VC`;
     document.getElementById("profile-balance").innerText = `Баланс: ${balance} VC`;
+    document.getElementById("wallet-balance-live").innerText = `${balance} VC`;
   }
 
   /* ================= POPUPS ================= */
