@@ -269,17 +269,27 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   document.getElementById("confirm-paid").onclick = async () => {
   const amount = parseInt(document.getElementById("deposit-amount").value);
 
+  if (!amount || amount < 100) {
+    alert("Минимум 100 ₽");
+    return;
+  }
+
   const { error } = await supabase.from("deposits").insert({
     user_id: window.USER_ID,
-    amount,
+    amount: amount,
     status: "pending"
   });
 
-  if (error) return alert(error.message);
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
+  // закрываем попапы
   closePopup("popup-payment");
   closePopup("popup-deposit");
 
+  // показываем анимацию успеха
   openPopup("popup-success");
 
   setTimeout(() => {
