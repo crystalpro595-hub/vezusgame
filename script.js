@@ -109,7 +109,28 @@ if (depositInput && vcEstimate) {
     loadHistory();
   };
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
+// открыть бонусы
+document.getElementById("btn-bonus").onclick = () => {
+  openPopup("popup-bonus");
+};
 
+// закрыть бонусы
+document.getElementById("close-bonus").onclick = () => {
+  closePopup("popup-bonus");
+};
+
+// временные действия
+document.getElementById("open-promo").onclick = () => {
+  alert("🎟 Скоро будет промокод");
+};
+
+document.getElementById("open-referral").onclick = () => {
+  alert("👥 Скоро будет реферальная система");
+};
+
+document.getElementById("open-giveaway").onclick = () => {
+  alert("🎁 Скоро будут розыгрыши");
+};
   /* ================= HISTORY ================= */
 
   async function loadHistory() {
