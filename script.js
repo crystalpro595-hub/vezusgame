@@ -376,9 +376,7 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   }, 2500);
 };
 
-  initUser();
-
-  /* ================= PROMO CODE ================= */
+/* ================= PROMO CODE ================= */
 
   const promoBtn = document.getElementById("promo-apply");
   const promoInput = document.getElementById("promo-input");
@@ -433,3 +431,6 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
       alert(`✅ Промокод активирован! +${promo.reward} VC`);
     };
   }
+  
+  
+  initUser();
