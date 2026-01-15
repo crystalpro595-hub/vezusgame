@@ -686,6 +686,45 @@ body.show #site {
   font-size: 22px;
   opacity: .6;
 }
+
+.promo-card {
+  background: #1c1c1c;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.promo-title {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.promo-input {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #2a2a2a;
+  color: #fff;
+  outline: none;
+}
+
+.promo-btn {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #6a5cff, #8f7bff);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.promo-hint {
+  font-size: 12px;
+  opacity: 0.6;
+  text-align: center;
+}
     
 </style>
 </head>
@@ -945,6 +984,24 @@ body.show #site {
       </button>
     </div>
 
+  </div>
+</div>
+
+<div class="promo-card">
+  <div class="promo-title">🎟 Промокод</div>
+
+  <input
+    id="promo-input"
+    class="promo-input"
+    placeholder="Введите промокод"
+  >
+
+  <button id="promo-apply" class="promo-btn">
+    Активировать
+  </button>
+
+  <div class="promo-hint">
+    Промокод можно использовать один раз
   </div>
 </div>
     
