@@ -375,8 +375,8 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
     closePopup("popup-success");
   }, 2500);
 };
-  
-    initUser();
+
+  initUser();
 
   /* ================= PROMO CODE ================= */
 
