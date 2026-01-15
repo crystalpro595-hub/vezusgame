@@ -1,3 +1,6 @@
+// Очищаем кеш схемы
+localStorage.removeItem("supabase-schema-cache");
+
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
@@ -26,12 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!user) {
       const { data: newUser } = await supabase
         .from("users")
-      .insert({
-  telegram_id: tgUser.id,
-  username: tgUser.username || null,
-  first_name: tgUser.first_name || "",
-  last_name: tgUser.last_name || ""
-})
+        .insert({
+          telegram_id: tgUser.id,
+          username: tgUser.username,
+          first_name: tgUser.first_name,
+          last_name: tgUser.last_name
+        })
         .select()
         .single();
 
@@ -51,10 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.USER_ID = user.id;
     loadBalance();
 
-    const profileUser = document.getElementById("profile-user");
-if (profileUser) {
-  profileUser.innerText = `👤 ${name} | TG ID: ${tgUser.id}`;
-}
+    const name = `${tgUser.first_name}${tgUser.last_name ? " " + tgUser.last_name : ""}`;
+    document.getElementById("profile-user").innerText =
+      `👤 ${name} | TG ID: ${tgUser.id}`;
+  }
 
   /* ===== КОНВЕРТАЦИЯ ₽ → VC ===== */
 const depositInput = document.getElementById("deposit-amount");
@@ -74,13 +77,13 @@ if (depositInput && vcEstimate) {
   /* ================= BALANCE ================= */
 
   async function loadBalance() {
-    const { data, error } = await supabase
-  .from("balances")
-  .select("balance")
-  .eq("user_id", window.USER_ID)
-  .maybeSingle();
+    const { data } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
 
-const balance = data?.balance ?? 0;
+    const balance = data?.balance ?? 0;
     document.getElementById("top-balance").innerText = `БАЛАНС: ${balance} VC`;
     document.getElementById("profile-balance").innerText = `Баланс: ${balance} VC`;
     document.getElementById("wallet-balance-live").innerText = `${balance} VC`;
@@ -106,29 +109,7 @@ const balance = data?.balance ?? 0;
     loadHistory();
   };
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
-// открыть бонусы
-document.getElementById("btn-bonus").onclick = () => {
-  openPopup("popup-bonus");
-};
 
-// закрыть бонусы
-document.getElementById("close-bonus").onclick = () => {
-  closePopup("popup-bonus");
-};
-
-// временные действия
-document.getElementById("open-promo").onclick = () => {
-  alert("🎟 Скоро будет промокод");
-};
-
-document.getElementById("open-referral").onclick = () => {
-  alert("👥 Скоро будет реферальная система");
-};
-
-document.getElementById("open-giveaway").onclick = () => {
-  alert("🎁 Скоро будут розыгрыши");
-};
-  
   /* ================= HISTORY ================= */
 
   async function loadHistory() {
@@ -236,6 +217,13 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
     cancelWithdrawal(btn.dataset.id, parseFloat(btn.dataset.amount));
   };
 });
+
+    document.querySelectorAll(".cancel-btn").forEach(btn => {
+      btn.onclick = () => {
+        cancelWithdrawal(btn.dataset.id, parseFloat(btn.dataset.amount));
+      };
+    });
+  }
 
   /* ================= CANCEL WITHDRAW ================= */
 
@@ -369,6 +357,6 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
     closePopup("popup-success");
   }, 2500);
 };
-
+  
   initUser();
 });
