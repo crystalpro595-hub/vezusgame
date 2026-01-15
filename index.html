@@ -575,36 +575,7 @@ body.show #site {
   box-shadow: 0 0 18px rgba(30,136,255,.45);
   color: #fff;
 }
-
-.bonus-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.bonus-item {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 14px;
-  border-radius: 14px;
-  background: #111;
-  border: 1px solid #222;
-  color: #fff;
-  cursor: pointer;
-  text-align: left;
-}
-
-.bonus-item:hover {
-  background: #181818;
-}
-
-.bonus-icon {
-  font-size: 26px;
-  width: 40px;
-  text-align: center;
-}
-
+    
 </style>
 </head>
 <body>
@@ -642,9 +613,9 @@ body.show #site {
     </div>
 
     <div class="big-blocks">
-    <div class="block">ИГРЫ</div>
-    <div class="block">UC</div>
-</div>
+        <div class="block">ИГРЫ</div>
+        <div class="block">UC</div>
+    </div>
 </div>
 </div>  
 
@@ -660,7 +631,7 @@ body.show #site {
   <div class="popup-box wallet-box">
 
     <div class="popup-header">
-      <span>Кошелёк</span>
+      <span>👛 Кошелёк</span>
       <button id="close-wallet">✖</button>
     </div>
 
@@ -672,11 +643,11 @@ body.show #site {
       </div>
 
       <button class="wallet-action deposit" id="open-deposit">
-         Пополнить баланс
+        ➕ Пополнить баланс
       </button>
 
       <button class="wallet-action withdraw" id="open-withdraw">
-         Вывести средства
+        💸 Вывести средства
       </button>
 
     </div>
@@ -685,7 +656,7 @@ body.show #site {
 </div>
 
 <div class="popup" id="popup-deposit">
-  <div class="box deposit-box">
+  <div class="deposit-box">
 
     <div class="deposit-header">
       <span>💰 Пополнение — СБП</span>
@@ -698,7 +669,7 @@ body.show #site {
         Минимум: <b>100 ₽</b><br>
         Курс: <b>1 ₽ = 1 VC</b><br>
         Перевод на номер:<br>
-        <b>+7 990 151 05 97 СберБанк</b>
+        <b>+7 990 151 05 97</b>
       </div>
 
       <div class="deposit-row">
@@ -721,7 +692,7 @@ body.show #site {
 </div>
 
   <div class="popup" id="popup-payment">
-  <div class="box payment-box">
+  <div class="payment-box">
 
     <div class="payment-header">
       <span>💳 Оплата — СБП</span>
@@ -771,6 +742,7 @@ body.show #site {
   <div class="popup-box profile-box">
     <div class="profile-header">
   <h2>👤 Профиль</h2>
+  <button class="profile-close" id="close-profile">✖</button>
 </div>
 
 <div class="profile-body">
@@ -788,47 +760,47 @@ body.show #site {
   </div>
 </div>
 
-<div id="popup-bonus" class="popup">
-  <div class="popup-box">
+<div class="popup" id="popup-bonus">
+  <div class="box">
+    <div class="title">🎁 Бонусы</div>
 
-    <div class="popup-header">
-      <span>🎁 Бонусы</span>
-      <button id="close-bonus">✕</button>
-    </div>
+    <a class="action btn-deposit" id="bonus-promocode">🎟 Ввести промокод</a>
+    <a class="action btn-deposit" id="bonus-referral">👥 Пригласить друга</a>
 
-    <div class="bonus-list">
-
-      <button class="bonus-item" id="open-promo">
-        <div class="bonus-icon">🎟</div>
-        <div>
-          <b>Промокод</b>
-          <div class="meta">Активируй код и получи бонус</div>
-        </div>
-      </button>
-
-      <button class="bonus-item" id="open-referral">
-        <div class="bonus-icon">👥</div>
-        <div>
-          <b>Реферальная система</b>
-          <div class="meta">Приглашай друзей и зарабатывай</div>
-        </div>
-      </button>
-
-      <button class="bonus-item" id="open-giveaway">
-        <div class="bonus-icon">🎁</div>
-        <div>
-          <b>Розыгрыши</b>
-          <div class="meta">Участвуй и выигрывай призы</div>
-        </div>
-      </button>
-
-    </div>
+    <a class="action btn-cancel" id="close-bonus">Закрыть</a>
   </div>
 </div>
-    
+
+<div class="popup" id="popup-promocode">
+  <div class="box">
+    <div class="title">🎟 Промокод</div>
+
+  <input id="promo-input" placeholder="Введите промокод" style="width:85%;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b0b;color:#fff">
+
+    <a class="action btn-deposit" id="activate-promo">Активировать</a>
+    <a class="action btn-cancel" id="close-promocode">Закрыть</a>
+  </div>
+</div>
+
+<div class="popup" id="popup-referral">
+  <div class="box">
+    <div class="title">👥 Пригласить друга</div>
+
+    <div style="margin-bottom:10px;">Ваш код:</div>
+    <div id="ref-code" style="font-size:26px;font-weight:900;margin-bottom:14px;"></div>
+
+    <a class="action btn-deposit" id="copy-ref">Скопировать ссылку</a>
+
+    <div style="margin-top:20px;font-weight:900">Статистика</div>
+    <div id="ref-stats" class="meta" style="margin-top:6px;"></div>
+
+    <a class="action btn-cancel" id="close-referral">Закрыть</a>
+  </div>
+</div>
+
 <!-- popup вывода -->
 <div class="popup" id="popup-withdraw">
-  <div class="box popup-box withdraw-box">
+  <div class="popup-box withdraw-box">
 
     <div class="popup-header">
       <span>💸 Вывод средств</span>
@@ -862,7 +834,7 @@ body.show #site {
 
   </div>
 </div>
-
+    
 <!-- === POPUPS END === -->
 
 <!-- Snow container -->
