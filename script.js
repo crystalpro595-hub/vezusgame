@@ -26,12 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!user) {
       const { data: newUser } = await supabase
         .from("users")
-        .insert({
-          telegram_id: tgUser.id,
-          username: tgUser.username,
-          first_name: tgUser.first_name,
-          last_name: tgUser.last_name
-        })
+      .insert({
+  telegram_id: tgUser.id,
+  username: tgUser.username || null,
+  first_name: tgUser.first_name || "",
+  last_name: tgUser.last_name || ""
+})
         .select()
         .single();
 
@@ -51,10 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.USER_ID = user.id;
     loadBalance();
 
-    const name = `${tgUser.first_name}${tgUser.last_name ? " " + tgUser.last_name : ""}`;
-    document.getElementById("profile-user").innerText =
-      `👤 ${name} | TG ID: ${tgUser.id}`;
-  }
+    const profileUser = document.getElementById("profile-user");
+if (profileUser) {
+  profileUser.innerText = `👤 ${name} | TG ID: ${tgUser.id}`;
+}
 
   /* ===== КОНВЕРТАЦИЯ ₽ → VC ===== */
 const depositInput = document.getElementById("deposit-amount");
@@ -74,13 +74,13 @@ if (depositInput && vcEstimate) {
   /* ================= BALANCE ================= */
 
   async function loadBalance() {
-    const { data } = await supabase
-      .from("balances")
-      .select("balance")
-      .eq("user_id", window.USER_ID)
-      .single();
+    const { data, error } = await supabase
+  .from("balances")
+  .select("balance")
+  .eq("user_id", window.USER_ID)
+  .maybeSingle();
 
-    const balance = data?.balance ?? 0;
+const balance = data?.balance ?? 0;
     document.getElementById("top-balance").innerText = `БАЛАНС: ${balance} VC`;
     document.getElementById("profile-balance").innerText = `Баланс: ${balance} VC`;
     document.getElementById("wallet-balance-live").innerText = `${balance} VC`;
