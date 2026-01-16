@@ -383,65 +383,60 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
 
 /* ================= PROMO CODE ================= */
 
-const promoBtn = document.getElementById("promo-apply");
-const promoInput = document.getElementById("promo-input");
+promoBtn.onclick = async () => {
+  const code = promoInput.value.trim().toUpperCase();
+  if (!code) return alert("Введите промокод");
 
-if (promoBtn && promoInput) {
-  promoBtn.onclick = async () => {
-    const code = promoInput.value.trim().toUpperCase();
-    if (!code) return alert("Введите промокод");
+  const { data: promo } = await supabase
+    .from("promo_codes")
+    .select("*")
+    .eq("code", code)
+    .eq("active", true)
+    .maybeSingle();
 
-    // 1. получаем промокод
-    const { data: promo } = await supabase
-      .from("promo_codes")
-      .select("*")
-      .eq("code", code)
-      .eq("active", true)
-      .maybeSingle();
+  if (!promo) {
+    alert("❌ Промокод недействителен");
+    return;
+  }
 
-    if (!promo) {
-      alert("❌ Промокод недействителен");
-      return;
-    }
+  const { data: used } = await supabase
+    .from("promo_uses")
+    .select("id")
+    .eq("user_id", window.USER_ID)
+    .eq("promo_id", promo.id)
+    .maybeSingle();
 
-    // 2. проверка использования
-    const { data: used } = await supabase
-      .from("promo_uses")
-      .select("id")
-      .eq("user_id", window.USER_ID)
-      .eq("promo_id", promo.id)
-      .maybeSingle();
+  if (used) {
+    alert("⚠️ Вы уже активировали этот промокод");
+    return;
+  }
 
-    if (used) {
-      alert("⚠️ Вы уже активировали этот промокод");
-      return;
-    }
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
 
-    // 3. получаем баланс
-    const { data: bal } = await supabase
-      .from("balances")
-      .select("balance")
-      .eq("user_id", window.USER_ID)
-      .single();
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance + promo.reward })
+    .eq("user_id", window.USER_ID);
 
-    // 4. начисляем
-    await supabase
-      .from("balances")
-      .update({ balance: bal.balance + promo.reward })
-      .eq("user_id", window.USER_ID);
+  await supabase.from("promo_uses").insert({
+    user_id: window.USER_ID,
+    promo_id: promo.id
+  });
 
-    // 5. фиксируем использование
-    await supabase.from("promo_uses").insert({
-      user_id: window.USER_ID,
-      promo_id: promo.id
-    });
+  loadBalance();
+  promoInput.value = "";
 
-    loadBalance();
-    promoInput.value = "";
-    closePopup("popup-promo");
-    alert(`✅ Промокод активирован! +${promo.reward} VC`);
-  };
-}
+  closePopup("popup-promo");
+  openPopup("popup-promo-success");
+
+  setTimeout(() => {
+    closePopup("popup-promo-success");
+  }, 2200);
+};
   
   initUser();
 });
