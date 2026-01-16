@@ -316,4 +316,65 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   }, 2500);
 };
 
-initUser();
+  /* ================= WITHDRAW ================= */
+
+  document.getElementById("confirm-withdraw").onclick = async () => {
+  const amount = parseFloat(document.getElementById("withdraw-amount").value);
+  const requisites = document.getElementById("withdraw-wallet").value.trim();
+
+  if (!amount || amount <= 0) {
+    alert("Введите сумму");
+    return;
+  }
+
+  if (!requisites) {
+    alert("Введите реквизиты");
+    return;
+  }
+
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
+
+  if (!bal || bal.balance < amount) {
+    alert("Недостаточно средств");
+    return;
+  }
+
+  // списываем баланс
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance - amount })
+    .eq("user_id", window.USER_ID);
+
+  // создаём заявку
+  const { error } = await supabase.from("withdrawals").insert({
+    user_id: window.USER_ID,
+    amount: amount,
+    address: requisites,
+    status: "pending"
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  // закрываем попап вывода
+  closePopup("popup-withdraw");
+
+  // обновляем баланс
+  loadBalance();
+
+  // показываем красивое подтверждение
+  openPopup("popup-success");
+
+  setTimeout(() => {
+    closePopup("popup-success");
+  }, 2500);
+};
+  
+  initUser();
+});
