@@ -118,7 +118,12 @@ document.getElementById("close-bonus").onclick = () => {
 
 // временные действия
 document.getElementById("open-promo").onclick = () => {
-  alert("🎟 Скоро будет промокод");
+  closePopup("popup-bonus");
+  openPopup("popup-promo");
+};
+
+document.getElementById("close-promo").onclick = () => {
+  closePopup("popup-promo");
 };
 
 document.getElementById("open-referral").onclick = () => {
@@ -375,6 +380,68 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
     closePopup("popup-success");
   }, 2500);
 };
+
+/* ================= PROMO CODE ================= */
+
+const promoBtn = document.getElementById("promo-apply");
+const promoInput = document.getElementById("promo-input");
+
+if (promoBtn && promoInput) {
+  promoBtn.onclick = async () => {
+    const code = promoInput.value.trim().toUpperCase();
+    if (!code) return alert("Введите промокод");
+
+    // 1. получаем промокод
+    const { data: promo } = await supabase
+      .from("promo_codes")
+      .select("*")
+      .eq("code", code)
+      .eq("active", true)
+      .maybeSingle();
+
+    if (!promo) {
+      alert("❌ Промокод недействителен");
+      return;
+    }
+
+    // 2. проверка использования
+    const { data: used } = await supabase
+      .from("promo_uses")
+      .select("id")
+      .eq("user_id", window.USER_ID)
+      .eq("promo_id", promo.id)
+      .maybeSingle();
+
+    if (used) {
+      alert("⚠️ Вы уже активировали этот промокод");
+      return;
+    }
+
+    // 3. получаем баланс
+    const { data: bal } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
+
+    // 4. начисляем
+    await supabase
+      .from("balances")
+      .update({ balance: bal.balance + promo.reward })
+      .eq("user_id", window.USER_ID);
+
+    // 5. фиксируем использование
+    await supabase.from("promo_uses").insert({
+      user_id: window.USER_ID,
+      promo_id: promo.id
+    });
+
+    loadBalance();
+    promoInput.value = "";
+    closePopup("popup-promo");
+    alert(`✅ Промокод активирован! +${promo.reward} VC`);
+  };
+}
   
   initUser();
 });
