@@ -1152,43 +1152,5 @@ window.addEventListener("load", () => {
 </script>
 
 <script>
-/* === BALANCE COUNTER ANIMATION === */
-
-let currentBalance = 0;
-const balanceEl = document.getElementById("top-balance");
-const balanceCard = document.querySelector(".balance-card");
-
-/**
- * Плавно обновляет баланс
- * @param {number} newBalance
- */
-function animateBalance(newBalance) {
-  const duration = 800; // мс
-  const start = currentBalance;
-  const diff = newBalance - start;
-  const startTime = performance.now();
-
-  balanceCard.classList.add("updated");
-
-  function step(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    const value = Math.floor(start + diff * progress);
-    balanceEl.innerHTML = `${value} <span>VC</span>`;
-
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    } else {
-      currentBalance = newBalance;
-      setTimeout(() => balanceCard.classList.remove("updated"), 300);
-    }
-  }
-
-  requestAnimationFrame(step);
-}
-
-/* === ПРИМЕР ИСПОЛЬЗОВАНИЯ === */
-// animateBalance(500);
-// animateBalance(1250);
-</script>
 </body>
 </html>
