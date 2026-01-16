@@ -760,6 +760,29 @@ body.show #site {
   color: #7dd3fc;
   margin-left: 4px;
 }
+
+/* === BALANCE ANIMATION EFFECTS === */
+.balance-card.updated {
+  animation: balancePulse 0.8s ease;
+}
+
+@keyframes balancePulse {
+  0% {
+    box-shadow:
+      0 0 20px rgba(0,136,255,.4),
+      inset 0 0 16px rgba(0,136,255,.25);
+  }
+  50% {
+    box-shadow:
+      0 0 45px rgba(0,136,255,.9),
+      inset 0 0 26px rgba(0,136,255,.45);
+  }
+  100% {
+    box-shadow:
+      0 0 25px rgba(0,136,255,.45),
+      inset 0 0 18px rgba(0,136,255,.25);
+  }
+}    
     
 </style>
 </head>
@@ -1126,6 +1149,46 @@ window.addEventListener("load", () => {
         }
     });
 })();
+</script>
+
+<script>
+/* === BALANCE COUNTER ANIMATION === */
+
+let currentBalance = 0;
+const balanceEl = document.getElementById("top-balance");
+const balanceCard = document.querySelector(".balance-card");
+
+/**
+ * Плавно обновляет баланс
+ * @param {number} newBalance
+ */
+function animateBalance(newBalance) {
+  const duration = 800; // мс
+  const start = currentBalance;
+  const diff = newBalance - start;
+  const startTime = performance.now();
+
+  balanceCard.classList.add("updated");
+
+  function step(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const value = Math.floor(start + diff * progress);
+    balanceEl.innerHTML = `${value} <span>VC</span>`;
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      currentBalance = newBalance;
+      setTimeout(() => balanceCard.classList.remove("updated"), 300);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+/* === ПРИМЕР ИСПОЛЬЗОВАНИЯ === */
+// animateBalance(500);
+// animateBalance(1250);
 </script>
 </body>
 </html>
