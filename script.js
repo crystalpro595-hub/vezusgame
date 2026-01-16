@@ -109,9 +109,6 @@ if (depositInput && vcEstimate) {
     loadHistory();
   };
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
-
-/* ===== BONUS POPUP ===== */
-
 // открыть бонусы
 document.getElementById("btn-bonus").onclick = () => {
   openPopup("popup-bonus");
@@ -122,20 +119,18 @@ document.getElementById("close-bonus").onclick = () => {
   closePopup("popup-bonus");
 };
 
-// переходы внутри бонусов
+// временные действия
 document.getElementById("open-promo").onclick = () => {
-  closePopup("popup-bonus");
-  openPopup("popup-promo"); // если есть попап промо
+  alert("🎟 Скоро будет промокод");
 };
 
 document.getElementById("open-referral").onclick = () => {
-  alert("👥 Реферальная система скоро");
+  alert("👥 Скоро будет реферальная система");
 };
 
 document.getElementById("open-giveaway").onclick = () => {
-  alert("🎁 Розыгрыши скоро");
+  alert("🎁 Скоро будут розыгрыши");
 };
-  
   /* ================= HISTORY ================= */
 
   async function loadHistory() {
@@ -383,6 +378,5 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
     closePopup("popup-success");
   }, 2500);
 };
-  
+
   initUser();
-});
