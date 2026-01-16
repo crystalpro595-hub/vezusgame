@@ -1,6 +1,3 @@
-// Очищаем кеш схемы
-localStorage.removeItem("supabase-schema-cache");
-
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
@@ -109,7 +106,28 @@ if (depositInput && vcEstimate) {
     loadHistory();
   };
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
+// открыть бонусы
+document.getElementById("btn-bonus").onclick = () => {
+  openPopup("popup-bonus");
+};
 
+// закрыть бонусы
+document.getElementById("close-bonus").onclick = () => {
+  closePopup("popup-bonus");
+};
+
+// временные действия
+document.getElementById("open-promo").onclick = () => {
+  alert("🎟 Скоро будет промокод");
+};
+
+document.getElementById("open-referral").onclick = () => {
+  alert("👥 Скоро будет реферальная система");
+};
+
+document.getElementById("open-giveaway").onclick = () => {
+  alert("🎁 Скоро будут розыгрыши");
+};
   /* ================= HISTORY ================= */
 
   async function loadHistory() {
