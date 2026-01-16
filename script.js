@@ -1,3 +1,6 @@
+// Очищаем кеш схемы
+localStorage.removeItem("supabase-schema-cache");
+
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
@@ -106,33 +109,7 @@ if (depositInput && vcEstimate) {
     loadHistory();
   };
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
-// открыть бонусы
-document.getElementById("btn-bonus").onclick = () => {
-  openPopup("popup-bonus");
-};
 
-// закрыть бонусы
-document.getElementById("close-bonus").onclick = () => {
-  closePopup("popup-bonus");
-};
-
-// временные действия
-document.getElementById("open-promo").onclick = () => {
-  closePopup("popup-bonus");
-  openPopup("popup-promo");
-};
-
-document.getElementById("close-promo").onclick = () => {
-  closePopup("popup-promo");
-};
-
-document.getElementById("open-referral").onclick = () => {
-  alert("👥 Скоро будет реферальная система");
-};
-
-document.getElementById("open-giveaway").onclick = () => {
-  alert("🎁 Скоро будут розыгрыши");
-};
   /* ================= HISTORY ================= */
 
   async function loadHistory() {
@@ -379,63 +356,6 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   setTimeout(() => {
     closePopup("popup-success");
   }, 2500);
-};
-
-/* ================= PROMO CODE ================= */
-
-promoBtn.onclick = async () => {
-  const code = promoInput.value.trim().toUpperCase();
-  if (!code) return alert("Введите промокод");
-
-  const { data: promo } = await supabase
-    .from("promo_codes")
-    .select("*")
-    .eq("code", code)
-    .eq("active", true)
-    .maybeSingle();
-
-  if (!promo) {
-    alert("❌ Промокод недействителен");
-    return;
-  }
-
-  const { data: used } = await supabase
-    .from("promo_uses")
-    .select("id")
-    .eq("user_id", window.USER_ID)
-    .eq("promo_id", promo.id)
-    .maybeSingle();
-
-  if (used) {
-    alert("⚠️ Вы уже активировали этот промокод");
-    return;
-  }
-
-  const { data: bal } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
-
-  await supabase
-    .from("balances")
-    .update({ balance: bal.balance + promo.reward })
-    .eq("user_id", window.USER_ID);
-
-  await supabase.from("promo_uses").insert({
-    user_id: window.USER_ID,
-    promo_id: promo.id
-  });
-
-  loadBalance();
-  promoInput.value = "";
-
-  closePopup("popup-promo");
-  openPopup("popup-promo-success");
-
-  setTimeout(() => {
-    closePopup("popup-promo-success");
-  }, 2200);
 };
   
   initUser();
