@@ -1,6 +1,3 @@
-// Очищаем кеш схемы
-localStorage.removeItem("supabase-schema-cache");
-
 document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
@@ -319,64 +316,4 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
   }, 2500);
 };
 
-  /* ================= WITHDRAW ================= */
-
-  document.getElementById("confirm-withdraw").onclick = async () => {
-  const amount = parseFloat(document.getElementById("withdraw-amount").value);
-  const requisites = document.getElementById("withdraw-wallet").value.trim();
-
-  if (!amount || amount <= 0) {
-    alert("Введите сумму");
-    return;
-  }
-
-  if (!requisites) {
-    alert("Введите реквизиты");
-    return;
-  }
-
-  const { data: bal } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
-
-  if (!bal || bal.balance < amount) {
-    alert("Недостаточно средств");
-    return;
-  }
-
-  // списываем баланс
-  await supabase
-    .from("balances")
-    .update({ balance: bal.balance - amount })
-    .eq("user_id", window.USER_ID);
-
-  // создаём заявку
-  const { error } = await supabase.from("withdrawals").insert({
-    user_id: window.USER_ID,
-    amount: amount,
-    address: requisites,
-    status: "pending"
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  // закрываем попап вывода
-  closePopup("popup-withdraw");
-
-  // обновляем баланс
-  loadBalance();
-
-  // показываем красивое подтверждение
-  openPopup("popup-success");
-
-  setTimeout(() => {
-    closePopup("popup-success");
-  }, 2500);
-};
-
-  initUser();
+initUser();
