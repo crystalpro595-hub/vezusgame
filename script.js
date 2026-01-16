@@ -110,6 +110,32 @@ if (depositInput && vcEstimate) {
   };
   document.getElementById("close-profile").onclick = () => closePopup("popup-profile");
 
+/* ===== BONUS POPUP ===== */
+
+// открыть бонусы
+document.getElementById("btn-bonus").onclick = () => {
+  openPopup("popup-bonus");
+};
+
+// закрыть бонусы
+document.getElementById("close-bonus").onclick = () => {
+  closePopup("popup-bonus");
+};
+
+// переходы внутри бонусов
+document.getElementById("open-promo").onclick = () => {
+  closePopup("popup-bonus");
+  openPopup("popup-promo"); // если есть попап промо
+};
+
+document.getElementById("open-referral").onclick = () => {
+  alert("👥 Реферальная система скоро");
+};
+
+document.getElementById("open-giveaway").onclick = () => {
+  alert("🎁 Розыгрыши скоро");
+};
+  
   /* ================= HISTORY ================= */
 
   async function loadHistory() {
