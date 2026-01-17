@@ -300,32 +300,43 @@ document.getElementById("to-payment").onclick = () => {
 
   /* ================= DEPOSIT ================= */
 
-  let depositLocked = false;
-
-document.getElementById("confirm-paid").onclick = async () => {
-  if (depositLocked) return;
-  depositLocked = true;
-
+  document.getElementById("confirm-paid").onclick = async () => {
   const btn = document.getElementById("confirm-paid");
+
+  if (btn.dataset.loading === "1") return;
+  btn.dataset.loading = "1";
   btn.disabled = true;
-  btn.innerText = "⏳ Отправка...";
+  btn.innerText = "⏳ Проверка...";
 
   try {
     const amount = parseInt(document.getElementById("deposit-amount").value);
-
     if (!amount || amount < 100) {
       alert("Минимум 100 ₽");
       return;
     }
 
+    // 🔍 ПРОВЕРКА pending
+    const { data: pending } = await supabase
+      .from("deposits")
+      .select("id")
+      .eq("user_id", window.USER_ID)
+      .eq("status", "pending")
+      .maybeSingle();
+
+    if (pending) {
+      alert("⏳ У вас уже есть пополнение в ожидании. Дождитесь обработки.");
+      return;
+    }
+
+    // ✅ создаём депозит
     const { error } = await supabase.from("deposits").insert({
       user_id: window.USER_ID,
-      amount: amount,
+      amount,
       status: "pending"
     });
 
     if (error) {
-      alert(error.message);
+      alert("Ошибка создания заявки");
       return;
     }
 
@@ -336,7 +347,7 @@ document.getElementById("confirm-paid").onclick = async () => {
     setTimeout(() => closePopup("popup-success"), 2500);
 
   } finally {
-    depositLocked = false;
+    btn.dataset.loading = "0";
     btn.disabled = false;
     btn.innerText = "✅ Я оплатил";
   }
@@ -344,15 +355,13 @@ document.getElementById("confirm-paid").onclick = async () => {
 
   /* ================= WITHDRAW ================= */
 
-  let withdrawLocked = false;
-
-document.getElementById("confirm-withdraw").onclick = async () => {
-  if (withdrawLocked) return;
-  withdrawLocked = true;
-
+  document.getElementById("confirm-withdraw").onclick = async () => {
   const btn = document.getElementById("confirm-withdraw");
+
+  if (btn.dataset.loading === "1") return;
+  btn.dataset.loading = "1";
   btn.disabled = true;
-  btn.innerText = "⏳ Отправка...";
+  btn.innerText = "⏳ Проверка...";
 
   try {
     const amount = parseFloat(document.getElementById("withdraw-amount").value);
@@ -368,6 +377,19 @@ document.getElementById("confirm-withdraw").onclick = async () => {
       return;
     }
 
+    // 🔍 ПРОВЕРКА pending
+    const { data: pending } = await supabase
+      .from("withdrawals")
+      .select("id")
+      .eq("user_id", window.USER_ID)
+      .eq("status", "pending")
+      .maybeSingle();
+
+    if (pending) {
+      alert("⏳ У вас уже есть заявка на вывод в ожидании.");
+      return;
+    }
+
     const { data: bal } = await supabase
       .from("balances")
       .select("balance")
@@ -379,20 +401,22 @@ document.getElementById("confirm-withdraw").onclick = async () => {
       return;
     }
 
+    // списываем
     await supabase
       .from("balances")
       .update({ balance: bal.balance - amount })
       .eq("user_id", window.USER_ID);
 
+    // создаём заявку
     const { error } = await supabase.from("withdrawals").insert({
       user_id: window.USER_ID,
-      amount: amount,
+      amount,
       address: requisites,
       status: "pending"
     });
 
     if (error) {
-      alert(error.message);
+      alert("Ошибка создания заявки");
       return;
     }
 
@@ -403,12 +427,11 @@ document.getElementById("confirm-withdraw").onclick = async () => {
     setTimeout(() => closePopup("popup-success"), 2500);
 
   } finally {
-    withdrawLocked = false;
+    btn.dataset.loading = "0";
     btn.disabled = false;
     btn.innerText = "🚀 Отправить заявку";
   }
 };
-
 /* ================= PROMO CODE ================= */
 
 const promoBtn = document.getElementById("promo-apply");
