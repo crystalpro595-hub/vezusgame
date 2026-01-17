@@ -386,67 +386,84 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
 const promoBtn = document.getElementById("promo-apply");
 const promoInput = document.getElementById("promo-input");
 
+let promoLocked = false;
+
 if (promoBtn && promoInput) {
   promoBtn.onclick = async () => {
-    const code = promoInput.value.trim().toUpperCase();
-    if (!code) return alert("Введите промокод");
+    if (promoLocked) return; // ⛔ защита от спама
+    promoLocked = true;
 
-    // 1. ищем промокод
-    const { data: promo } = await supabase
-      .from("promo_codes")
-      .select("*")
-      .eq("code", code)
-      .eq("active", true)
-      .single();
+    promoBtn.disabled = true;
+    promoBtn.innerText = "⏳ Проверка...";
 
-    if (!promo) {
-      alert("❌ Промокод недействителен");
-      return;
+    try {
+      const code = promoInput.value.trim().toUpperCase();
+      if (!code) {
+        alert("Введите промокод");
+        return;
+      }
+
+      // 1. ищем промокод
+      const { data: promo } = await supabase
+        .from("promo_codes")
+        .select("*")
+        .eq("code", code)
+        .eq("active", true)
+        .single();
+
+      if (!promo) {
+        alert("❌ Промокод недействителен");
+        return;
+      }
+
+      // 2. проверяем использование
+      const { data: used } = await supabase
+        .from("promo_uses")
+        .select("id")
+        .eq("user_id", window.USER_ID)
+        .eq("promo_id", promo.id)
+        .single();
+
+      if (used) {
+        alert("⚠️ Вы уже активировали этот промокод");
+        return;
+      }
+
+      // 3. начисляем баланс
+      const { data: bal } = await supabase
+        .from("balances")
+        .select("balance")
+        .eq("user_id", window.USER_ID)
+        .single();
+
+      await supabase
+        .from("balances")
+        .update({ balance: bal.balance + promo.reward })
+        .eq("user_id", window.USER_ID);
+
+      // 4. сохраняем использование
+      await supabase.from("promo_uses").insert({
+        user_id: window.USER_ID,
+        promo_id: promo.id
+      });
+
+      // UI
+      promoInput.value = "";
+      closePopup("popup-promo");
+      openPopup("popup-promo-success");
+      loadBalance();
+
+      setTimeout(() => {
+        closePopup("popup-promo-success");
+      }, 2500);
+
+    } finally {
+      promoLocked = false;
+      promoBtn.disabled = false;
+      promoBtn.innerText = "✅ Активировать";
     }
-
-    // 2. проверяем, использовал ли юзер
-    const { data: used } = await supabase
-      .from("promo_uses")
-      .select("id")
-      .eq("user_id", window.USER_ID)
-      .eq("promo_id", promo.id)
-      .single();
-
-    if (used) {
-      alert("⚠️ Вы уже активировали этот промокод");
-      return;
-    }
-
-    // 3. начисляем баланс
-    const { data: bal } = await supabase
-      .from("balances")
-      .select("balance")
-      .eq("user_id", window.USER_ID)
-      .single();
-
-    await supabase
-      .from("balances")
-      .update({ balance: bal.balance + promo.reward })
-      .eq("user_id", window.USER_ID);
-
-    // 4. сохраняем факт использования
-    await supabase.from("promo_uses").insert({
-      user_id: window.USER_ID,
-      promo_id: promo.id
-    });
-
-    // UI
-    promoInput.value = "";
-    closePopup("popup-promo");
-    openPopup("popup-promo-success");
-
-    loadBalance();
-
-    setTimeout(() => {
-      closePopup("popup-promo-success");
-    }, 2500);
   };
-}  
+}
   
   initUser();
 });
