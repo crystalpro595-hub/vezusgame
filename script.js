@@ -281,6 +281,23 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
     alert("Заявка отменена, средства возвращены");
   }
 
+  /* ================= TO PAYMENT ================= */
+
+document.getElementById("to-payment").onclick = () => {
+  const amount = parseInt(document.getElementById("deposit-amount").value);
+
+  if (!amount || amount < 100) {
+    alert("Минимум 100 ₽");
+    return;
+  }
+
+  // подставляем сумму в попап оплаты
+  document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
+
+  // открываем оплату
+  openPopup("popup-payment");
+};
+
   /* ================= DEPOSIT ================= */
 
   let depositLocked = false;
