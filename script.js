@@ -283,102 +283,113 @@ document.querySelectorAll(".cancel-btn").forEach(btn => {
 
   /* ================= DEPOSIT ================= */
 
-  document.getElementById("to-payment").onclick = () => {
+  let depositLocked = false;
+
+document.getElementById("confirm-paid").onclick = async () => {
+  if (depositLocked) return;
+  depositLocked = true;
+
+  const btn = document.getElementById("confirm-paid");
+  btn.disabled = true;
+  btn.innerText = "⏳ Отправка...";
+
+  try {
     const amount = parseInt(document.getElementById("deposit-amount").value);
-    if (!amount || amount < 100) return alert("Минимум 100 ₽");
-    document.getElementById("pay-amount-text").innerText = `${amount} ₽`;
-    openPopup("popup-payment");
-  };
 
-  document.getElementById("confirm-paid").onclick = async () => {
-  const amount = parseInt(document.getElementById("deposit-amount").value);
+    if (!amount || amount < 100) {
+      alert("Минимум 100 ₽");
+      return;
+    }
 
-  if (!amount || amount < 100) {
-    alert("Минимум 100 ₽");
-    return;
+    const { error } = await supabase.from("deposits").insert({
+      user_id: window.USER_ID,
+      amount: amount,
+      status: "pending"
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    closePopup("popup-payment");
+    closePopup("popup-deposit");
+    openPopup("popup-success");
+
+    setTimeout(() => closePopup("popup-success"), 2500);
+
+  } finally {
+    depositLocked = false;
+    btn.disabled = false;
+    btn.innerText = "✅ Я оплатил";
   }
-
-  const { error } = await supabase.from("deposits").insert({
-    user_id: window.USER_ID,
-    amount: amount,
-    status: "pending"
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  // закрываем попапы
-  closePopup("popup-payment");
-  closePopup("popup-deposit");
-
-  // показываем анимацию успеха
-  openPopup("popup-success");
-
-  setTimeout(() => {
-    closePopup("popup-success");
-  }, 2500);
 };
 
   /* ================= WITHDRAW ================= */
 
-  document.getElementById("confirm-withdraw").onclick = async () => {
-  const amount = parseFloat(document.getElementById("withdraw-amount").value);
-  const requisites = document.getElementById("withdraw-wallet").value.trim();
+  let withdrawLocked = false;
 
-  if (!amount || amount <= 0) {
-    alert("Введите сумму");
-    return;
+document.getElementById("confirm-withdraw").onclick = async () => {
+  if (withdrawLocked) return;
+  withdrawLocked = true;
+
+  const btn = document.getElementById("confirm-withdraw");
+  btn.disabled = true;
+  btn.innerText = "⏳ Отправка...";
+
+  try {
+    const amount = parseFloat(document.getElementById("withdraw-amount").value);
+    const requisites = document.getElementById("withdraw-wallet").value.trim();
+
+    if (!amount || amount <= 0) {
+      alert("Введите сумму");
+      return;
+    }
+
+    if (!requisites) {
+      alert("Введите реквизиты");
+      return;
+    }
+
+    const { data: bal } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
+
+    if (!bal || bal.balance < amount) {
+      alert("Недостаточно средств");
+      return;
+    }
+
+    await supabase
+      .from("balances")
+      .update({ balance: bal.balance - amount })
+      .eq("user_id", window.USER_ID);
+
+    const { error } = await supabase.from("withdrawals").insert({
+      user_id: window.USER_ID,
+      amount: amount,
+      address: requisites,
+      status: "pending"
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    closePopup("popup-withdraw");
+    loadBalance();
+    openPopup("popup-success");
+
+    setTimeout(() => closePopup("popup-success"), 2500);
+
+  } finally {
+    withdrawLocked = false;
+    btn.disabled = false;
+    btn.innerText = "🚀 Отправить заявку";
   }
-
-  if (!requisites) {
-    alert("Введите реквизиты");
-    return;
-  }
-
-  const { data: bal } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
-
-  if (!bal || bal.balance < amount) {
-    alert("Недостаточно средств");
-    return;
-  }
-
-  // списываем баланс
-  await supabase
-    .from("balances")
-    .update({ balance: bal.balance - amount })
-    .eq("user_id", window.USER_ID);
-
-  // создаём заявку
-  const { error } = await supabase.from("withdrawals").insert({
-    user_id: window.USER_ID,
-    amount: amount,
-    address: requisites,
-    status: "pending"
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  // закрываем попап вывода
-  closePopup("popup-withdraw");
-
-  // обновляем баланс
-  loadBalance();
-
-  // показываем красивое подтверждение
-  openPopup("popup-success");
-
-  setTimeout(() => {
-    closePopup("popup-success");
-  }, 2500);
 };
 
 /* ================= PROMO CODE ================= */
