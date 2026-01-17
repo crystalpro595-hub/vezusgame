@@ -947,6 +947,15 @@ body.show #site {
   </div>
 </div>
 
+<!-- === PROMO SUCCESS === -->
+<div class="popup" id="popup-promo-success">
+  <div class="success-box">
+    <div class="checkmark">✓</div>
+    <div class="success-title">Промокод активирован</div>
+    <div class="success-text">+10 VC начислено</div>
+  </div>
+</div>    
+
   <div class="popup" id="popup-requests">
   <div class="box">
     <div id="requests-list" class="list"></div>
@@ -1016,6 +1025,39 @@ body.show #site {
     </div>
   </div>
 </div>
+
+<!-- === PROMO CODE POPUP === -->
+<div class="popup" id="popup-promo">
+  <div class="popup-box deposit-box">
+
+    <div class="deposit-header">
+      <span>🎟 Активация промокода</span>
+      <button id="close-promo">✖</button>
+    </div>
+
+    <div class="deposit-body">
+
+      <div class="deposit-info">
+        Введите промокод и получите бонусные VC.<br>
+        <b>Один промокод — один раз</b>
+      </div>
+
+      <div class="deposit-row">
+        <input
+          id="promo-input"
+          type="text"
+          placeholder="Введите промокод"
+        />
+      </div>
+
+      <button class="deposit-btn" id="promo-apply">
+        ✅ Активировать
+      </button>
+
+    </div>
+  </div>
+</div>
+    
 <!-- popup вывода -->
 <div class="popup" id="popup-withdraw">
   <div class="popup-box withdraw-box">
