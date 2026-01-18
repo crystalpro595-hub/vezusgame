@@ -822,6 +822,33 @@ body.show #site {
   height: 100%;
   object-fit: cover;
 }    
+
+.event-banner {
+  position: relative;
+}
+
+.event-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 5;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.35);
+  transition: .3s;
+}
+
+.dot.active {
+  background: #00a2ff;
+  box-shadow: 0 0 10px rgba(0,162,255,.8);
+}
     
 </style>
 </head>
@@ -856,8 +883,14 @@ body.show #site {
 </div>
 
 <div class="event-banner">
-  <div class="event-track">
-
+  <div class="event-track">    
+      
+<div class="event-dots">
+  <span class="dot active"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+      
     <div class="event-slide">
       <img src="https://images.wallpaperscraft.com/image/single/pubg_game_character_129700_1280x720.jpg" alt="">
     </div>
@@ -1249,5 +1282,22 @@ window.addEventListener("load", () => {
     });
 })();
 </script>
+
+<script>
+const track = document.querySelector('.event-track');
+const dots = document.querySelectorAll('.event-dots .dot');
+
+if (track && dots.length) {
+  track.addEventListener('scroll', () => {
+    const slideWidth = track.offsetWidth;
+    const index = Math.round(track.scrollLeft / slideWidth);
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+  });
+}
+</script>
+    
 </body>
 </html>
