@@ -516,10 +516,18 @@ if (promoBtn && promoInput) {
   };
 }
 
-document.querySelectorAll(".event-slide")[1].onclick = () => {
-  openPopup("popup-wheel");
-  loadWheel();
-};
+document.addEventListener("click", e => {
+  const slide = e.target.closest(".event-slide");
+
+  if (!slide) return;
+
+  const index = [...document.querySelectorAll(".event-slide")].indexOf(slide);
+
+  if (index === 1) {
+    openPopup("popup-wheel");
+    loadWheel();
+  }
+});
 
 document.getElementById("close-wheel").onclick = () => {
   closePopup("popup-wheel");
