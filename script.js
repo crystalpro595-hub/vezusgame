@@ -518,3 +518,99 @@ if (promoBtn && promoInput) {
   
   initUser();
 });
+
+document.querySelectorAll(".event-slide")[1].onclick = () => {
+  openPopup("popup-wheel");
+  loadWheel();
+};
+
+document.getElementById("close-wheel").onclick = () => {
+  closePopup("popup-wheel");
+};
+
+async function loadWheel() {
+  const userId = window.USER_ID;
+  const today = new Date().toISOString().slice(0,10);
+
+  // 1. депозит >= 500
+  const { data: deps } = await supabase
+    .from("deposits")
+    .select("amount")
+    .eq("user_id", userId)
+    .eq("status", "approved");
+
+  const depositSum = deps.reduce((s,d)=>s+d.amount,0);
+  const depositOk = depositSum >= 500;
+  updateCond("cond-deposit", depositOk);
+
+  // 2. был ли спин сегодня
+  const { data: spin } = await supabase
+    .from("wheel_spins")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("spin_date", today)
+    .maybeSingle();
+
+  const timeOk = !spin;
+  updateCond("cond-time", timeOk);
+
+  const btn = document.getElementById("wheel-spin");
+
+  if (depositOk && timeOk) {
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.onclick = spinWheel;
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = ".4";
+    if (spin) startWheelTimer(spin.created_at);
+  }
+}
+
+function updateCond(id, ok) {
+  const el = document.getElementById(id);
+  el.className = "condition " + (ok ? "ok" : "fail");
+  el.querySelector("span").innerText = ok ? "✔" : "✖";
+}
+
+function startWheelTimer(time) {
+  const next = new Date(time);
+  next.setHours(24,0,0,0);
+
+  const t = document.getElementById("wheel-timer");
+
+  setInterval(()=>{
+    const d = next - new Date();
+    if (d <= 0) location.reload();
+    const h = Math.floor(d/3600000);
+    const m = Math.floor(d%3600000/60000);
+    t.innerText = `Можно крутить через ${h}ч ${m}м`;
+  },1000);
+}
+
+async function spinWheel() {
+  const prize = [5,10,20,50][Math.floor(Math.random()*4)];
+
+  document.getElementById("wheel-visual").style.transform =
+    "rotate(" + (720 + Math.random()*360) + "deg)";
+
+  await supabase.from("wheel_spins").insert({
+    user_id: window.USER_ID,
+    spin_date: new Date().toISOString().slice(0,10),
+    prize
+  });
+
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
+
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance + prize })
+    .eq("user_id", window.USER_ID);
+
+  loadBalance();
+  alert(`🎉 Вы выиграли ${prize} VC`);
+}
