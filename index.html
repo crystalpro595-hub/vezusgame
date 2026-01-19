@@ -849,6 +849,128 @@ body.show #site {
   background: #00a2ff;
   box-shadow: 0 0 10px rgba(0,162,255,.8);
 }
+
+/* ===== WHEEL POPUP ===== */
+.wheel-box {
+  width: 92%;
+  max-width: 420px;
+  border-radius: 22px;
+  background: linear-gradient(180deg,#0b1220,#020617);
+  border: 1px solid #1e293b;
+  box-shadow: 0 0 40px rgba(0,136,255,.35);
+  overflow: hidden;
+}
+
+.wheel-header {
+  background: linear-gradient(90deg,#0080ff,#003c7a);
+  padding: 16px;
+  font-weight: 900;
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wheel-header button {
+  background: rgba(0,0,0,.3);
+  border: none;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.wheel-body {
+  padding: 20px;
+}
+
+/* колесо */
+.wheel-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.wheel {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #22c55e 0deg 60deg,
+    #1e88ff 60deg 120deg,
+    #facc15 120deg 180deg,
+    #ef4444 180deg 240deg,
+    #a855f7 240deg 300deg,
+    #22c55e 300deg 360deg
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(0,136,255,.6);
+  transition: transform 4s cubic-bezier(.17,.67,.25,1);
+}
+
+.wheel span {
+  position: absolute;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.wheel span:nth-child(1){transform: rotate(30deg) translateY(-90px)}
+.wheel span:nth-child(2){transform: rotate(90deg) translateY(-90px)}
+.wheel span:nth-child(3){transform: rotate(150deg) translateY(-90px)}
+.wheel span:nth-child(4){transform: rotate(210deg) translateY(-90px)}
+.wheel span:nth-child(5){transform: rotate(270deg) translateY(-90px)}
+.wheel span:nth-child(6){transform: rotate(330deg) translateY(-90px)}
+
+.wheel-arrow {
+  position: absolute;
+  top: -6px;
+  font-size: 28px;
+  color: #facc15;
+  text-shadow: 0 0 10px #facc15;
+}
+
+/* условия */
+.wheel-condition {
+  display: flex;
+  justify-content: space-between;
+  background: #020617;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid #1e293b;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+/* таймер */
+.wheel-timer {
+  text-align: center;
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 14px;
+}
+
+/* кнопка */
+.wheel-spin-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+  box-shadow: 0 0 18px rgba(34,197,94,.6);
+}
+
+.wheel-spin-btn:disabled {
+  background: #1e293b;
+  box-shadow: none;
+  cursor: not-allowed;
+}    
     
 </style>
 </head>
@@ -1182,6 +1304,49 @@ body.show #site {
       </button>
     </div>
 
+  </div>
+</div>
+
+<div class="popup" id="popup-wheel">
+  <div class="popup-box wheel-box">
+
+    <div class="wheel-header">
+      🎡 Колесо фортуны
+      <button onclick="closePopup('popup-wheel')">✖</button>
+    </div>
+
+    <div class="wheel-body">
+
+      <!-- КОЛЕСО -->
+      <div class="wheel-wrapper">
+        <div class="wheel" id="wheel">
+          <span>10 VC</span>
+          <span>20 VC</span>
+          <span>50 VC</span>
+          <span>0 VC</span>
+          <span>30 VC</span>
+          <span>100 VC</span>
+        </div>
+        <div class="wheel-arrow">▼</div>
+      </div>
+
+      <!-- УСЛОВИЕ -->
+      <div class="wheel-condition" id="wheel-condition">
+        <span>💰 Депозит от 500 ₽</span>
+        <b id="wheel-check">❌</b>
+      </div>
+
+      <!-- ТАЙМЕР -->
+      <div class="wheel-timer" id="wheel-timer">
+        Доступно для вращения
+      </div>
+
+      <!-- КНОПКА -->
+      <button class="wheel-spin-btn" id="wheel-spin">
+        🔄 Крутить
+      </button>
+
+    </div>
   </div>
 </div>
     
