@@ -849,6 +849,16 @@ body.show #site {
   background: #00a2ff;
   box-shadow: 0 0 10px rgba(0,162,255,.8);
 }
+
+.condition {
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+  font-weight:700;
+  color:#aaa;
+}
+.condition.ok { color:#22c55e }
+.condition.fail { color:#ef4444 }
     
 </style>
 </head>
@@ -1180,6 +1190,64 @@ body.show #site {
       <button class="withdraw-btn" id="confirm-withdraw">
         🚀 Отправить заявку
       </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="popup" id="popup-wheel">
+  <div class="popup-box bonus-box">
+
+    <div class="bonus-header">
+      <span>🎡 Колесо Фортуны</span>
+      <button id="close-wheel">✖</button>
+    </div>
+
+    <div style="padding:20px">
+
+      <div id="wheel-visual"
+        style="
+          width:260px;
+          height:260px;
+          border-radius:50%;
+          margin:0 auto 20px;
+          background:conic-gradient(
+            #22c55e 0 25%,
+            #3b82f6 25% 50%,
+            #facc15 50% 75%,
+            #ef4444 75% 100%
+          );
+          box-shadow:0 0 30px rgba(0,162,255,.6);
+        ">
+      </div>
+
+      <!-- условия -->
+      <div id="wheel-conditions">
+        <div class="condition" id="cond-deposit">💰 Депозит от 500₽ <span></span></div>
+        <div class="condition" id="cond-time">⏳ 1 раз в день <span></span></div>
+      </div>
+
+      <button id="wheel-spin"
+        style="
+          width:100%;
+          margin-top:14px;
+          padding:14px;
+          border-radius:14px;
+          font-weight:900;
+          background:#008cff;
+          border:none;
+          color:#fff;
+          opacity:.4;
+        "
+        disabled
+      >
+        Крутить
+      </button>
+
+      <div id="wheel-timer"
+        style="margin-top:10px;font-size:13px;color:#9fb6ff;text-align:center">
+      </div>
+
     </div>
 
   </div>
