@@ -851,85 +851,69 @@ body.show #site {
 }
 
 .wheel-box {
-  width: 92%;
-  max-width: 420px;
-  background: linear-gradient(180deg,#0b1220,#040814);
-  border-radius: 22px;
-  border: 1px solid #1e293b;
-  padding: 18px;
-  box-shadow: 0 0 40px rgba(0,136,255,.35);
-}
-
-.wheel-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  font-weight:900;
-  margin-bottom:12px;
-}
-
-.wheel-header button {
-  background:none;
-  border:none;
-  color:#9fb6ff;
-  font-size:20px;
-  cursor:pointer;
-}
-
-.wheel-conditions {
-  background:#020617;
-  border-radius:14px;
-  padding:12px;
-  font-size:13px;
-  color:#c7d2fe;
-  margin-bottom:14px;
-}
-
-.wheel-conditions b {
-  display:block;
-  margin-bottom:6px;
-  color:#38bdf8;
+  background: #0f141a;
+  border-radius: 16px;
+  padding: 20px;
+  width: 320px;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0,255,180,.15);
 }
 
 .wheel-wrapper {
-  position:relative;
-  display:flex;
-  justify-content:center;
-  margin:14px 0;
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto;
 }
 
-#wheel-canvas {
-  border-radius:50%;
-  box-shadow:0 0 35px rgba(0,136,255,.45);
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      #1abc9c 0deg 60deg,
+      #2ecc71 60deg 120deg,
+      #f1c40f 120deg 180deg,
+      #e67e22 180deg 240deg,
+      #e74c3c 240deg 300deg,
+      #34495e 300deg 360deg
+    );
+  border: 6px solid #1affb0;
+  box-shadow: 0 0 25px rgba(26,255,176,.6);
+  transition: transform 4s cubic-bezier(.12,.85,.25,1);
 }
 
 .wheel-pointer {
-  position:absolute;
-  top:-6px;
-  width:0;
-  height:0;
-  border-left:14px solid transparent;
-  border-right:14px solid transparent;
-  border-bottom:22px solid #38bdf8;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-bottom: 26px solid #1affb0;
+  z-index: 10;
 }
 
-.wheel-spin-btn {
-  width:100%;
-  padding:16px;
-  border-radius:16px;
-  border:none;
-  font-size:18px;
-  font-weight:900;
-  color:#fff;
-  background:linear-gradient(45deg,#0ea5e9,#2563eb);
-  box-shadow:0 0 20px rgba(56,189,248,.6);
-  cursor:pointer;
+.wheel-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: none;
+  background: #1affb0;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(26,255,176,.8);
 }
 
-.wheel-spin-btn:disabled {
-  opacity:.6;
-  cursor:not-allowed;
+.wheel-btn:disabled {
+  opacity: .5;
 }
     
 </style>
@@ -1267,31 +1251,24 @@ body.show #site {
   </div>
 </div>
 
-<div class="popup" id="popup-wheel">
+<div id="popup-wheel" class="popup">
   <div class="wheel-box">
 
-    <div class="wheel-header">
-      <span>🎡 Колесо фортуны</span>
-      <button id="close-wheel">✖</button>
-    </div>
-
-    <div class="wheel-conditions">
-      <b>Условия участия</b>
-      <span>• Минимальный депозит: <b>500 VC</b></span>
-      <span>• 1 прокрутка в сутки</span>
-    </div>
+    <div class="wheel-pointer"></div>
 
     <div class="wheel-wrapper">
-      <canvas id="wheel-canvas" width="320" height="320"></canvas>
-      <div class="wheel-pointer"></div>
+      <div id="wheel" class="wheel"></div>
+      <button id="wheel-spin" class="wheel-btn">КРУТИТЬ</button>
     </div>
 
-    <button class="wheel-spin-btn" id="spin-btn">
-      🎯 КРУТИТЬ
-    </button>
+    <div class="wheel-info">
+      <div>Депозит ≥ 500₽ <span id="wheel-check">❌</span></div>
+      <div id="wheel-timer">Проверка...</div>
+    </div>
 
+    <button class="close" onclick="closePopup('popup-wheel')">✖</button>
   </div>
-</div>    
+</div>
     
 <!-- === POPUPS END === -->
 
