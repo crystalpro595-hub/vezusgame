@@ -432,7 +432,6 @@ document.getElementById("to-payment").onclick = () => {
     btn.innerText = "🚀 Отправить заявку";
   }
 };
-  
 /* ================= PROMO CODE ================= */
 
 const promoBtn = document.getElementById("promo-apply");
