@@ -432,6 +432,175 @@ document.getElementById("to-payment").onclick = () => {
     btn.innerText = "🚀 Отправить заявку";
   }
 };
+
+/* ===================== WHEEL OF FORTUNE ===================== */
+
+const wheelPopupId = "popup-wheel";
+const spinBtn = document.getElementById("spin-btn");
+const closeWheelBtn = document.getElementById("close-wheel");
+const canvas = document.getElementById("wheel-canvas");
+const ctx = canvas.getContext("2d");
+
+// призы
+const WHEEL_REWARDS = [10, 25, 50, 75, 100, 150];
+
+// состояние
+let wheelAngle = 0;
+let spinning = false;
+
+// рисуем колесо
+function drawWheel() {
+  const size = canvas.width;
+  const center = size / 2;
+  const slice = (Math.PI * 2) / WHEEL_REWARDS.length;
+
+  ctx.clearRect(0, 0, size, size);
+
+  WHEEL_REWARDS.forEach((reward, i) => {
+    ctx.beginPath();
+    ctx.moveTo(center, center);
+    ctx.fillStyle = i % 2 === 0 ? "#1e40af" : "#0ea5e9";
+    ctx.arc(
+      center,
+      center,
+      center,
+      i * slice,
+      (i + 1) * slice
+    );
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(i * slice + slice / 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "900 18px Montserrat";
+    ctx.textAlign = "right";
+    ctx.fillText(`${reward} VC`, center - 18, 8);
+    ctx.restore();
+  });
+}
+
+// первичная отрисовка
+drawWheel();
+
+/* ---------- открытие с 2 баннера ---------- */
+const slides = document.querySelectorAll(".event-slide");
+if (slides[1]) {
+  slides[1].addEventListener("click", () => {
+    openPopup(wheelPopupId);
+  });
+}
+
+closeWheelBtn.onclick = () => closePopup(wheelPopupId);
+
+/* ---------- КРУТИТЬ ---------- */
+spinBtn.onclick = async () => {
+  if (spinning) return;
+
+  /* 1️⃣ условие — депозит от 500 */
+  const { data: dep } = await supabase
+    .from("deposits")
+    .select("amount")
+    .eq("user_id", USER_ID)
+    .eq("status", "approved")
+    .gte("amount", 500)
+    .maybeSingle();
+
+  if (!dep) {
+    alert("❌ Минимальный депозит для участия — 500 VC");
+    return;
+  }
+
+  /* 2️⃣ проверка суточного прокрута */
+  const yesterday = new Date(Date.now() - 86400000).toISOString();
+
+  const { data: spinExist } = await supabase
+    .from("wheel_spins")
+    .select("id")
+    .eq("user_id", USER_ID)
+    .gte("created_at", yesterday)
+    .maybeSingle();
+
+  if (spinExist) {
+    alert("⏳ Вы уже крутили колесо сегодня");
+    return;
+  }
+
+  /* 3️⃣ старт */
+  spinning = true;
+  spinBtn.disabled = true;
+  spinBtn.innerText = "⏳ Крутится...";
+
+  const reward =
+    WHEEL_REWARDS[Math.floor(Math.random() * WHEEL_REWARDS.length)];
+
+  const targetAngle =
+    wheelAngle + 360 * 6 + Math.random() * 360;
+
+  const spinInterval = setInterval(async () => {
+    wheelAngle += 18;
+
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate((wheelAngle * Math.PI) / 180);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    drawWheel();
+    ctx.restore();
+
+    if (wheelAngle >= targetAngle) {
+      clearInterval(spinInterval);
+
+      /* 4️⃣ начисление */
+      const { data: bal } = await supabase
+        .from("balances")
+        .select("balance")
+        .eq("user_id", USER_ID)
+        .single();
+
+      await supabase
+        .from("balances")
+        .update({ balance: bal.balance + reward })
+        .eq("user_id", USER_ID);
+
+      /* 5️⃣ запись прокрута */
+      await supabase.from("wheel_spins").insert({
+        user_id: USER_ID,
+        reward
+      });
+
+      loadBalance();
+
+      alert(`🎉 Вы выиграли ${reward} VC`);
+
+      spinning = false;
+      spinBtn.disabled = true;
+
+      startDailyTimer();
+    }
+  }, 20);
+};
+
+/* ---------- суточный таймер на кнопке ---------- */
+function startDailyTimer() {
+  const end = Date.now() + 86400000;
+
+  const timer = setInterval(() => {
+    const diff = end - Date.now();
+    if (diff <= 0) {
+      clearInterval(timer);
+      spinBtn.disabled = false;
+      spinBtn.innerText = "🎯 КРУТИТЬ";
+      return;
+    }
+
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+
+    spinBtn.innerText = `⏳ ${h}ч ${m}м`;
+  }, 60000);
+}
+  
 /* ================= PROMO CODE ================= */
 
 const promoBtn = document.getElementById("promo-apply");
