@@ -515,9 +515,6 @@ if (promoBtn && promoInput) {
     }
   };
 }
-  
-  initUser();
-});
 
 document.querySelectorAll(".event-slide")[1].onclick = () => {
   openPopup("popup-wheel");
@@ -614,3 +611,7 @@ async function spinWheel() {
   loadBalance();
   alert(`🎉 Вы выиграли ${prize} VC`);
 }
+
+  initUser();
+});
+
