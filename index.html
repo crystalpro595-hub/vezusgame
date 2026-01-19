@@ -849,6 +849,88 @@ body.show #site {
   background: #00a2ff;
   box-shadow: 0 0 10px rgba(0,162,255,.8);
 }
+
+.wheel-box {
+  width: 92%;
+  max-width: 420px;
+  background: linear-gradient(180deg,#0b1220,#040814);
+  border-radius: 22px;
+  border: 1px solid #1e293b;
+  padding: 18px;
+  box-shadow: 0 0 40px rgba(0,136,255,.35);
+}
+
+.wheel-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+.wheel-header button {
+  background:none;
+  border:none;
+  color:#9fb6ff;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.wheel-conditions {
+  background:#020617;
+  border-radius:14px;
+  padding:12px;
+  font-size:13px;
+  color:#c7d2fe;
+  margin-bottom:14px;
+}
+
+.wheel-conditions b {
+  display:block;
+  margin-bottom:6px;
+  color:#38bdf8;
+}
+
+.wheel-wrapper {
+  position:relative;
+  display:flex;
+  justify-content:center;
+  margin:14px 0;
+}
+
+#wheel-canvas {
+  border-radius:50%;
+  box-shadow:0 0 35px rgba(0,136,255,.45);
+}
+
+.wheel-pointer {
+  position:absolute;
+  top:-6px;
+  width:0;
+  height:0;
+  border-left:14px solid transparent;
+  border-right:14px solid transparent;
+  border-bottom:22px solid #38bdf8;
+}
+
+.wheel-spin-btn {
+  width:100%;
+  padding:16px;
+  border-radius:16px;
+  border:none;
+  font-size:18px;
+  font-weight:900;
+  color:#fff;
+  background:linear-gradient(45deg,#0ea5e9,#2563eb);
+  box-shadow:0 0 20px rgba(56,189,248,.6);
+  cursor:pointer;
+}
+
+.wheel-spin-btn:disabled {
+  opacity:.6;
+  cursor:not-allowed;
+}
     
 </style>
 </head>
@@ -1184,6 +1266,32 @@ body.show #site {
 
   </div>
 </div>
+
+<div class="popup" id="popup-wheel">
+  <div class="wheel-box">
+
+    <div class="wheel-header">
+      <span>🎡 Колесо фортуны</span>
+      <button id="close-wheel">✖</button>
+    </div>
+
+    <div class="wheel-conditions">
+      <b>Условия участия</b>
+      <span>• Минимальный депозит: <b>500 VC</b></span>
+      <span>• 1 прокрутка в сутки</span>
+    </div>
+
+    <div class="wheel-wrapper">
+      <canvas id="wheel-canvas" width="320" height="320"></canvas>
+      <div class="wheel-pointer"></div>
+    </div>
+
+    <button class="wheel-spin-btn" id="spin-btn">
+      🎯 КРУТИТЬ
+    </button>
+
+  </div>
+</div>    
     
 <!-- === POPUPS END === -->
 
