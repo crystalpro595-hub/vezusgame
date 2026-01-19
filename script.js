@@ -515,6 +515,92 @@ if (promoBtn && promoInput) {
     }
   };
 }
+
+/* ================= WHEEL LOGIC ================= */
+
+const wheelBtn = document.getElementById("wheel-spin");
+const wheel = document.getElementById("wheel");
+const wheelCheck = document.getElementById("wheel-check");
+const wheelTimer = document.getElementById("wheel-timer");
+
+let wheelLocked = false;
+
+// 👉 клик по ВТОРОМУ баннеру
+document.addEventListener("click", e => {
+  const slide = e.target.closest(".event-slide");
+  if (!slide) return;
+
+  const slides = [...document.querySelectorAll(".event-slide")];
+  if (slides.indexOf(slide) === 1) {
+    openPopup("popup-wheel");
+    checkWheelAccess();
+  }
+});
+
+async function checkWheelAccess() {
+  // проверка депозита >= 500
+  const { data: dep } = await supabase
+    .from("deposits")
+    .select("amount")
+    .eq("user_id", window.USER_ID)
+    .eq("status", "approved")
+    .gte("amount", 500)
+    .limit(1);
+
+  const hasDeposit = dep && dep.length > 0;
+  wheelCheck.innerText = hasDeposit ? "✅" : "❌";
+
+  // проверка таймера
+  const last = localStorage.getItem("wheel_last");
+  if (last) {
+    const diff = Date.now() - parseInt(last);
+    if (diff < 86400000) {
+      const h = Math.floor((86400000 - diff) / 3600000);
+      wheelTimer.innerText = `⏳ Через ${h} ч`;
+      wheelBtn.disabled = true;
+      return;
+    }
+  }
+
+  wheelTimer.innerText = "Можно крутить";
+  wheelBtn.disabled = !hasDeposit;
+}
+
+// крутить
+wheelBtn.onclick = async () => {
+  if (wheelLocked) return;
+  wheelLocked = true;
+
+  const prize = [0,10,20,30,50,100];
+  const win = prize[Math.floor(Math.random()*prize.length)];
+  const deg = 360 * 5 + Math.floor(Math.random() * 360);
+
+  wheel.style.transform = `rotate(${deg}deg)`;
+
+  setTimeout(async () => {
+    if (win > 0) {
+      const { data: bal } = await supabase
+        .from("balances")
+        .select("balance")
+        .eq("user_id", window.USER_ID)
+        .single();
+
+      await supabase
+        .from("balances")
+        .update({ balance: bal.balance + win })
+        .eq("user_id", window.USER_ID);
+
+      loadBalance();
+      alert(`🎉 Вы выиграли ${win} VC`);
+    } else {
+      alert("😢 Попробуй завтра");
+    }
+
+    localStorage.setItem("wheel_last", Date.now());
+    closePopup("popup-wheel");
+    wheelLocked = false;
+  }, 4200);
+};  
   
   initUser();
 });
