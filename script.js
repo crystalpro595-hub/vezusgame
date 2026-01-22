@@ -353,6 +353,75 @@ document.getElementById("to-payment").onclick = () => {
   }
 };
 
+/* ================= UC SHOP ================= */
+
+let selectedUC = null;
+let selectedPrice = null;
+
+// открыть попап
+document.getElementById("open-uc").onclick = () => {
+  openPopup("popup-uc");
+};
+
+// выбор пакета
+document.querySelectorAll(".uc-list button").forEach(btn => {
+  btn.onclick = () => {
+    selectedUC = parseInt(btn.dataset.uc);
+    selectedPrice = parseInt(btn.dataset.price);
+
+    document.querySelectorAll(".uc-list button").forEach(b => {
+      b.style.opacity = "0.6";
+    });
+
+    btn.style.opacity = "1";
+    document.getElementById("buy-uc").disabled = false;
+  };
+});
+
+// покупка
+document.getElementById("buy-uc").onclick = async () => {
+  if (!selectedUC || !selectedPrice) return;
+
+  // получаем баланс
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
+
+  if (!bal || bal.balance < selectedPrice) {
+    alert("❌ Недостаточно VC");
+    return;
+  }
+
+  // списываем VC
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance - selectedPrice })
+    .eq("user_id", window.USER_ID);
+
+  // записываем покупку UC
+  await supabase.from("uc_purchases").insert({
+    user_id: window.USER_ID,
+    uc_amount: selectedUC,
+    price: selectedPrice,
+    status: "completed"
+  });
+
+  loadBalance();
+  closePopup("popup-uc");
+
+  alert(`✅ Куплено ${selectedUC} UC`);
+};
+
+// закрыть
+function closePopup() {
+  document.getElementById("popup-uc").style.display = "none";
+  document.getElementById("buy-uc").disabled = true;
+  selectedUC = null;
+  selectedPrice = null;
+}  
+
   /* ================= WITHDRAW ================= */
 
   document.getElementById("confirm-withdraw").onclick = async () => {
@@ -514,75 +583,6 @@ if (promoBtn && promoInput) {
       promoBtn.innerText = "✅ Активировать";
     }
   };
-}
-
-/* ================= UC SHOP ================= */
-
-let selectedUC = null;
-let selectedPrice = null;
-
-// открыть попап
-document.getElementById("open-uc").onclick = () => {
-  openPopup("popup-uc");
-};
-
-// выбор пакета
-document.querySelectorAll(".uc-list button").forEach(btn => {
-  btn.onclick = () => {
-    selectedUC = parseInt(btn.dataset.uc);
-    selectedPrice = parseInt(btn.dataset.price);
-
-    document.querySelectorAll(".uc-list button").forEach(b => {
-      b.style.opacity = "0.6";
-    });
-
-    btn.style.opacity = "1";
-    document.getElementById("buy-uc").disabled = false;
-  };
-});
-
-// покупка
-document.getElementById("buy-uc").onclick = async () => {
-  if (!selectedUC || !selectedPrice) return;
-
-  // получаем баланс
-  const { data: bal } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
-
-  if (!bal || bal.balance < selectedPrice) {
-    alert("❌ Недостаточно VC");
-    return;
-  }
-
-  // списываем VC
-  await supabase
-    .from("balances")
-    .update({ balance: bal.balance - selectedPrice })
-    .eq("user_id", window.USER_ID);
-
-  // записываем покупку UC
-  await supabase.from("uc_purchases").insert({
-    user_id: window.USER_ID,
-    uc_amount: selectedUC,
-    price: selectedPrice,
-    status: "completed"
-  });
-
-  loadBalance();
-  closePopup("popup-uc");
-
-  alert(`✅ Куплено ${selectedUC} UC`);
-};
-
-// закрыть
-function closePopup() {
-  document.getElementById("popup-uc").style.display = "none";
-  document.getElementById("buy-uc").disabled = true;
-  selectedUC = null;
-  selectedPrice = null;
 }
   
   initUser();
