@@ -925,6 +925,31 @@ body.show #site {
   color: #cfeaff;
   text-shadow: 0 0 14px rgba(0,162,255,.9);
 }    
+
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup.hidden { display: none; }
+
+.popup-box {
+  background: #0b1320;
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+}
+
+.uc-list button {
+  width: 100%;
+  margin-bottom: 10px;
+}
     
 </style>
 </head>
@@ -1271,6 +1296,23 @@ body.show #site {
         🚀 Отправить заявку
       </button>
     </div>
+
+  </div>
+</div>
+
+<div id="popup-uc" class="popup hidden">
+  <div class="popup-box">
+
+    <h2>Покупка UC</h2>
+
+    <div class="uc-list">
+      <button data-uc="60" data-price="300">60 UC — 300 VC</button>
+      <button data-uc="300" data-price="1300">300 UC — 1300 VC</button>
+      <button data-uc="600" data-price="2500">600 UC — 2500 VC</button>
+    </div>
+
+    <button id="buy-uc" disabled>Купить</button>
+    <button onclick="closePopup()">Закрыть</button>
 
   </div>
 </div>
