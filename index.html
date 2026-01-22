@@ -887,6 +887,44 @@ body.show #site {
   50%  { transform: translateY(-12px) rotate(3deg); }
   100% { transform: translateY(0) rotate(0deg); }
 }  
+
+/* === КОНТЕЙНЕР КНОПКИ === */
+.menu-item {
+  width: 28%;              /* как у старого .block */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 14px;
+}
+
+/* === КНОПКА ИГРЫ (РАЗМЕР КАК БЫЛ) === */
+.games-btn {
+  width: 100%;
+  height: 300px;           /* ТОЧНО как .block */
+  border-radius: 18px;
+  background: url("https://radika1.link/2026/01/22/IMG_046062f162c36777bbd4.png") center / cover no-repeat;
+  cursor: pointer;
+
+  box-shadow:
+    0 0 25px rgba(0,162,255,.45),
+    inset 0 0 14px rgba(0,162,255,.25);
+
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.games-btn:active {
+  transform: scale(.97);
+}
+
+/* === ТЕКСТ ПОД КНОПКОЙ === */
+.menu-label {
+  margin-top: 14px;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #cfeaff;
+  text-shadow: 0 0 14px rgba(0,162,255,.9);
+}    
     
 </style>
 </head>
@@ -968,7 +1006,10 @@ body.show #site {
     </div>
 
     <div class="big-blocks">
-        <div class="block">ИГРЫ</div>
+        <div class="menu-item">
+  <div class="block games-btn"></div>
+  <div class="menu-label">ИГРЫ</div>
+</div>
         <div class="block">UC</div>
     </div>
 </div>
