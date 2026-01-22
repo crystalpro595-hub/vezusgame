@@ -584,6 +584,5 @@ if (promoBtn && promoInput) {
     }
   };
 }
-  
   initUser();
 });
