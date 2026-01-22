@@ -515,50 +515,6 @@ if (promoBtn && promoInput) {
     }
   };
 }
-
-let selectedUC = null;
-let selectedPrice = null;
-
-document.querySelectorAll(".uc-list button").forEach(btn => {
-  btn.onclick = () => {
-    selectedUC = +btn.dataset.uc;
-    selectedPrice = +btn.dataset.price;
-
-    document.getElementById("buy-uc").disabled = false;
-  };
-});
-
-document.getElementById("buy-uc").onclick = async () => {
-  if (!selectedUC) return;
-
-  // 1️⃣ Получаем баланс пользователя
-  const { data: user } = await supabase
-    .from("users")
-    .select("balance")
-    .eq("id", CURRENT_USER_ID)
-    .single();
-
-  if (user.balance < selectedPrice) {
-    alert("Недостаточно VC");
-    return;
-  }
-
-  // 2️⃣ Списываем баланс
-  await supabase
-    .from("users")
-    .update({ balance: user.balance - selectedPrice })
-    .eq("id", CURRENT_USER_ID);
-
-  // 3️⃣ Создаём заказ UC
-  await supabase.from("uc_orders").insert({
-    user_id: CURRENT_USER_ID,
-    uc_amount: selectedUC,
-    price_vc: selectedPrice
-  });
-
-  alert("Заявка создана! UC будут выданы в ближайшее время.");
-  closePopup();
-};  
   
   initUser();
 });
