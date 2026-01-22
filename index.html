@@ -849,6 +849,31 @@ body.show #site {
   background: #00a2ff;
   box-shadow: 0 0 10px rgba(0,162,255,.8);
 }
+
+/* === FLOATING UC DECOR === */
+.uc-decor {
+  position: absolute;
+  top: 170px;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.uc-decor.left {
+  left: -5px;
+}
+
+.uc-decor.right {
+  right: -10px;
+}
+
+/* UC базовый стиль */
+.uc {
+  position: absolute;
+  width: 90px;
+  filter: drop-shadow(0 0 18px rgba(0,162,255,.7));
+  animation: floatUC 6s ease-in-out infinite;
+  opacity: 0.95;
+}
     
 </style>
 </head>
@@ -890,6 +915,17 @@ body.show #site {
   <span class="dot"></span>
   <span class="dot"></span>
 </div>
+
+ <!-- Floating UC DECOR -->
+<div class="uc-decor left">
+  <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png" class="uc uc1">
+  <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png" class="uc uc2">
+</div>
+
+<div class="uc-decor right">
+  <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png" class="uc uc3">
+  <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png" class="uc uc4">
+</div>        
       
     <div class="event-slide">
       <img src="https://i.postimg.cc/BZLrJ99L/IMG-0459.png" alt="">
