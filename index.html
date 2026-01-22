@@ -850,7 +850,6 @@ body.show #site {
   box-shadow: 0 0 10px rgba(0,162,255,.8);
 }
 
-/* === FLOATING UC DECOR === */
 .uc-decor {
   position: absolute;
   top: 170px;
@@ -874,6 +873,20 @@ body.show #site {
   animation: floatUC 6s ease-in-out infinite;
   opacity: 0.95;
 }
+
+/* === ПО 2 С КАЖДОЙ СТОРОНЫ === */
+.uc1 { top: 10px; left: 15px; animation-delay: 0s; }
+.uc2 { top: 80px; left: 55px; animation-delay: 1.5s; }
+
+.uc3 { top: 15px; right: 20px; animation-delay: 0.7s; }
+.uc4 { top: 85px; right: 60px; animation-delay: 2.2s; }
+
+/* === ПАРЕНИЕ === */
+@keyframes floatUC {
+  0%   { transform: translateY(0) rotate(0deg); }
+  50%  { transform: translateY(-12px) rotate(3deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}  
     
 </style>
 </head>
