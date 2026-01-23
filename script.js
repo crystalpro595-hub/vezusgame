@@ -498,6 +498,74 @@ document.getElementById("buy-uc-btn").onclick = async () => {
 
   setTimeout(() => closePopup("popup-success"), 2000);
 };
+
+<script>
+let selectedUC = null;
+let selectedPrice = null;
+let isProcessing = false;
+
+const popupUC = document.getElementById('popup-uc');
+const ucCards = document.querySelectorAll('.uc-card');
+const ucForm = document.getElementById('uc-form');
+const buyBtn = document.getElementById('buy-uc');
+
+document.querySelector('.block:nth-child(2)').onclick = () => {
+  popupUC.style.display = 'flex';
+};
+
+document.getElementById('close-uc').onclick = () => {
+  popupUC.style.display = 'none';
+  resetUC();
+};
+
+ucCards.forEach(card => {
+  card.onclick = () => {
+    ucCards.forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+
+    selectedUC = card.dataset.uc;
+    selectedPrice = card.dataset.price;
+
+    ucForm.classList.remove('hidden');
+  };
+});
+
+buyBtn.onclick = async () => {
+  if (isProcessing) return;
+
+  const pubgId = document.getElementById('pubg-id').value.trim();
+  if (!pubgId) {
+    alert('Введите PUBG ID');
+    return;
+  }
+
+  isProcessing = true;
+  buyBtn.disabled = true;
+
+  try {
+    // тут будет supabase insert
+    console.log('Покупка:', selectedUC, pubgId);
+
+    alert('Заявка на UC отправлена');
+    popupUC.style.display = 'none';
+    resetUC();
+
+  } catch (e) {
+    alert('Ошибка покупки');
+  } finally {
+    isProcessing = false;
+    buyBtn.disabled = false;
+  }
+};
+
+function resetUC() {
+  selectedUC = null;
+  selectedPrice = null;
+  ucForm.classList.add('hidden');
+  document.getElementById('pubg-id').value = '';
+  ucCards.forEach(c => c.classList.remove('active'));
+}
+</script>
   
 /* ================= PROMO CODE ================= */
 
