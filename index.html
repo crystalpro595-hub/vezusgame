@@ -980,6 +980,53 @@ body.show #site {
   color: #ffb74d;
   font-weight: 700;
 }    
+
+.uc-shop {
+  max-width: 520px;
+}
+
+.uc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  padding: 16px;
+}
+
+.uc-item {
+  background: linear-gradient(135deg, #0b1a33, #020617);
+  border-radius: 18px;
+  padding: 14px 10px;
+  text-align: center;
+  border: 1px solid rgba(0,140,255,.35);
+  box-shadow:
+    inset 0 0 12px rgba(0,140,255,.2),
+    0 0 18px rgba(0,140,255,.25);
+  cursor: pointer;
+  transition: .25s;
+}
+
+.uc-item:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 0 30px rgba(0,140,255,.6),
+    inset 0 0 20px rgba(0,140,255,.35);
+}
+
+.uc-item img {
+  width: 64px;
+  margin-bottom: 8px;
+}
+
+.uc-item b {
+  display: block;
+  font-size: 16px;
+}
+
+.uc-item span {
+  font-size: 14px;
+  color: #4fc3f7;
+  font-weight: 700;
+}
     
 </style>
 </head>
@@ -1330,56 +1377,55 @@ body.show #site {
   </div>
 </div>
 
-<!-- === UC SHOP POPUP === -->
 <div class="popup" id="popup-uc-shop">
-  <div class="uc-box">
+  <div class="deposit-box uc-shop">
 
-    <div class="uc-header">
-      <span>🔥 PUBG UC</span>
-      <button id="close-uc">✖</button>
+    <div class="deposit-header">
+      <span>🪙 PUBG UC</span>
+      <button onclick="closePopup('popup-uc-shop')">✖</button>
     </div>
 
     <div class="uc-grid">
-      <!-- ПАК -->
-      <div class="uc-card" data-uc="60" data-price="60">
-        <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
-        <div class="uc-info">
-          <b>60 UC</b>
-          <span>60 VC</span>
-        </div>
+
+      <!-- UC CARD -->
+      <div class="uc-item" data-uc="60" data-price="60">
+        <img src="https://i.postimg.cc/g0cgTk7t/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <b>60 UC</b>
+        <span>60 VC</span>
       </div>
 
-      <div class="uc-card" data-uc="325" data-price="325">
-        <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
-        <div class="uc-info">
-          <b>325 UC</b>
-          <span>325 VC</span>
-        </div>
+      <div class="uc-item" data-uc="325" data-price="325">
+        <img src="https://i.postimg.cc/g0cgTk7t/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <b>325 UC</b>
+        <span>325 VC</span>
       </div>
 
-      <!-- добавь ещё по аналогии -->
+      <div class="uc-item" data-uc="660" data-price="660">
+        <img src="https://i.postimg.cc/g0cgTk7t/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <b>660 UC</b>
+        <span>660 VC</span>
+      </div>
+
+      <div class="uc-item" data-uc="1800" data-price="1800">
+        <img src="https://i.postimg.cc/g0cgTk7t/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <b>1800 UC</b>
+        <span>1800 VC</span>
+      </div>
+
+      <div class="uc-item" data-uc="3850" data-price="3850">
+        <img src="https://i.postimg.cc/g0cgTk7t/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <b>3850 UC</b>
+        <span>3850 VC</span>
+      </div>
+
+      <div class="uc-item" data-uc="8100" data-price="8100">
+        <img src="https://i.postimg.cc/g0cgTk7t/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <b>8100 UC</b>
+        <span>8100 VC</span>
+      </div>
+
     </div>
-  </div>
-</div>
 
-<!-- === PUBG ID POPUP === -->
-<div class="popup" id="popup-uc-buy">
-  <div class="deposit-box">
-
-    <div class="deposit-header">
-      <span>🎮 PUBG ID</span>
-      <button id="close-uc-buy">✖</button>
-    </div>
-
-    <div class="deposit-body">
-      <div class="deposit-info" id="uc-summary"></div>
-
-      <input id="pubg-id" type="text" placeholder="Введите PUBG ID">
-
-      <button class="deposit-btn" id="confirm-uc-buy">
-        ✅ Купить UC
-      </button>
-    </div>
   </div>
 </div>
     
