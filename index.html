@@ -925,6 +925,61 @@ body.show #site {
   color: #cfeaff;
   text-shadow: 0 0 14px rgba(0,162,255,.9);
 }    
+
+/* === UC SHOP === */
+.uc-box {
+  width: 92%;
+  max-width: 520px;
+  background: linear-gradient(180deg,#0c0f1d,#05060c);
+  border-radius: 22px;
+  border: 1px solid #1e293b;
+  box-shadow: 0 0 40px rgba(0,136,255,.25);
+}
+
+.uc-header {
+  padding: 18px;
+  background: linear-gradient(90deg,#ff9800,#ff5722);
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  justify-content: space-between;
+}
+
+.uc-grid {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 14px;
+}
+
+.uc-card {
+  background: linear-gradient(135deg,#0b1220,#020617);
+  border-radius: 18px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #1e293b;
+  transition:.2s;
+}
+
+.uc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px rgba(255,152,0,.6);
+}
+
+.uc-card img {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+.uc-info b {
+  font-size: 18px;
+}
+
+.uc-info span {
+  color: #ffb74d;
+  font-weight: 700;
+}    
     
 </style>
 </head>
@@ -1272,6 +1327,59 @@ body.show #site {
       </button>
     </div>
 
+  </div>
+</div>
+
+<!-- === UC SHOP POPUP === -->
+<div class="popup" id="popup-uc-shop">
+  <div class="uc-box">
+
+    <div class="uc-header">
+      <span>🔥 PUBG UC</span>
+      <button id="close-uc">✖</button>
+    </div>
+
+    <div class="uc-grid">
+      <!-- ПАК -->
+      <div class="uc-card" data-uc="60" data-price="60">
+        <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <div class="uc-info">
+          <b>60 UC</b>
+          <span>60 VC</span>
+        </div>
+      </div>
+
+      <div class="uc-card" data-uc="325" data-price="325">
+        <img src="https://i.postimg.cc/wTjKmtST/DA6DA66B-0B6C-4492-BA58-2D807972BD89.png">
+        <div class="uc-info">
+          <b>325 UC</b>
+          <span>325 VC</span>
+        </div>
+      </div>
+
+      <!-- добавь ещё по аналогии -->
+    </div>
+  </div>
+</div>
+
+<!-- === PUBG ID POPUP === -->
+<div class="popup" id="popup-uc-buy">
+  <div class="deposit-box">
+
+    <div class="deposit-header">
+      <span>🎮 PUBG ID</span>
+      <button id="close-uc-buy">✖</button>
+    </div>
+
+    <div class="deposit-body">
+      <div class="deposit-info" id="uc-summary"></div>
+
+      <input id="pubg-id" type="text" placeholder="Введите PUBG ID">
+
+      <button class="deposit-btn" id="confirm-uc-buy">
+        ✅ Купить UC
+      </button>
+    </div>
   </div>
 </div>
     
