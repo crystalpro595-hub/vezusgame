@@ -926,38 +926,16 @@ body.show #site {
   text-shadow: 0 0 14px rgba(0,162,255,.9);
 }    
 
-/* ================= UC SHOP PREMIUM ================= */
+/* ================= UC SHOP CLEAN & GAME ================= */
 
 .uc-box {
-  background:
-    radial-gradient(120% 120% at 10% 10%, #0b3a6a 0%, transparent 50%),
-    radial-gradient(120% 120% at 90% 90%, #021226 0%, transparent 55%),
-    linear-gradient(180deg, #050b18, #020617);
-  border-radius: 28px;
-  padding: 22px;
+  background: linear-gradient(180deg, #0e1e3a, #081428);
+  border-radius: 26px;
+  padding: 20px;
   max-width: 820px;
-  width: 94%;
-  border: 1px solid rgba(0,136,255,.35);
-  box-shadow:
-    0 0 60px rgba(0,136,255,.45),
-    inset 0 0 40px rgba(0,136,255,.15);
-  position: relative;
-  overflow: hidden;
-}
-
-/* светящаяся линия */
-.uc-box::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    120deg,
-    transparent 30%,
-    rgba(0,136,255,.25),
-    transparent 70%
-  );
-  opacity: .4;
-  pointer-events: none;
+  width: 95%;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 10px 40px rgba(0,0,0,.45);
 }
 
 /* ===== HEADER ===== */
@@ -965,152 +943,109 @@ body.show #site {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .uc-header span {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 900;
-  letter-spacing: 1px;
-  background: linear-gradient(135deg, #38bdf8, #0ea5e9, #0284c7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(56,189,248,.6);
+  color: #fff;
 }
 
 .uc-header button {
   background: none;
   border: none;
-  color: #7dd3fc;
+  color: #aaa;
   font-size: 22px;
   cursor: pointer;
-  transition: .2s;
 }
 .uc-header button:hover {
   color: #fff;
-  transform: scale(1.15);
 }
 
 /* ===== GRID ===== */
 .uc-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+  gap: 16px;
 }
 
 /* ===== CARD ===== */
 .uc-card {
-  position: relative;
-  background:
-    radial-gradient(100% 100% at 50% 0%, rgba(56,189,248,.25), transparent 60%),
-    linear-gradient(180deg, #071a34, #020617);
-  border-radius: 22px;
-  padding: 18px 14px 20px;
-  border: 1px solid rgba(56,189,248,.45);
+  background: linear-gradient(180deg, #1a2f55, #0f1f3a);
+  border-radius: 18px;
+  padding: 14px;
   text-align: center;
   cursor: pointer;
-  overflow: hidden;
   transition: .25s;
-  box-shadow:
-    0 0 22px rgba(0,136,255,.35),
-    inset 0 0 18px rgba(0,136,255,.2);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 6px 20px rgba(0,0,0,.4);
 }
 
-/* анимация блика */
-.uc-card::after {
-  content: "";
-  position: absolute;
-  top: -120%;
-  left: -120%;
-  width: 240%;
-  height: 240%;
-  background: linear-gradient(
-    120deg,
-    transparent 40%,
-    rgba(255,255,255,.25),
-    transparent 60%
-  );
-  transform: rotate(25deg);
-  opacity: 0;
-  transition: .4s;
-}
-
-.uc-card:hover::after {
-  top: -60%;
-  left: -60%;
-  opacity: .6;
-}
-
+/* hover */
 .uc-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow:
-    0 0 40px rgba(56,189,248,.8),
-    inset 0 0 24px rgba(56,189,248,.4);
+  transform: translateY(-4px);
+  background: linear-gradient(180deg, #23457c, #152a4d);
+  box-shadow: 0 12px 28px rgba(0,0,0,.55);
 }
 
-.uc-card:active {
-  transform: scale(.96);
-}
-
-/* ===== ICON ===== */
+/* ===== ICON (SQUARE) ===== */
 .uc-card img {
-  width: 82px;
+  width: 100%;
+  max-width: 110px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
   margin-bottom: 10px;
-  filter: drop-shadow(0 0 14px rgba(255,200,0,.6));
+  background: radial-gradient(circle at top, #ffd24d, #c79a18);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow:
+    inset 0 0 10px rgba(255,255,255,.25),
+    0 6px 16px rgba(0,0,0,.45);
 }
 
 /* ===== TEXT ===== */
 .uc-card b {
   display: block;
-  font-size: 20px;
-  font-weight: 900;
+  font-size: 19px;
+  font-weight: 800;
   color: #fff;
   margin-bottom: 4px;
 }
 
 .uc-card span {
-  font-size: 15px;
-  font-weight: 800;
-  color: #7dd3fc;
-  letter-spacing: .5px;
+  font-size: 14px;
+  color: #ffd24d;
+  font-weight: 700;
 }
 
 /* ===== PUBG ID POPUP ===== */
 .pubg-box {
-  background:
-    radial-gradient(120% 120% at 50% 0%, #0b3a6a 0%, transparent 60%),
-    linear-gradient(180deg, #050b18, #020617);
-  padding: 26px;
-  border-radius: 22px;
+  background: linear-gradient(180deg, #162a4d, #0a1830);
+  padding: 24px;
+  border-radius: 20px;
   max-width: 380px;
   width: 92%;
-  border: 1px solid rgba(0,136,255,.45);
-  box-shadow: 0 0 45px rgba(0,136,255,.5);
+  box-shadow: 0 12px 40px rgba(0,0,0,.6);
   text-align: center;
 }
 
 .pubg-box h3 {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   font-size: 20px;
-  font-weight: 900;
-  color: #38bdf8;
+  font-weight: 800;
+  color: #fff;
 }
 
 .pubg-box input {
   width: 100%;
   padding: 14px;
   border-radius: 14px;
-  background: #000;
-  border: 1px solid rgba(56,189,248,.45);
-  color: #fff;
+  background: #fff;
+  border: none;
   font-size: 15px;
   outline: none;
-  margin-bottom: 16px;
-  box-shadow: inset 0 0 12px rgba(0,136,255,.3);
-}
-
-.pubg-box input:focus {
-  border-color: #38bdf8;
+  margin-bottom: 14px;
 }
 
 /* ===== BUY BUTTON ===== */
@@ -1120,19 +1055,16 @@ body.show #site {
   border-radius: 16px;
   font-weight: 900;
   font-size: 16px;
-  background:
-    linear-gradient(135deg, #22c55e, #16a34a);
-  color: #fff;
+  background: linear-gradient(135deg, #ffb703, #ff8f00);
+  color: #000;
   border: none;
   cursor: pointer;
-  box-shadow:
-    0 0 22px rgba(34,197,94,.6);
+  box-shadow: 0 8px 20px rgba(255,183,3,.55);
   transition: .2s;
 }
 
 .uc-buy-btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 35px rgba(34,197,94,.85);
+  transform: scale(1.04);
 }
 
 .uc-buy-btn:active {
@@ -1141,25 +1073,23 @@ body.show #site {
 
 /* ===== SUCCESS ===== */
 .success-box {
-  background:
-    radial-gradient(120% 120% at 50% 0%, #0f5132 0%, transparent 60%),
-    linear-gradient(180deg, #052e1a, #020617);
-  padding: 28px;
-  border-radius: 22px;
+  background: linear-gradient(180deg, #173a2b, #0b2018);
+  padding: 26px;
+  border-radius: 20px;
   text-align: center;
-  box-shadow: 0 0 40px rgba(34,197,94,.7);
+  box-shadow: 0 0 30px rgba(34,197,94,.6);
 }
 
 .checkmark {
-  font-size: 56px;
+  font-size: 54px;
   color: #22c55e;
-  text-shadow: 0 0 25px rgba(34,197,94,.9);
 }
 
 .success-title {
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 800;
   margin-top: 10px;
+  color: #fff;
 }
 
 .success-text {
