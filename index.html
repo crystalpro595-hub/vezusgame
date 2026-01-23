@@ -954,6 +954,97 @@ body.show #site {
   border-color: #00a2ff;
   box-shadow: 0 0 18px rgba(0,162,255,.7);
 }
+
+/* === UC POPUP === */
+.uc-box {
+  width: 94%;
+  max-width: 520px;
+  background: linear-gradient(180deg,#0b1220,#05070c);
+  border-radius: 22px;
+  padding: 18px;
+  border: 1px solid #1e293b;
+  box-shadow: 0 0 40px rgba(0,136,255,.35);
+}
+
+.uc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 16px;
+}
+
+.uc-header button {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.uc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.uc-card {
+  background: linear-gradient(135deg,#0b1e3a,#020617);
+  border: 1px solid #1e293b;
+  border-radius: 18px;
+  padding: 20px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: .2s;
+  box-shadow: inset 0 0 12px rgba(0,136,255,.2);
+}
+
+.uc-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(0,136,255,.45);
+}
+
+.uc-card.active {
+  outline: 3px solid #22c55e;
+}
+
+.uc-form {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.uc-form input {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #fff;
+  font-size: 15px;
+}
+
+.uc-form button {
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+  border: none;
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.uc-form button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}    
     
 </style>
 </head>
@@ -1326,6 +1417,37 @@ body.show #site {
 
   </div>
 </div>
+
+<!-- === UC POPUP === -->
+<div class="popup" id="popup-uc">
+  <div class="uc-box">
+
+    <div class="uc-header">
+      <span>🎮 Покупка UC (PUBG)</span>
+      <button id="close-uc">✖</button>
+    </div>
+
+    <div class="uc-grid" id="uc-grid">
+      <!-- UC пакеты -->
+      <div class="uc-card" data-uc="60" data-price="60">60 UC</div>
+      <div class="uc-card" data-uc="120" data-price="120">120 UC</div>
+      <div class="uc-card" data-uc="180" data-price="180">180 UC</div>
+      <div class="uc-card" data-uc="325" data-price="325">325 UC</div>
+      <div class="uc-card" data-uc="660" data-price="660">660 UC</div>
+      <div class="uc-card" data-uc="1800" data-price="1800">1800 UC</div>
+      <div class="uc-card" data-uc="3850" data-price="3850">3850 UC</div>
+      <div class="uc-card" data-uc="8100" data-price="8100">8100 UC</div>
+      <div class="uc-card" data-uc="16200" data-price="16200">16200 UC</div>
+      <div class="uc-card" data-uc="24300" data-price="24300">24300 UC</div>
+    </div>
+
+    <div class="uc-form hidden" id="uc-form">
+      <input type="text" id="pubg-id" placeholder="Введите PUBG ID">
+      <button id="buy-uc">Купить UC</button>
+    </div>
+
+  </div>
+</div>    
     
 <!-- === POPUPS END === -->
 
