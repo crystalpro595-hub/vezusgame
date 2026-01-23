@@ -925,6 +925,35 @@ body.show #site {
   color: #cfeaff;
   text-shadow: 0 0 14px rgba(0,162,255,.9);
 }    
+
+.uc-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.uc-pack {
+  background: #0b0b0b;
+  border: 2px solid #1e293b;
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.uc-pack small {
+  font-size: 13px;
+  color: #7dd3fc;
+}
+
+.uc-pack.active {
+  border-color: #00a2ff;
+  box-shadow: 0 0 18px rgba(0,162,255,.7);
+}
     
 </style>
 </head>
@@ -1271,6 +1300,29 @@ body.show #site {
         🚀 Отправить заявку
       </button>
     </div>
+
+  </div>
+</div>
+
+<!-- === UC SHOP POPUP === -->
+<div class="popup" id="popup-uc">
+  <div class="popup-box">
+
+    <div class="popup-header">
+      <span>💎 PUBG UC</span>
+      <button id="close-uc">✖</button>
+    </div>
+
+    <div class="uc-list">
+      <button class="uc-pack" data-uc="60" data-price="60">60 UC<br><small>60 VC</small></button>
+      <button class="uc-pack" data-uc="325" data-price="300">325 UC<br><small>300 VC</small></button>
+      <button class="uc-pack" data-uc="660" data-price="600">660 UC<br><small>600 VC</small></button>
+      <button class="uc-pack" data-uc="1800" data-price="1500">1800 UC<br><small>1500 VC</small></button>
+    </div>
+
+    <button class="action btn-deposit" id="buy-uc-btn" disabled>
+      Выберите пакет
+    </button>
 
   </div>
 </div>
