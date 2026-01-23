@@ -432,6 +432,73 @@ document.getElementById("to-payment").onclick = () => {
     btn.innerText = "🚀 Отправить заявку";
   }
 };
+
+/* ================= UC SHOP ================= */
+
+let selectedUC = null;
+let selectedPrice = null;
+
+// открыть UC
+document.getElementById("open-uc").onclick = () => {
+  document.querySelectorAll(".uc-pack").forEach(b => b.classList.remove("active"));
+  document.getElementById("buy-uc-btn").disabled = true;
+  document.getElementById("buy-uc-btn").innerText = "Выберите пакет";
+  openPopup("popup-uc");
+};
+
+document.getElementById("close-uc").onclick = () => closePopup("popup-uc");
+
+// выбор пакета
+document.querySelectorAll(".uc-pack").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".uc-pack").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    selectedUC = parseInt(btn.dataset.uc);
+    selectedPrice = parseInt(btn.dataset.price);
+
+    document.getElementById("buy-uc-btn").disabled = false;
+    document.getElementById("buy-uc-btn").innerText =
+      `Купить ${selectedUC} UC за ${selectedPrice} VC`;
+  };
+});
+
+// покупка
+document.getElementById("buy-uc-btn").onclick = async () => {
+  if (!selectedUC || !selectedPrice) return;
+
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
+
+  if (!bal || bal.balance < selectedPrice) {
+    alert("❌ Недостаточно VC");
+    return;
+  }
+
+  // списываем баланс
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance - selectedPrice })
+    .eq("user_id", window.USER_ID);
+
+  // записываем покупку
+  await supabase.from("uc_purchases").insert({
+    user_id: window.USER_ID,
+    uc_amount: selectedUC,
+    price: selectedPrice,
+    status: "completed"
+  });
+
+  closePopup("popup-uc");
+  loadBalance();
+  openPopup("popup-success");
+
+  setTimeout(() => closePopup("popup-success"), 2000);
+};
+  
 /* ================= PROMO CODE ================= */
 
 const promoBtn = document.getElementById("promo-apply");
