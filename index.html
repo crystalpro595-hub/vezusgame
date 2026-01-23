@@ -925,6 +925,91 @@ body.show #site {
   color: #cfeaff;
   text-shadow: 0 0 14px rgba(0,162,255,.9);
 }    
+
+/* ===== UC POPUP ===== */
+.uc-box {
+  background: linear-gradient(180deg,#0b1220,#020617);
+  border-radius: 22px;
+  border: 1px solid #1e293b;
+  padding: 18px;
+  max-width: 760px;
+  width: 92%;
+  box-shadow: 0 0 40px rgba(0,136,255,.35);
+}
+
+.uc-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:16px;
+}
+
+.uc-grid {
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:14px;
+}
+
+.uc-card {
+  background: linear-gradient(135deg,#0b1e3a,#040814);
+  border:1px solid rgba(0,136,255,.4);
+  border-radius:18px;
+  padding:14px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.uc-card:active {
+  transform: scale(.96);
+}
+
+.uc-card img {
+  width:72px;
+  margin-bottom:8px;
+}
+
+.uc-card b {
+  display:block;
+  font-size:18px;
+}
+
+.uc-card span {
+  color:#7dd3fc;
+  font-weight:700;
+}
+
+/* PUBG ID */
+.pubg-box {
+  background:#020617;
+  padding:24px;
+  border-radius:18px;
+  max-width:360px;
+  width:90%;
+  text-align:center;
+}
+
+.pubg-box input {
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  background:#000;
+  border:1px solid #1e293b;
+  color:#fff;
+  margin:14px 0;
+}
+
+.uc-buy-btn {
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  font-weight:900;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  border:none;
+  cursor:pointer;
+}
     
 </style>
 </head>
@@ -1272,6 +1357,46 @@ body.show #site {
       </button>
     </div>
 
+  </div>
+</div>
+
+<!-- === UC POPUP === -->
+<div class="popup" id="popup-uc">
+  <div class="popup-box uc-box">
+
+    <div class="uc-header">
+      <span>UC PUBG</span>
+      <button id="close-uc">✖</button>
+    </div>
+
+    <div class="uc-grid" id="uc-grid"></div>
+
+  </div>
+</div>
+
+<!-- === PUBG ID POPUP === -->
+<div class="popup" id="popup-pubg-id">
+  <div class="popup-box pubg-box">
+    <h3>Введите PUBG ID</h3>
+
+    <input
+      type="text"
+      id="pubg-id-input"
+      placeholder="Например: 5123456789"
+    />
+
+    <button class="uc-buy-btn" id="confirm-uc-buy">
+      Купить UC
+    </button>
+  </div>
+</div>
+
+<!-- === UC SUCCESS === -->
+<div class="popup" id="popup-uc-success">
+  <div class="success-box">
+    <div class="checkmark">✓</div>
+    <div class="success-title">Покупка успешна</div>
+    <div class="success-text">UC будут начислены в PUBG</div>
   </div>
 </div>
     
