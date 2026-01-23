@@ -432,6 +432,93 @@ document.getElementById("to-payment").onclick = () => {
     btn.innerText = "🚀 Отправить заявку";
   }
 };
+/* ================= UC SHOP ================= */
+
+const ucPacks = [
+  { uc: 60, price: 60, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 120, price: 120, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 180, price: 180, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 300, price: 300, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 600, price: 600, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 900, price: 900, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 1200, price: 1200, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 1800, price: 1800, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 2400, price: 2400, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" },
+  { uc: 6000, price: 6000, icon: "https://i.postimg.cc/wTjKmtST/DA6DA66B.png" }
+];
+
+let selectedPack = null;
+let buyLock = false;
+
+document.getElementById("open-uc").onclick = () => {
+  const grid = document.getElementById("uc-grid");
+  grid.innerHTML = "";
+
+  ucPacks.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "uc-card";
+    div.innerHTML = `
+      <img src="${p.icon}">
+      <b>${p.uc} UC</b>
+      <span>${p.price} VC</span>
+    `;
+    div.onclick = () => {
+      selectedPack = p;
+      closePopup("popup-uc");
+      openPopup("popup-pubg-id");
+    };
+    grid.appendChild(div);
+  });
+
+  openPopup("popup-uc");
+};
+
+document.getElementById("close-uc").onclick =
+  () => closePopup("popup-uc");
+
+document.getElementById("confirm-uc-buy").onclick = async () => {
+  if (buyLock) return;
+  buyLock = true;
+
+  const pubgId = document.getElementById("pubg-id-input").value.trim();
+  if (!pubgId) {
+    alert("Введите PUBG ID");
+    buyLock = false;
+    return;
+  }
+
+  const { data: bal } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
+
+  if (!bal || bal.balance < selectedPack.price) {
+    alert("Недостаточно средств");
+    buyLock = false;
+    return;
+  }
+
+  await supabase
+    .from("balances")
+    .update({ balance: bal.balance - selectedPack.price })
+    .eq("user_id", window.USER_ID);
+
+  await supabase.from("uc_purchases").insert({
+    user_id: window.USER_ID,
+    uc_amount: selectedPack.uc,
+    price: selectedPack.price,
+    pubg_player_id: pubgId,
+    icon_url: selectedPack.icon
+  });
+
+  closePopup("popup-pubg-id");
+  openPopup("popup-uc-success");
+  loadBalance();
+
+  setTimeout(() => closePopup("popup-uc-success"), 2500);
+  buyLock = false;
+};
 /* ================= PROMO CODE ================= */
 
 const promoBtn = document.getElementById("promo-apply");
