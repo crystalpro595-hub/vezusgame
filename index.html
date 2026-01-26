@@ -964,6 +964,28 @@ body.loaded #site {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
+
+/* === ФИКСИРУЕМ ЭКРАН НА МОБИЛЕ === */
+html, body {
+    height: 100vh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+}
+
+/* контейнер сайта */
+#site {
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* разрешаем скролл ТОЛЬКО там, где нужно */
+.event-track,
+.profile-history,
+.list {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
     
 </style>
 </head>
