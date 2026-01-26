@@ -1301,20 +1301,30 @@ if (track && dots.length) {
 </script>
 
 <script>
-window.addEventListener('load', () => {
-  const preloader = document.getElementById('preloader');
+(() => {
+  const MIN_TIME = 1800; // минимум 1.8 сек
+  const start = Date.now();
 
-  document.body.classList.add('loaded');
-
-  if (preloader) {
-    preloader.style.opacity = '0';
-    preloader.style.pointerEvents = 'none';
+  function hidePreloader() {
+    const elapsed = Date.now() - start;
+    const delay = Math.max(0, MIN_TIME - elapsed);
 
     setTimeout(() => {
-      preloader.remove();
-    }, 600);
+      document.body.classList.add('loaded');
+
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.style.opacity = '0';
+        setTimeout(() => preloader.remove(), 600);
+      }
+    }, delay);
   }
-});
+
+  window.addEventListener('load', hidePreloader);
+
+  // страховка для Telegram
+  setTimeout(hidePreloader, 3000);
+})();
 </script>
     
 </body>
