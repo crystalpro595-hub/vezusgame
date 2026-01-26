@@ -1286,6 +1286,18 @@ if (track && dots.length) {
   });
 }
 </script>
+
+<script>
+window.addEventListener('load', () => {
+  document.body.classList.add('show');
+
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    preloader.style.opacity = '0';
+    setTimeout(() => preloader.remove(), 600);
+  }
+});
+</script>
     
 </body>
 </html>
