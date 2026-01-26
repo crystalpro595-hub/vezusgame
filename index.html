@@ -33,11 +33,24 @@ html, body {
     animation: pulse 1.6s infinite ease-in-out;
     filter: drop-shadow(0 0 18px #42aaff);
 }
+
+body:not(.loaded) {
+    overflow: hidden;
+}
+    
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.12); }
     100% { transform: scale(1); }
 } 
+
+#site {
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+body.loaded #site {
+    opacity: 1;
+}    
 
 /* === МАСШТАБ ТОЛЬКО КОНТЕНТА === */
 #content {
@@ -1289,12 +1302,17 @@ if (track && dots.length) {
 
 <script>
 window.addEventListener('load', () => {
-  document.body.classList.add('show');
-
   const preloader = document.getElementById('preloader');
+
+  document.body.classList.add('loaded');
+
   if (preloader) {
     preloader.style.opacity = '0';
-    setTimeout(() => preloader.remove(), 600);
+    preloader.style.pointerEvents = 'none';
+
+    setTimeout(() => {
+      preloader.remove();
+    }, 600);
   }
 });
 </script>
