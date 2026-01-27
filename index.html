@@ -1411,6 +1411,29 @@ if (track && dots.length) {
   setTimeout(hidePreloader, 3000);
 })();
 </script>
+
+<script>
+const ucBtn = document.getElementById('open-uc');
+const ucPage = document.getElementById('uc-page');
+const mainContent = document.getElementById('content');
+const backBtn = document.getElementById('uc-back');
+
+if (ucBtn) {
+  ucBtn.addEventListener('click', () => {
+    mainContent.style.display = 'none';
+    ucPage.style.display = 'block';
+    window.scrollTo(0, 0);
+  });
+}
+
+if (backBtn) {
+  backBtn.addEventListener('click', () => {
+    ucPage.style.display = 'none';
+    mainContent.style.display = 'block';
+    window.scrollTo(0, 0);
+  });
+}
+</script>    
     
 </body>
 </html>
