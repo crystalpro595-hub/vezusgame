@@ -965,6 +965,19 @@ body.loaded #site {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
+
+/* === UC PAGE SCALE (как основной контент) === */
+#uc-page {
+  transform-origin: top left;
+}
+
+/* телефоны */
+@media (max-width: 480px) {
+  #uc-page {
+    transform: scale(0.40);
+    width: 250%;
+  }
+}    
     
 </style>
 </head>
