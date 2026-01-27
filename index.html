@@ -965,38 +965,6 @@ body.loaded #site {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
-
-/* === FIX: ЗАПРЕТ СВАЙПА ВНИЗ / ПУСТОТЫ === */
-html, body {
-    height: 100%;
-    overflow: hidden;          /* ❗ полностью убираем скролл */
-    overscroll-behavior: none; /* ❗ отключает pull-to-refresh */
-    touch-action: manipulation;
-}
-
-/* сайт всегда ровно под экран */
-#site {
-    height: 100vh;
-    overflow: hidden;
-}
-
-/* контент не растягивает страницу */
-#content {
-    height: auto;
-    max-height: 100vh;
-}
-
-/* разрешаем скролл ТОЛЬКО внутри попапов */
-.popup {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.popup .box,
-.popup .popup-box {
-    max-height: 92vh;
-    overflow-y: auto;
-}    
     
 </style>
 </head>
