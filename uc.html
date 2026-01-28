@@ -19,24 +19,24 @@ html, body {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* === ОСНОВНОЙ КОНТЕЙНЕР === */
+/* === КОНТЕЙНЕР === */
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 20px;
 }
 
-/* === ВЕРХНЯЯ ПАНЕЛЬ === */
+/* === ВЕРХ === */
 .top-bar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 30px;
+  flex-wrap: wrap;
 }
 
-/* === КНОПКА НАЗАД === */
+/* === НАЗАД === */
 .back-btn {
   padding: 14px 22px;
   font-size: 18px;
@@ -46,14 +46,13 @@ html, body {
   border: 2px solid #4dc7ff;
   color: #fff;
   text-decoration: none;
-  white-space: nowrap;
 }
 
 /* === БАЛАНС === */
 .balance-card {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   padding: 14px 22px;
   border-radius: 20px;
   background: linear-gradient(
@@ -69,8 +68,8 @@ html, body {
 }
 
 .balance-icon {
-  width: 54px;
-  height: 54px;
+  width: 50px;
+  height: 50px;
   border-radius: 16px;
   background: linear-gradient(135deg,#0080ff,#003c7a);
   display: flex;
@@ -79,11 +78,11 @@ html, body {
 }
 
 .balance-icon img {
-  width: 32px;
+  width: 30px;
 }
 
 .balance-label {
-  font-size: 13px;
+  font-size: 12px;
   color: #9fb6ff;
   font-weight: 600;
 }
@@ -91,14 +90,12 @@ html, body {
 .balance-value {
   font-size: 26px;
   font-weight: 900;
-  color: #fff;
   text-shadow: 0 0 12px rgba(0,136,255,.6);
 }
 
 .balance-value span {
   font-size: 16px;
   color: #7dd3fc;
-  margin-left: 4px;
 }
 
 /* === ЗАГОЛОВОК === */
@@ -109,55 +106,52 @@ html, body {
   text-shadow: 0 0 20px rgba(0,136,255,.6);
 }
 
-/* === СЕТКА UC === */
+/* === GRID UC === */
 .uc-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 18px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-@media (max-width: 1024px) {
-  .uc-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .uc-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* === КАРТОЧКА UC === */
+/* === КАРТОЧКИ === */
 .menu-item {
   text-align: center;
 }
 
 .uc-btn {
   width: 100%;
-  height: 220px;
-  border-radius: 20px;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
   background: url("https://i.postimg.cc/d3fmS9MS/IMG-0493.png") center / cover no-repeat;
   box-shadow:
     0 0 25px rgba(0,162,255,.45),
     inset 0 0 14px rgba(0,162,255,.25);
-  transition: transform .2s ease, box-shadow .2s ease;
   cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
 
-.uc-btn:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 0 35px rgba(0,162,255,.65),
-    inset 0 0 18px rgba(0,162,255,.35);
+.uc-btn:active {
+  transform: scale(.97);
 }
 
 .menu-label {
-  margin-top: 14px;
-  font-size: 20px;
+  margin-top: 10px;
+  font-size: 16px;
   font-weight: 900;
   letter-spacing: 1px;
   color: #cfeaff;
+}
+
+/* === МЕЛКИЕ ЭКРАНЫ === */
+@media (max-width: 380px) {
+  .menu-label {
+    font-size: 14px;
+  }
+  .uc-grid {
+    gap: 12px;
+  }
 }
 </style>
 </head>
@@ -183,20 +177,18 @@ html, body {
   <div class="page-title">UC SHOP</div>
 
   <div class="uc-grid">
-    <div class="menu-item">
-      <div class="uc-btn"></div>
-      <div class="menu-label">60 UC</div>
-    </div>
-
-    <div class="menu-item">
-      <div class="uc-btn"></div>
-      <div class="menu-label">180 UC</div>
-    </div>
-
-    <div class="menu-item">
-      <div class="uc-btn"></div>
-      <div class="menu-label">325 UC</div>
-    </div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">60 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">180 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">325 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">660 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">720 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">1800 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">2125 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">3850 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">8100 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">16200 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">24300 UC</div></div>
+    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">32400 UC</div></div>
   </div>
 
 </div>
