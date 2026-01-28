@@ -2,12 +2,16 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UC SHOP</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   background: linear-gradient(180deg, #02102A, #000);
@@ -15,165 +19,170 @@ html, body {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* === МАСШТАБ ТОЛЬКО КОНТЕНТА === */
-
-#content {
-    transform-origin: top left;
+/* === ОСНОВНОЙ КОНТЕЙНЕР === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
-@media (max-width: 480px) {
-    #content {
-        transform: scale(0.40);
-        width: 250%;
-    }
-}    
+
+/* === ВЕРХНЯЯ ПАНЕЛЬ === */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
 
 /* === КНОПКА НАЗАД === */
 .back-btn {
-  margin: 50px 0 120px 20px;
-  display: inline-block;
-  padding: 20px 30px;
-  font-size: 28px;
+  padding: 14px 22px;
+  font-size: 18px;
   font-weight: 900;
   border-radius: 14px;
   background: linear-gradient(45deg,#007bff,#000);
-  border: 3px solid #4dc7ff;
+  border: 2px solid #4dc7ff;
   color: #fff;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-/* === БЛОКИ === */
-.big-blocks {
-  display: flex;
-  justify-content: left;
-  margin: 60px 0 0 20px;
-}
-
-.menu-item {
-  width: 28%;
-  margin: 0 14px;
-  text-align: center;
-}
-
-.uc-btn {
-  width: 100%;
-  height: 300px;
-  border-radius: 18px;
-  background: url("https://i.postimg.cc/d3fmS9MS/IMG-0493.png") center / cover no-repeat;
-  box-shadow:
-    0 0 25px rgba(0,162,255,.45),
-    inset 0 0 14px rgba(0,162,255,.25);
-}
-
-.menu-label {
-  margin-top: 14px;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: #cfeaff;
-}
-
-/* === BALANCE PREMIUM CARD === */
-.balance-wrapper {
-  display: flex;
-  justify-content: center;
-  margin: 30px 0 20px;
-}
-
+/* === БАЛАНС === */
 .balance-card {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 18px 26px;
-  border-radius: 22px;
-  cursor: pointer;
-
+  gap: 16px;
+  padding: 14px 22px;
+  border-radius: 20px;
   background: linear-gradient(
     135deg,
-    rgba(0,136,255,0.22),
-    rgba(0,0,0,0.65)
+    rgba(0,136,255,0.25),
+    rgba(0,0,0,0.6)
   );
-
   border: 1px solid rgba(0,136,255,0.4);
   backdrop-filter: blur(10px);
   box-shadow:
-    0 0 25px rgba(0,136,255,.45),
-    inset 0 0 18px rgba(0,136,255,.25);
-
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-
-.balance-card:active {
-  transform: scale(.97);
+    0 0 20px rgba(0,136,255,.45),
+    inset 0 0 14px rgba(0,136,255,.25);
 }
 
 .balance-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
   background: linear-gradient(135deg,#0080ff,#003c7a);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(0,136,255,.6);
 }
 
 .balance-icon img {
-  width: 36px;
+  width: 32px;
 }
 
 .balance-label {
-  font-size: 14px;
+  font-size: 13px;
   color: #9fb6ff;
   font-weight: 600;
 }
 
 .balance-value {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 900;
-  letter-spacing: .5px;
-  color: #ffffff;
+  color: #fff;
   text-shadow: 0 0 12px rgba(0,136,255,.6);
 }
 
 .balance-value span {
-  font-size: 18px;
+  font-size: 16px;
   color: #7dd3fc;
   margin-left: 4px;
-}  
-  
+}
+
+/* === ЗАГОЛОВОК === */
+.page-title {
+  font-size: 36px;
+  font-weight: 900;
+  margin-bottom: 30px;
+  text-shadow: 0 0 20px rgba(0,136,255,.6);
+}
+
+/* === СЕТКА UC === */
+.uc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .uc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .uc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === КАРТОЧКА UC === */
+.menu-item {
+  text-align: center;
+}
+
+.uc-btn {
+  width: 100%;
+  height: 220px;
+  border-radius: 20px;
+  background: url("https://i.postimg.cc/d3fmS9MS/IMG-0493.png") center / cover no-repeat;
+  box-shadow:
+    0 0 25px rgba(0,162,255,.45),
+    inset 0 0 14px rgba(0,162,255,.25);
+  transition: transform .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+
+.uc-btn:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 35px rgba(0,162,255,.65),
+    inset 0 0 18px rgba(0,162,255,.35);
+}
+
+.menu-label {
+  margin-top: 14px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #cfeaff;
+}
 </style>
 </head>
 
 <body>
-<div id="content">
 
-<div class="balance-wrapper">
-  <div class="balance-card">
-    <div class="balance-icon">
-      <img src="https://i.postimg.cc/7YrQyB4C/IMG-0427.png" alt="wallet">
-    </div>
+<div class="container">
 
-    <div>
-      <div class="balance-label">Текущий баланс</div>
-      <div class="balance-value" id="uc-balance">
-        0 <span>VC</span>
+  <div class="top-bar">
+    <a href="index.html" class="back-btn">← Назад</a>
+
+    <div class="balance-card">
+      <div class="balance-icon">
+        <img src="https://i.postimg.cc/7YrQyB4C/IMG-0427.png">
+      </div>
+      <div>
+        <div class="balance-label">Текущий баланс</div>
+        <div class="balance-value">0 <span>VC</span></div>
       </div>
     </div>
   </div>
-</div>
-  
-  <a href="index.html" class="back-btn">← НАЗАД</a>
 
-  <h1 style="
-    margin:20px 0 20px 20px;
-    font-size:42px;
-    font-weight:900;
-    text-shadow:0 0 20px rgba(0,136,255,.6);
-  ">
-    UC SHOP
-  </h1>
+  <div class="page-title">UC SHOP</div>
 
-  <div class="big-blocks">
+  <div class="uc-grid">
     <div class="menu-item">
       <div class="uc-btn"></div>
       <div class="menu-label">60 UC</div>
@@ -191,5 +200,6 @@ html, body {
   </div>
 
 </div>
+
 </body>
 </html>
