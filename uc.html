@@ -226,6 +226,75 @@ html, body {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
+  const SUPABASE_KEY = "ТВОЙ_PUBLIC_ANON_KEY";
+
+  const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+
+  if (!tg.initDataUnsafe?.user) {
+    alert("Открой через Telegram");
+    return;
+  }
+
+  const tgUser = tg.initDataUnsafe.user;
+
+  /* ===== INIT USER ===== */
+  async function initUser() {
+    let { data: user } = await supabase
+      .from("users")
+      .select("id")
+      .eq("telegram_id", tgUser.id)
+      .single();
+
+    if (!user) {
+      const { data: newUser } = await supabase
+        .from("users")
+        .insert({
+          telegram_id: tgUser.id,
+          username: tgUser.username,
+          first_name: tgUser.first_name,
+          last_name: tgUser.last_name
+        })
+        .select()
+        .single();
+
+      await supabase.from("balances").insert({
+        user_id: newUser.id,
+        balance: 0
+      });
+
+      user = newUser;
+    }
+
+    window.USER_ID = user.id;
+    loadBalance();
+  }
+
+  /* ===== LOAD BALANCE ===== */
+  async function loadBalance() {
+    const { data } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
+
+    const balance = data?.balance ?? 0;
+    document.getElementById("top-balance-value").innerText = balance;
+  }
+
+  initUser();
+});
+</script>
   
 </body>
 </html>
