@@ -198,7 +198,9 @@ html, body {
       </div>
       <div>
         <div class="balance-label">Текущий баланс</div>
-        <div class="balance-value">0 <span>VC</span></div>
+        <div class="balance-value">
+  <span id="top-balance-value">0</span> <span>VC</span>
+</div>
       </div>
     </div>
   </div>
@@ -222,5 +224,8 @@ html, body {
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
 </body>
 </html>
