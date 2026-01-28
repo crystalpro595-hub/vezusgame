@@ -6,7 +6,6 @@
 <title>UC SHOP</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-
 <style>
 * {
   box-sizing: border-box;
@@ -19,41 +18,42 @@ html, body {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* === КОНТЕЙНЕР === */
+/* ===== КОНТЕЙНЕР ===== */
 .container {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 16px;
 }
 
-/* === ВЕРХ === */
+/* ===== ВЕРХНЯЯ ПАНЕЛЬ ===== */
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 26px;
+  flex-wrap: nowrap;
 }
 
-/* === НАЗАД === */
+/* ===== КНОПКА НАЗАД ===== */
 .back-btn {
-  padding: 14px 22px;
-  font-size: 18px;
+  padding: 12px 20px;
+  font-size: 16px;
   font-weight: 900;
   border-radius: 14px;
   background: linear-gradient(45deg,#007bff,#000);
   border: 2px solid #4dc7ff;
   color: #fff;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-/* === БАЛАНС === */
+/* ===== БАЛАНС ===== */
 .balance-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 22px;
+  gap: 12px;
+  padding: 12px 18px;
   border-radius: 20px;
   background: linear-gradient(
     135deg,
@@ -65,12 +65,13 @@ html, body {
   box-shadow:
     0 0 20px rgba(0,136,255,.45),
     inset 0 0 14px rgba(0,136,255,.25);
+  white-space: nowrap;
 }
 
 .balance-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   background: linear-gradient(135deg,#0080ff,#003c7a);
   display: flex;
   align-items: center;
@@ -78,7 +79,7 @@ html, body {
 }
 
 .balance-icon img {
-  width: 30px;
+  width: 28px;
 }
 
 .balance-label {
@@ -88,25 +89,25 @@ html, body {
 }
 
 .balance-value {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 900;
   text-shadow: 0 0 12px rgba(0,136,255,.6);
 }
 
 .balance-value span {
-  font-size: 16px;
+  font-size: 15px;
   color: #7dd3fc;
 }
 
-/* === ЗАГОЛОВОК === */
+/* ===== ЗАГОЛОВОК ===== */
 .page-title {
-  font-size: 36px;
+  font-size: 34px;
   font-weight: 900;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
   text-shadow: 0 0 20px rgba(0,136,255,.6);
 }
 
-/* === GRID UC === */
+/* ===== GRID UC ===== */
 .uc-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -115,7 +116,7 @@ html, body {
   margin: 0 auto;
 }
 
-/* === КАРТОЧКИ === */
+/* ===== КАРТОЧКИ ===== */
 .menu-item {
   text-align: center;
 }
@@ -144,13 +145,31 @@ html, body {
   color: #cfeaff;
 }
 
-/* === МЕЛКИЕ ЭКРАНЫ === */
-@media (max-width: 380px) {
+/* ===== МАЛЕНЬКИЕ ТЕЛЕФОНЫ ===== */
+@media (max-width: 420px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .back-btn {
+    padding: 10px 16px;
+    font-size: 15px;
+  }
+
+  .balance-card {
+    padding: 10px 14px;
+  }
+
+  .balance-value {
+    font-size: 22px;
+  }
+
   .menu-label {
     font-size: 14px;
   }
+
   .uc-grid {
-    gap: 12px;
+    gap: 14px;
   }
 }
 </style>
