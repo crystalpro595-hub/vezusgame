@@ -7,6 +7,12 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
+<script>
+if (sessionStorage.getItem('vezus_loaded')) {
+  document.documentElement.classList.add('no-preloader');
+}
+</script>
+    
 <style>
 /* === ВСЯ твоя стилизация (скопирована из исходника) === */
 /* === ОСНОВА === */
@@ -27,6 +33,11 @@ html, body {
     align-items: center;
     justify-content: center;
     z-index: 9999999;
+}
+
+/* 🔥 если сайт уже был загружен — прелоадер вообще не рисуется */
+.no-preloader #preloader {
+    display: none !important;
 }
 #preloader img {
     width: 240px;
