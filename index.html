@@ -1343,7 +1343,16 @@ if (track && dots.length) {
 
 <script>
 (() => {
-  const MIN_TIME = 1800; // минимум 1.8 сек
+  const preloader = document.getElementById('preloader');
+
+  // 🔒 если пользователь уже был в этой сессии — НЕ показываем прелоадер
+  if (sessionStorage.getItem('vezus_loaded')) {
+    document.body.classList.add('loaded');
+    if (preloader) preloader.remove();
+    return;
+  }
+
+  const MIN_TIME = 1800; // минимальное время показа
   const start = Date.now();
 
   function hidePreloader() {
@@ -1351,9 +1360,9 @@ if (track && dots.length) {
     const delay = Math.max(0, MIN_TIME - elapsed);
 
     setTimeout(() => {
+      sessionStorage.setItem('vezus_loaded', '1'); // ⬅️ КЛЮЧЕВОЕ
       document.body.classList.add('loaded');
 
-      const preloader = document.getElementById('preloader');
       if (preloader) {
         preloader.style.opacity = '0';
         setTimeout(() => preloader.remove(), 600);
@@ -1363,7 +1372,7 @@ if (track && dots.length) {
 
   window.addEventListener('load', hidePreloader);
 
-  // страховка для Telegram
+  // страховка (Telegram / слабый интернет)
   setTimeout(hidePreloader, 3000);
 })();
 </script>
