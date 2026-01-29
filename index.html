@@ -19,7 +19,7 @@ if (sessionStorage.getItem('vezus_loaded')) {
 html, body {
     margin: 0;
     height: 100%;
-    background: linear-gradient(180deg, #02102A, #000000);
+    background: none;
     color: #fff;
     font-family: 'Montserrat', sans-serif;
 }
@@ -976,7 +976,16 @@ body.loaded #site {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
-    
+
+/* === ФОН, КОТОРЫЙ ВСЕГДА ТЯНЕТСЯ ВНИЗ === */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #02102A, #000000);
+    z-index: -1;
+}
+  
 </style>
 </head>
 <body>
