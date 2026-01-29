@@ -215,20 +215,29 @@ html, body {
   z-index: 999;
 }
 
-.popup {
-  width: 90%;
-  max-width: 360px;
-  background: linear-gradient(180deg,#041b3a,#000);
-  border-radius: 22px;
-  padding: 24px 20px 26px;
-  position: relative;
-  box-shadow: 0 0 40px rgba(0,255,120,.25);
-  animation: popupIn .25s ease;
+@keyframes blueNeonPulse {
+  0% {
+    box-shadow:
+      0 0 18px rgba(0, 150, 255, 0.45),
+      0 0 40px rgba(0, 120, 255, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 32px rgba(0, 180, 255, 0.9),
+      0 0 75px rgba(0, 140, 255, 0.6);
+  }
+  100% {
+    box-shadow:
+      0 0 18px rgba(0, 150, 255, 0.45),
+      0 0 40px rgba(0, 120, 255, 0.35);
+  }
 }
 
-@keyframes popupIn {
-  from { transform: scale(.9); opacity: 0 }
-  to { transform: scale(1); opacity: 1 }
+.popup {
+  background: linear-gradient(180deg, #061a3a, #020b1d);
+  border-radius: 22px;
+  padding: 22px;
+  animation: blueNeonPulse 1.8s ease-in-out infinite;
 }
 
 .popup-title {
