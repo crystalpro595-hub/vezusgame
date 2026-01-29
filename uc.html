@@ -202,6 +202,95 @@ html, body {
   font-size: 16px;
   color: #fffff;
 }
+
+/* ===== POPUP ===== */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup {
+  width: 90%;
+  max-width: 360px;
+  background: linear-gradient(180deg,#041b3a,#000);
+  border-radius: 22px;
+  padding: 24px 20px 26px;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0,255,120,.25);
+  animation: popupIn .25s ease;
+}
+
+@keyframes popupIn {
+  from { transform: scale(.9); opacity: 0 }
+  to { transform: scale(1); opacity: 1 }
+}
+
+.popup-title {
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.popup-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-weight: 900;
+}
+
+.popup-price {
+  color: #6dff9c;
+}
+
+/* INPUT */
+.popup-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: 15px;
+  margin-bottom: 18px;
+  outline: none;
+}
+
+/* BUY BUTTON */
+.buy-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: none;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  color: #042b14;
+  background: linear-gradient(135deg,#00ff88,#00c66a);
+  box-shadow:
+    0 0 20px rgba(0,255,136,.6),
+    inset 0 0 10px rgba(255,255,255,.3);
+}
+
+.buy-btn:active {
+  transform: scale(.97);
+}
+
+/* CLOSE */
+.popup-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: .7;
+}  
   
 </style>
 </head>
@@ -227,102 +316,112 @@ html, body {
 
 <div class="uc-grid">
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/k5V6BkKS/Picsart-26-01-29-21-02-11-444.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">60 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="60" data-price="100"
+    style="background-image:url('https://i.postimg.cc/k5V6BkKS/Picsart-26-01-29-21-02-11-444.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">60 UC</div>
+    <div class="uc-price">100 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/CxhbLPcK/Picsart-26-01-29-20-32-23-792.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">180 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="180" data-price="280"
+    style="background-image:url('https://i.postimg.cc/CxhbLPcK/Picsart-26-01-29-20-32-23-792.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">180 UC</div>
+    <div class="uc-price">280 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/90yyzv3t/Picsart-26-01-29-20-31-37-249.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">325 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="325" data-price="450"
+    style="background-image:url('https://i.postimg.cc/90yyzv3t/Picsart-26-01-29-20-31-37-249.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">325 UC</div>
+    <div class="uc-price">450 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/KzkPh1JN/Picsart-26-01-29-20-33-04-655.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">660 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="660" data-price="850"
+    style="background-image:url('https://i.postimg.cc/KzkPh1JN/Picsart-26-01-29-20-33-04-655.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">660 UC</div>
+    <div class="uc-price">850 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/d3CjrhCZ/Picsart-26-01-29-20-34-02-726.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">720 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="720" data-price="920"
+    style="background-image:url('https://i.postimg.cc/d3CjrhCZ/Picsart-26-01-29-20-34-02-726.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">720 UC</div>
+    <div class="uc-price">920 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/nzCkVRcs/Picsart-26-01-29-20-51-49-065.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">1800 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="1800" data-price="2100"
+    style="background-image:url('https://i.postimg.cc/nzCkVRcs/Picsart-26-01-29-20-51-49-065.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">1800 UC</div>
+    <div class="uc-price">2100 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/mk1FJK2f/Picsart-26-01-29-20-53-14-450.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">2125 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="2125" data-price="2400"
+    style="background-image:url('https://i.postimg.cc/mk1FJK2f/Picsart-26-01-29-20-53-14-450.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">2125 UC</div>
+    <div class="uc-price">2400 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/JnnXcGfz/Picsart-26-01-29-20-53-49-183.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">3850 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="3850" data-price="4200"
+    style="background-image:url('https://i.postimg.cc/JnnXcGfz/Picsart-26-01-29-20-53-49-183.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">3850 UC</div>
+    <div class="uc-price">4200 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/13GD9x0x/Picsart-26-01-29-20-56-34-985.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">8100 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="8100" data-price="8500"
+    style="background-image:url('https://i.postimg.cc/13GD9x0x/Picsart-26-01-29-20-56-34-985.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">8100 UC</div>
+    <div class="uc-price">8500 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/ydQFwFmV/Picsart-26-01-29-20-55-06-525.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">16200 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="16200" data-price="16800"
+    style="background-image:url('https://i.postimg.cc/ydQFwFmV/Picsart-26-01-29-20-55-06-525.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">16200 UC</div>
+    <div class="uc-price">16800 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/kgKvBRmH/Picsart-26-01-29-20-54-32-563.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">24300 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="24300" data-price="25000"
+    style="background-image:url('https://i.postimg.cc/kgKvBRmH/Picsart-26-01-29-20-54-32-563.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">24300 UC</div>
+    <div class="uc-price">25000 VC</div>
   </div>
+</div>
 
-  <div class="menu-item">
-    <div class="uc-btn" style="background-image:url('https://i.postimg.cc/sxL4Zp1V/Picsart-26-01-29-20-52-29-417.png')"></div>
-    <div class="uc-info">
-      <div class="uc-amount">32400 UC</div>
-      <div class="uc-price">?</div>
-    </div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="32400" data-price="33000"
+    style="background-image:url('https://i.postimg.cc/sxL4Zp1V/Picsart-26-01-29-20-52-29-417.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">32400 UC</div>
+    <div class="uc-price">33000 VC</div>
   </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -395,6 +494,68 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initUser();
 });
+</script>
+
+<div class="popup-overlay" id="popup">
+  <div class="popup">
+    <div class="popup-title">Покупка UC</div>
+
+    <div class="popup-info">
+      <div><span id="popup-uc">0</span> UC</div>
+      <div class="popup-price">
+        Цена: <span id="popup-price">0</span> VC
+      </div>
+    </div>
+
+    <input
+      type="text"
+      id="game-id"
+      class="popup-input"
+      placeholder="Введите игровой ID"
+    >
+
+    <button class="buy-btn" id="buy-btn">
+      Купить
+    </button>
+
+    <div class="popup-close" id="popup-close">✕</div>
+  </div>
+</div>
+
+  <script>
+const popup = document.getElementById("popup");
+const popupUc = document.getElementById("popup-uc");
+const popupPrice = document.getElementById("popup-price");
+const popupClose = document.getElementById("popup-close");
+const buyBtn = document.getElementById("buy-btn");
+const gameIdInput = document.getElementById("game-id");
+
+document.querySelectorAll(".uc-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    popupUc.innerText = btn.dataset.uc;
+    popupPrice.innerText = btn.dataset.price;
+    gameIdInput.value = "";
+    popup.style.display = "flex";
+  });
+});
+
+popupClose.onclick = () => {
+  popup.style.display = "none";
+};
+
+buyBtn.onclick = () => {
+  const gameId = gameIdInput.value.trim();
+  if (!gameId) {
+    alert("Введите игровой ID");
+    return;
+  }
+
+  alert(
+    `Покупка:\n${popupUc.innerText} UC\nЦена: ${popupPrice.innerText} VC\nID: ${gameId}`
+  );
+
+  popup.style.display = "none";
+};
 </script>
   
 </body>
