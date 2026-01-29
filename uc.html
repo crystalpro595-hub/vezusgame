@@ -110,7 +110,8 @@ html, body {
 .uc-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  column-gap: 18px;
+  row-gap: 30px;
   max-width: 900px;
   margin: 0 auto;
 }
@@ -167,9 +168,10 @@ html, body {
     font-size: 14px;
   }
 
-  .uc-grid {
-    gap: 14px;
-  }
+ .uc-grid {
+  column-gap: 14px;
+  row-gap: 50px;
+}
 }
 
 /* ===== iPad и планшеты ===== */
