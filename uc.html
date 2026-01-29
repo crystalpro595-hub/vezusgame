@@ -180,6 +180,26 @@ html, body {
     margin-right: auto;
   }
 }
+
+/* ===== ТЕКСТ ПОД КАРТОЧКОЙ (UC + ЦЕНА) ===== */
+.uc-info {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.uc-amount {
+  font-size: 16px;
+  color: #cfeaff;
+}
+
+.uc-price {
+  font-size: 16px;
+  color: #7dd3fc;
+}
   
 </style>
 </head>
@@ -204,7 +224,14 @@ html, body {
   <div class="page-title">UC SHOP</div>
 
   <div class="uc-grid">
-    <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">60 UC</div></div>
+    <div class="menu-item">
+  <div class="uc-btn" style="background-image:url('IMG_1.jpg')"></div>
+
+  <div class="uc-info">
+    <div class="uc-amount">60 UC</div>
+    <div class="uc-price">?</div>
+  </div>
+</div>
     <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">180 UC</div></div>
     <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">325 UC</div></div>
     <div class="menu-item"><div class="uc-btn"></div><div class="menu-label">660 UC</div></div>
