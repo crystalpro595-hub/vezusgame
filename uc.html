@@ -332,58 +332,6 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }  
-
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  padding: 16px 22px;
-  border-radius: 18px;
-  font-weight: 900;
-  opacity: 0;
-  transition: .35s ease;
-  z-index: 9999;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-.toast.success {
-  background: linear-gradient(135deg,#00ff88,#00c66a);
-  color: #042b14;
-  box-shadow: 0 0 25px rgba(0,255,136,.7);
-}
-
-.toast.error {
-  background: linear-gradient(135deg,#ff4d4d,#a80000);
-  color: #fff;
-  box-shadow: 0 0 25px rgba(255,77,77,.7);
-}
-
-.buy-btn.loading {
-  pointer-events: none;
-  opacity: .85;
-}
-
-.buy-btn.loading::after {
-  content: "";
-  width: 22px;
-  height: 22px;
-  margin-left: 10px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.4);
-  border-top-color: #fff;
-  display: inline-block;
-  vertical-align: middle;
-  animation: spin .8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
   
 </style>
 </head>
@@ -521,6 +469,8 @@ html, body {
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <script>
+document.addEventListener("DOMContentLoaded", async () => {
+
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
@@ -528,10 +478,6 @@ html, body {
     SUPABASE_URL,
     SUPABASE_KEY
   );
-</script>
-  
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
 
   const tg = window.Telegram.WebApp;
   tg.expand();
@@ -618,98 +564,40 @@ document.addEventListener("DOMContentLoaded", async () => {
 </div>
 
   <script>
-let isBuying = false;
-
 const popup = document.getElementById("popup");
 const popupUc = document.getElementById("popup-uc");
 const popupPrice = document.getElementById("popup-price");
 const popupClose = document.getElementById("popup-close");
 const buyBtn = document.getElementById("buy-btn");
 const gameIdInput = document.getElementById("game-id");
-const toast = document.getElementById("toast");
 
 document.querySelectorAll(".uc-btn").forEach(btn => {
-  btn.onclick = () => {
+  btn.addEventListener("click", () => {
     popupUc.innerText = btn.dataset.uc;
     popupPrice.innerText = btn.dataset.price;
     gameIdInput.value = "";
     popup.style.display = "flex";
-  };
+  });
 });
 
-popupClose.onclick = () => popup.style.display = "none";
-
-buyBtn.onclick = async () => {
-  if (isBuying) return;
-  isBuying = true;
-
-  const gameId = gameIdInput.value.trim();
-  if (!gameId) {
-    showToast("Введите игровой ID", "error");
-    isBuying = false;
-    return;
-  }
-
-  buyBtn.classList.add("loading");
-  buyBtn.innerText = "Обработка";
-
-  const price = Number(popupPrice.innerText);
-
-  const { data: balanceData } = await supabase
-    .from("balances")
-    .select("balance")
-    .eq("user_id", window.USER_ID)
-    .single();
-
-  const currentBalance = balanceData.balance;
-
-  if (currentBalance < price) {
-    showToast("Недостаточно средств 💸", "error");
-    resetBuy();
-    return;
-  }
-
-  const newBalance = currentBalance - price;
-
-  const { error } = await supabase
-    .from("balances")
-    .update({ balance: newBalance })
-    .eq("user_id", window.USER_ID);
-
-  if (error) {
-    showToast("Ошибка покупки", "error");
-    resetBuy();
-    return;
-  }
-
-  await supabase.from("purchases").insert({
-    user_id: window.USER_ID,
-    uc_amount: popupUc.innerText,
-    price: price,
-    game_id: gameId
-  });
-
-  document.getElementById("top-balance-value").innerText = newBalance;
-
-  showToast(`Покупка ${popupUc.innerText} UC успешна ✅`);
+popupClose.onclick = () => {
   popup.style.display = "none";
-  resetBuy();
 };
 
-function resetBuy() {
-  buyBtn.classList.remove("loading");
-  buyBtn.innerText = "Купить";
-  isBuying = false;
-}
+buyBtn.onclick = () => {
+  const gameId = gameIdInput.value.trim();
+  if (!gameId) {
+    alert("Введите игровой ID");
+    return;
+  }
 
-function showToast(text, type) {
-  toast.className = `toast show ${type}`;
-  toast.innerText = text;
-  setTimeout(() => toast.className = "toast", 2600);
-}
+  alert(
+    `Покупка:\n${popupUc.innerText} UC\nЦена: ${popupPrice.innerText} VC\nID: ${gameId}`
+  );
+
+  popup.style.display = "none";
+};
 </script>
-
-<div id="toast" class="toast"></div>
   
 </body>
 </html>
