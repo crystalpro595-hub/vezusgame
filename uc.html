@@ -6,188 +6,333 @@
 <title>UC SHOP</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-
 <style>
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
-  min-height: 100%;
+  height: 100%; /* важно для full-screen фона */
   font-family: 'Montserrat', sans-serif;
   color: #fff;
-  background: url('https://i.postimg.cc/15xyK3Xr/Picsart-26-01-30-00-16-57-552.png') center/cover no-repeat fixed;
+
+  /* кастомный фон */
+  background-image: url('https://i.postimg.cc/hGBZtN2k/Picsart-26-01-30-00-02-25-554.jpg'); /* вставь свою картинку */
+  background-size: cover;        /* картинка полностью закрывает фон */
+  background-position: center;   /* центрирование */
+  background-repeat: no-repeat;  /* не повторять */
+  background-attachment: fixed;  /* фон не прокручивается */
 }
 
-/* ===== CONTAINER ===== */
+/* ===== КОНТЕЙНЕР ===== */
 .container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px 16px;
 }
 
-/* ===== TOP ===== */
+/* ===== ВЕРХНЯЯ ПАНЕЛЬ ===== */
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   margin-bottom: 30px;
+  flex-wrap: nowrap;
 }
 
+/* ===== КНОПКА НАЗАД ===== */
 .back-btn {
   padding: 12px 20px;
+  font-size: 16px;
   font-weight: 900;
   border-radius: 14px;
   background: linear-gradient(45deg,#007bff,#000);
   border: 2px solid #4dc7ff;
   color: #fff;
   text-decoration: none;
+  white-space: nowrap;
 }
 
+/* ===== БАЛАНС ===== */
 .balance-card {
+  display: flex;
+  align-items: center;
   padding: 12px 20px;
   border-radius: 20px;
-  background: linear-gradient(135deg,rgba(0,136,255,.25),rgba(0,0,0,.6));
-  box-shadow: 0 0 20px rgba(0,136,255,.45);
+  background: linear-gradient(
+    135deg,
+    rgba(0,136,255,0.25),
+    rgba(0,0,0,0.6)
+  );
+  border: 1px solid rgba(0,136,255,0.4);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 20px rgba(0,136,255,.45),
+    inset 0 0 14px rgba(0,136,255,.25);
+  white-space: nowrap;
+}
+
+.balance-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg,#0080ff,#003c7a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.balance-icon img {
+  width: 28px;
 }
 
 .balance-label {
   font-size: 12px;
   color: #9fb6ff;
+  font-weight: 600;
 }
 
 .balance-value {
   font-size: 24px;
   font-weight: 900;
+  text-shadow: 0 0 12px rgba(0,136,255,.6);
 }
 
-/* ===== TITLE ===== */
+.balance-value span {
+  font-size: 15px;
+  color: #ffffff;
+}
+
+/* ===== ЗАГОЛОВОК ===== */
 .page-title {
   font-size: 34px;
   font-weight: 900;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
+  text-shadow: 0 0 20px rgba(0,136,255,.6);
 }
 
-/* ===== GRID ===== */
+/* ===== GRID UC ===== */
 .uc-grid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 30px;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 28px;
+  row-gap: 30px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-/* ===== CARD ===== */
-.menu-item { text-align: center; }
+/* ===== КАРТОЧКИ ===== */
+.menu-item {
+  text-align: center;
+}
 
 .uc-btn {
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 1 / 1;
   border-radius: 18px;
-  background-size: cover;
-  background-position: center;
+  background: url("https://i.postimg.cc/8CQWcjJF/Picsart-26-01-28-11-45-25-108.jpg") center / cover no-repeat;
+  box-shadow:
+    0 0 25px rgba(0,162,255,.45),
+    inset 0 0 14px rgba(0,162,255,.25);
   cursor: pointer;
-  box-shadow: 0 0 25px rgba(0,162,255,.45);
-  transition: transform .15s;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
-.uc-btn:active { transform: scale(.97); }
 
+.uc-btn:active {
+  transform: scale(.97);
+}
+
+.menu-label {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #cfeaff;
+}
+
+/* ===== МАЛЕНЬКИЕ ТЕЛЕФОНЫ ===== */
+@media (max-width: 420px) {
+  .container {
+    padding: 80px 12px;
+  }
+
+  .back-btn {
+    padding: 10px 16px;
+    font-size: 15px;
+  }
+
+  .balance-card {
+    padding: 10px 14px;
+  }
+
+  .balance-value {
+    font-size: 22px;
+  }
+
+  .menu-label {
+    font-size: 14px;
+  }
+
+ .uc-grid {
+  column-gap: 30px;
+  row-gap: 60px;
+}
+}
+
+/* ===== iPad и планшеты ===== */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .top-bar {
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ===== ТЕКСТ ПОД КАРТОЧКОЙ (UC + ЦЕНА) ===== */
 .uc-info {
+  margin-top: 0px;
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 6px;
   font-weight: 900;
+  letter-spacing: 0.5px;
 }
-.uc-amount { color: #1E90FF; font-size: 12px; }
-.uc-price { color: #fff; font-size: 12px; }
+
+.uc-amount {
+  font-size: 10px;
+  color: #1E90FF;
+}
+
+.uc-price {
+  font-size: 10px;
+  color: #fffff;
+}
 
 /* ===== POPUP ===== */
 .popup-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.7);
+  backdrop-filter: blur(6px);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 999;
 }
 
-@keyframes blueNeon {
-  0% { box-shadow: 0 0 20px #0088ff; }
-  50% { box-shadow: 0 0 45px #00bfff; }
-  100% { box-shadow: 0 0 20px #0088ff; }
+@keyframes blueNeonPulse {
+  0% {
+    box-shadow:
+      0 0 18px rgba(0, 150, 255, 0.45),
+      0 0 40px rgba(0, 120, 255, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 32px rgba(0, 180, 255, 0.9),
+      0 0 75px rgba(0, 140, 255, 0.6);
+  }
+  100% {
+    box-shadow:
+      0 0 18px rgba(0, 150, 255, 0.45),
+      0 0 40px rgba(0, 120, 255, 0.35);
+  }
 }
 
 .popup {
-  background: linear-gradient(180deg,#061a3a,#020b1d);
-  padding: 22px;
+  background: linear-gradient(180deg, #061a3a, #020b1d);
   border-radius: 22px;
-  animation: blueNeon 1.8s infinite;
-  position: relative;
-  width: 320px;
+  padding: 22px;
+  animation: blueNeonPulse 1.8s ease-in-out infinite;
 }
 
+.popup {
+  position: relative; /* ← ВАЖНО */
+  background: linear-gradient(180deg, #061a3a, #020b1d);
+  border-radius: 22px;
+  padding: 22px;
+  animation: blueNeonPulse 1.8s ease-in-out infinite;
+}
+  
 .popup-title {
   font-size: 22px;
   font-weight: 900;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .popup-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   font-weight: 900;
 }
 
-.popup-input {
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  border: none;
-  margin-bottom: 16px;
-  background: rgba(0,0,0,.6);
-  color: #fff;
+.popup-price {
+  color: #6dff9c;
 }
 
+/* INPUT */
+.popup-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: 15px;
+  margin-bottom: 18px;
+  outline: none;
+}
+
+/* BUY BUTTON */
 .buy-btn {
   width: 100%;
   padding: 14px;
   border-radius: 16px;
+  border: none;
   font-size: 18px;
   font-weight: 900;
-  background: linear-gradient(135deg,#00ff88,#00c66a);
-  border: none;
   cursor: pointer;
+  color: #042b14;
+  background: linear-gradient(135deg,#00ff88,#00c66a);
+  box-shadow:
+    0 0 20px rgba(0,255,136,.6),
+    inset 0 0 10px rgba(255,255,255,.3);
 }
 
-.buy-btn.loading {
-  pointer-events: none;
-  opacity: .8;
+.buy-btn:active {
+  transform: scale(.97);
 }
 
+/* CLOSE */
 .popup-close {
   position: absolute;
-  top: 10px;
+  top: 12px;
   right: 14px;
+  font-size: 20px;
   cursor: pointer;
+  opacity: .7;
+}  
+
+/* === УБИРАЕМ СИНИЙ MOBILE TAP EFFECT === */
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ===== TOAST ===== */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 14px 20px;
-  border-radius: 16px;
-  font-weight: 900;
-  opacity: 0;
-  transition: .3s;
-  z-index: 9999;
-}
-.toast.show { opacity: 1; }
-.toast.success { background:#00c66a; color:#042b14; }
-.toast.error { background:#ff4d4d; color:#fff; }
+.block,
+.games-btn,
+.uc-btn,
+.mid-btn,
+.wallet-action,
+.bonus-card,
+.balance-card {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}  
+  
 </style>
 </head>
 
@@ -195,89 +340,264 @@ html, body {
 
 <div class="container">
 
-<div class="top-bar">
-  <a href="index.html" class="back-btn">← Назад</a>
-  <div class="balance-card">
-    <div class="balance-label">Баланс</div>
-    <div class="balance-value"><span id="top-balance-value">0</span> VC</div>
-  </div>
-</div>
+  <div class="top-bar">
+    <a href="index.html" class="back-btn">← Назад</a>
 
-<div class="page-title">UC SHOP</div>
+    <div class="balance-card">
+      <div>
+        <div class="balance-label">Текущий баланс</div>
+        <div class="balance-value">
+  <span id="top-balance-value">0</span> <span>VC</span>
+</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-title">UC SHOP</div>
 
 <div class="uc-grid">
-  <!-- 12 карточек -->
-  <script>
-    const cards = [
-      [60,100,'k5V6BkKS'],[180,280,'CxhbLPcK'],[325,450,'90yyzv3t'],
-      [660,850,'KzkPh1JN'],[720,920,'d3CjrhCZ'],[1800,2100,'nzCkVRcs'],
-      [2125,2400,'mk1FJK2f'],[3850,4200,'JnnXcGfz'],[8100,8500,'13GD9x0x'],
-      [16200,16800,'ydQFwFmV'],[24300,25000,'kgKvBRmH'],[32400,33000,'sxL4Zp1V']
-    ];
-    document.write(cards.map(c=>`
-      <div class="menu-item">
-        <div class="uc-btn" data-uc="${c[0]}" data-price="${c[1]}"
-          style="background-image:url('https://i.postimg.cc/${c[2]}/img.png')"></div>
-        <div class="uc-info">
-          <div class="uc-amount">${c[0]} UC</div>
-          <div class="uc-price">${c[1]} VC</div>
-        </div>
-      </div>
-    `).join(''));
-  </script>
-</div>
-</div>
 
-<!-- POPUP -->
-<div class="popup-overlay" id="popup">
-  <div class="popup">
-    <div class="popup-title">Покупка UC</div>
-    <div class="popup-info">
-      <div><span id="popup-uc">0</span> UC</div>
-      <div>Цена: <span id="popup-price">0</span> VC</div>
-    </div>
-    <input id="game-id" class="popup-input" placeholder="Игровой ID">
-    <button class="buy-btn" id="buy-btn">Купить</button>
-    <div class="popup-close" id="popup-close">✕</div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="60" data-price="100"
+    style="background-image:url('https://i.postimg.cc/k5V6BkKS/Picsart-26-01-29-21-02-11-444.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">60 UC</div>
+    <div class="uc-price">100 VC</div>
   </div>
 </div>
 
-<div id="toast" class="toast"></div>
+<div class="menu-item">
+  <div class="uc-btn" data-uc="180" data-price="280"
+    style="background-image:url('https://i.postimg.cc/CxhbLPcK/Picsart-26-01-29-20-32-23-792.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">180 UC</div>
+    <div class="uc-price">280 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="325" data-price="450"
+    style="background-image:url('https://i.postimg.cc/90yyzv3t/Picsart-26-01-29-20-31-37-249.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">325 UC</div>
+    <div class="uc-price">450 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="660" data-price="850"
+    style="background-image:url('https://i.postimg.cc/KzkPh1JN/Picsart-26-01-29-20-33-04-655.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">660 UC</div>
+    <div class="uc-price">850 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="720" data-price="920"
+    style="background-image:url('https://i.postimg.cc/d3CjrhCZ/Picsart-26-01-29-20-34-02-726.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">720 UC</div>
+    <div class="uc-price">920 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="1800" data-price="2100"
+    style="background-image:url('https://i.postimg.cc/nzCkVRcs/Picsart-26-01-29-20-51-49-065.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">1800 UC</div>
+    <div class="uc-price">2100 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="2125" data-price="2400"
+    style="background-image:url('https://i.postimg.cc/mk1FJK2f/Picsart-26-01-29-20-53-14-450.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">2125 UC</div>
+    <div class="uc-price">2400 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="3850" data-price="4200"
+    style="background-image:url('https://i.postimg.cc/JnnXcGfz/Picsart-26-01-29-20-53-49-183.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">3850 UC</div>
+    <div class="uc-price">4200 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="8100" data-price="8500"
+    style="background-image:url('https://i.postimg.cc/13GD9x0x/Picsart-26-01-29-20-56-34-985.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">8100 UC</div>
+    <div class="uc-price">8500 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="16200" data-price="16800"
+    style="background-image:url('https://i.postimg.cc/ydQFwFmV/Picsart-26-01-29-20-55-06-525.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">16200 UC</div>
+    <div class="uc-price">16800 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="24300" data-price="25000"
+    style="background-image:url('https://i.postimg.cc/kgKvBRmH/Picsart-26-01-29-20-54-32-563.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">24300 UC</div>
+    <div class="uc-price">25000 VC</div>
+  </div>
+</div>
+
+<div class="menu-item">
+  <div class="uc-btn" data-uc="32400" data-price="33000"
+    style="background-image:url('https://i.postimg.cc/sxL4Zp1V/Picsart-26-01-29-20-52-29-417.png')"></div>
+  <div class="uc-info">
+    <div class="uc-amount">32400 UC</div>
+    <div class="uc-price">33000 VC</div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <script>
-const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-const SUPABASE_KEY = "ТВОЙ_КЛЮЧ";
-window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+document.addEventListener("DOMContentLoaded", async () => {
 
-const tg = Telegram.WebApp;
-tg.expand();
+  const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
+  const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+
+  if (!tg.initDataUnsafe?.user) {
+    alert("Открой через Telegram");
+    return;
+  }
+
+  const tgUser = tg.initDataUnsafe.user;
+
+  /* ===== INIT USER ===== */
+  async function initUser() {
+    let { data: user } = await supabase
+      .from("users")
+      .select("id")
+      .eq("telegram_id", tgUser.id)
+      .single();
+
+    if (!user) {
+      const { data: newUser } = await supabase
+        .from("users")
+        .insert({
+          telegram_id: tgUser.id,
+          username: tgUser.username,
+          first_name: tgUser.first_name,
+          last_name: tgUser.last_name
+        })
+        .select()
+        .single();
+
+      await supabase.from("balances").insert({
+        user_id: newUser.id,
+        balance: 0
+      });
+
+      user = newUser;
+    }
+
+    window.USER_ID = user.id;
+    loadBalance();
+  }
+
+  /* ===== LOAD BALANCE ===== */
+  async function loadBalance() {
+    const { data } = await supabase
+      .from("balances")
+      .select("balance")
+      .eq("user_id", window.USER_ID)
+      .single();
+
+    const balance = data?.balance ?? 0;
+    document.getElementById("top-balance-value").innerText = balance;
+  }
+
+  initUser();
+});
+</script>
+
+<div class="popup-overlay" id="popup">
+  <div class="popup">
+    <div class="popup-title">Покупка UC</div>
+
+    <div class="popup-info">
+      <div><span id="popup-uc">0</span> UC</div>
+      <div class="popup-price">
+        Цена: <span id="popup-price">0</span> VC
+      </div>
+    </div>
+
+    <input
+      type="text"
+      id="game-id"
+      class="popup-input"
+      placeholder="Введите игровой ID"
+    >
+
+    <button class="buy-btn" id="buy-btn">
+      Купить
+    </button>
+
+    <div class="popup-close" id="popup-close">✕</div>
+  </div>
+</div>
+
+  <script>
 const popup = document.getElementById("popup");
 const popupUc = document.getElementById("popup-uc");
 const popupPrice = document.getElementById("popup-price");
+const popupClose = document.getElementById("popup-close");
 const buyBtn = document.getElementById("buy-btn");
 const gameIdInput = document.getElementById("game-id");
 
-document.querySelectorAll(".uc-btn").forEach(btn=>{
-  btn.onclick=()=>{
-    popupUc.textContent = btn.dataset.uc;
-    popupPrice.textContent = btn.dataset.price;
-    popup.style.display="flex";
-  };
+document.querySelectorAll(".uc-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    popupUc.innerText = btn.dataset.uc;
+    popupPrice.innerText = btn.dataset.price;
+    gameIdInput.value = "";
+    popup.style.display = "flex";
+  });
 });
 
-document.getElementById("popup-close").onclick=()=>popup.style.display="none";
+popupClose.onclick = () => {
+  popup.style.display = "none";
+};
 
-function toast(msg,type="success"){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
-  t.className=`toast show ${type}`;
-  setTimeout(()=>t.className="toast",2500);
-}
+buyBtn.onclick = () => {
+  const gameId = gameIdInput.value.trim();
+  if (!gameId) {
+    alert("Введите игровой ID");
+    return;
+  }
+
+  alert(
+    `Покупка:\n${popupUc.innerText} UC\nЦена: ${popupPrice.innerText} VC\nID: ${gameId}`
+  );
+
+  popup.style.display = "none";
+};
 </script>
-
+  
 </body>
 </html>
