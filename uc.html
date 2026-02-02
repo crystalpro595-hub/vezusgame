@@ -332,37 +332,6 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }  
-
-.buy-btn.loading {
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.buy-btn.loading::after {
-  content: "⏳ Покупка...";
-}  
-
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg,#00ff88,#00c66a);
-  color: #042b14;
-  padding: 14px 22px;
-  border-radius: 18px;
-  font-weight: 900;
-  box-shadow: 0 0 25px rgba(0,255,136,.7);
-  z-index: 2000;
-  animation: fadeInOut 2.5s ease forwards;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translate(-50%,20px); }
-  15% { opacity: 1; transform: translate(-50%,0); }
-  85% { opacity: 1; }
-  100% { opacity: 0; }
-}
   
 </style>
 </head>
@@ -500,17 +469,12 @@ html, body {
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <script>
-let supabase;
-let tgUser;
-</script>
-  
-<script>
 document.addEventListener("DOMContentLoaded", async () => {
 
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
-  supabase = window.supabase.createClient(
+  const supabase = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
   );
@@ -523,7 +487,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  tgUser = tg.initDataUnsafe.user;
+  const tgUser = tg.initDataUnsafe.user;
 
   /* ===== INIT USER ===== */
   async function initUser() {
@@ -620,78 +584,20 @@ popupClose.onclick = () => {
   popup.style.display = "none";
 };
 
-let isBuying = false;
-
-function showToast(text) {
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.innerText = text;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2600);
-}
-
-buyBtn.onclick = async () => {
-  if (isBuying) return;
-
+buyBtn.onclick = () => {
   const gameId = gameIdInput.value.trim();
-  const uc = Number(popupUc.innerText);
-  const price = Number(popupPrice.innerText);
-
   if (!gameId) {
     alert("Введите игровой ID");
     return;
   }
 
-  isBuying = true;
-  buyBtn.classList.add("loading");
+  alert(
+    `Покупка:\n${popupUc.innerText} UC\nЦена: ${popupPrice.innerText} VC\nID: ${gameId}`
+  );
 
-  try {
-    /* 1. Получаем баланс */
-    const { data: balanceRow } = await supabase
-      .from("balances")
-      .select("balance")
-      .eq("user_id", window.USER_ID)
-      .single();
-
-    if (!balanceRow || balanceRow.balance < price) {
-      throw new Error("Недостаточно средств");
-    }
-
-    /* 2. Списываем баланс */
-    const newBalance = balanceRow.balance - price;
-
-    await supabase
-      .from("balances")
-      .update({ balance: newBalance })
-      .eq("user_id", window.USER_ID);
-
-    /* 3. Записываем покупку */
-    await supabase
-      .from("uc_purchases")
-      .insert({
-        user_id: window.USER_ID,
-        telegram_id: tgUser.id,
-        uc_amount: uc,
-        price: price,
-        game_id: gameId
-      });
-
-    /* 4. Обновляем баланс на экране */
-    document.getElementById("top-balance-value").innerText = newBalance;
-
-    popup.style.display = "none";
-    showToast(`✅ Куплено ${uc} UC`);
-
-  } catch (err) {
-    alert(err.message || "Ошибка покупки");
-  } finally {
-    isBuying = false;
-    buyBtn.classList.remove("loading");
-  }
+  popup.style.display = "none";
 };
 </script>
-
-<div id="toast-container"></div>
   
 </body>
 </html>
