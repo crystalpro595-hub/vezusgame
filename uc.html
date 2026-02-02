@@ -332,6 +332,67 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }  
+
+.notify {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.notify-box {
+  padding: 26px 28px;
+  border-radius: 22px;
+  background: linear-gradient(180deg,#041b3d,#010b1f);
+  text-align: center;
+  box-shadow:
+    0 0 35px rgba(0,160,255,.9),
+    inset 0 0 18px rgba(0,160,255,.4);
+  animation: notifyIn .35s ease;
+}
+
+@keyframes notifyIn {
+  from { transform: scale(.85); opacity: 0 }
+  to { transform: scale(1); opacity: 1 }
+}
+
+.notify-title {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  color: #7dffb0;
+}
+
+.notify-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e8f6ff;
+}
+
+.buy-btn.loading {
+  pointer-events: none;
+  opacity: .8;
+  background: linear-gradient(135deg,#888,#444);
+}
+
+.buy-btn.loading::after {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255,255,255,.4);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}  
   
 </style>
 </head>
@@ -584,20 +645,97 @@ popupClose.onclick = () => {
   popup.style.display = "none";
 };
 
-buyBtn.onclick = () => {
+const notify = document.getElementById("notify");
+const notifyText = document.getElementById("notify-text");
+
+let buying = false; // защита от двойного клика
+
+buyBtn.onclick = async () => {
+  if (buying) return;
+  buying = true;
+
   const gameId = gameIdInput.value.trim();
   if (!gameId) {
+    buying = false;
     alert("Введите игровой ID");
     return;
   }
 
-  alert(
-    `Покупка:\n${popupUc.innerText} UC\nЦена: ${popupPrice.innerText} VC\nID: ${gameId}`
-  );
+  buyBtn.classList.add("loading");
 
+  const price = Number(popupPrice.innerText);
+  const uc = Number(popupUc.innerText);
+
+  // 1. Получаем баланс
+  const { data: bal, error: balErr } = await supabase
+    .from("balances")
+    .select("balance")
+    .eq("user_id", window.USER_ID)
+    .single();
+
+  if (balErr || !bal) {
+    resetBuy();
+    alert("Ошибка баланса");
+    return;
+  }
+
+  if (bal.balance < price) {
+    resetBuy();
+    alert("Недостаточно VC");
+    return;
+  }
+
+  // 2. Списываем
+  const newBalance = bal.balance - price;
+
+  const { error: updErr } = await supabase
+    .from("balances")
+    .update({ balance: newBalance })
+    .eq("user_id", window.USER_ID);
+
+  if (updErr) {
+    resetBuy();
+    alert("Ошибка списания");
+    return;
+  }
+
+  // 3. Лог покупки
+  await supabase.from("purchases").insert({
+    user_id: window.USER_ID,
+    uc: uc,
+    price: price,
+    game_id: gameId
+  });
+
+  // 4. UI
+  document.getElementById("top-balance-value").innerText = newBalance;
   popup.style.display = "none";
+
+  notifyText.innerHTML = `
+    Вы купили <b>${uc} UC</b><br>
+    Списано <b>${price} VC</b>
+  `;
+  notify.style.display = "flex";
+
+  setTimeout(() => {
+    notify.style.display = "none";
+  }, 2200);
+
+  resetBuy();
 };
+
+function resetBuy() {
+  buying = false;
+  buyBtn.classList.remove("loading");
+}
 </script>
+
+<div class="notify" id="notify">
+  <div class="notify-box">
+    <div class="notify-title">✅ Покупка успешна</div>
+    <div class="notify-text" id="notify-text"></div>
+  </div>
+</div>
   
 </body>
 </html>
