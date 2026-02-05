@@ -287,15 +287,23 @@ html, body {
 }
 
 /* ✅ НОВОЕ: красивый зелёный toast (как депозиты/выводы) */
+/* ✅ НОВОЕ положение toast: ниже, но не в центре */
 .toast{
   position: fixed;
-  top: 16px;
+  top: 120px;              /* ← вот это двигает ниже */
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 28px);
   max-width: 520px;
   z-index: 4000;
   display: none;
+}
+
+/* на маленьких экранах чуть выше, чтобы не мешало */
+@media (max-width: 420px){
+  .toast{
+    top: 90px;
+  }
 }
 .toast-box{
   display: flex;
