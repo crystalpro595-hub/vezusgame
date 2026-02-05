@@ -418,13 +418,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       if (error) {
-        const msg = String(error.message || "");
-        if (msg.includes("insufficient_funds")) alert("Недостаточно VC");
-        else if (msg.includes("bad_game_id")) alert("ID слишком короткий");
-        else alert("Ошибка покупки");
-        console.log(error);
-        return;
-      }
+  alert(
+    "❌ Ошибка Supabase:\n" +
+    (error.message || "no message") +
+    "\n\ncode: " + (error.code || "-") +
+    "\ndetails: " + (error.details || "-") +
+    "\nhint: " + (error.hint || "-")
+  );
+  return;
+}
 
       const newBalance = Array.isArray(data) ? data[0]?.new_balance : data?.new_balance;
       if (newBalance !== undefined) {
