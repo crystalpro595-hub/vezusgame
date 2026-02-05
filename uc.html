@@ -516,14 +516,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /* ===== INIT USER ===== */
   async function initUser() {
-    let { data: user } = await window.sb.
+    let { data: user } = await window.sb
       .from("users")
       .select("id")
       .eq("telegram_id", tgUser.id)
       .single();
 
     if (!user) {
-      const { data: newUser } = await window.sb.
+      const { data: newUser } = await window.sb
         .from("users")
         .insert({
           telegram_id: tgUser.id,
@@ -548,7 +548,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /* ===== LOAD BALANCE ===== */
   async function loadBalance() {
-    const { data } = await window.sb.
+    const { data } = await window.sb
       .from("balances")
       .select("balance")
       .eq("user_id", window.USER_ID)
@@ -588,13 +588,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   </div>
 </div>
 
-  <script>
+<script>
 const popup = document.getElementById("popup");
 const popupUc = document.getElementById("popup-uc");
 const popupPrice = document.getElementById("popup-price");
 const popupClose = document.getElementById("popup-close");
 const buyBtn = document.getElementById("buy-btn");
 const gameIdInput = document.getElementById("game-id");
+
+let buying = false; // защита от двойного клика
 
 document.querySelectorAll(".uc-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -609,16 +611,13 @@ popupClose.onclick = () => {
   popup.style.display = "none";
 };
 
-buyBtn.onclick = () => {
-  const supabase = window.sb; // берём глобальный клиент
-
-let buying = false;
-
 buyBtn.onclick = async () => {
   if (buying) return;          // защита от двойного клика
   buying = true;
 
+  const supabase = window.sb;  // глобальный клиент
   const gameId = gameIdInput.value.trim();
+
   if (!gameId) {
     buying = false;
     alert("Введите игровой ID");
@@ -651,8 +650,8 @@ buyBtn.onclick = async () => {
       return;
     }
 
-    // новый баланс возвращается функцией
-    const newBalance = data?.[0]?.new_balance;
+    // функция вернёт новый баланс
+    const newBalance = Array.isArray(data) ? data[0]?.new_balance : data?.new_balance;
     if (newBalance !== undefined) {
       document.getElementById("top-balance-value").innerText = newBalance;
     }
