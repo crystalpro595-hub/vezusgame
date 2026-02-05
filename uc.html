@@ -485,16 +485,19 @@ const notify = document.getElementById("notify");
 const notifyText = document.getElementById("notify-text");
 
 notifyText.innerHTML = `
-  Вы купили <b>${uc} UC</b><br>
-  Списано <b>${price} VC</b><br>
-  Баланс: <b>${newBalance} VC</b>
+  <b>Покупка успешна ✅</b><br><br>
+  Кол-во: <b>${uc} UC</b><br>
+  Цена: <b>${price} VC</b><br><br>
+  <span style="color:#facc15;">
+    UC поступят на баланс в течение 15 минут
+  </span>
 `;
 
 notify.style.display = "flex";
 
 setTimeout(() => {
   notify.style.display = "none";
-}, 2200);
+}, 4500);
 
     } finally {
       buying = false;
