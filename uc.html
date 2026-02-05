@@ -332,6 +332,31 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }  
+
+.buy-btn.loading {
+  pointer-events: none;
+  opacity: .85;
+  background: linear-gradient(135deg,#888,#444);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.buy-btn.loading::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255,255,255,.35);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
   
 </style>
 </head>
@@ -474,10 +499,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
-  const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  window.sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
   const tg = window.Telegram.WebApp;
   tg.expand();
@@ -491,14 +516,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /* ===== INIT USER ===== */
   async function initUser() {
-    let { data: user } = await supabase
+    let { data: user } = await window.sb.
       .from("users")
       .select("id")
       .eq("telegram_id", tgUser.id)
       .single();
 
     if (!user) {
-      const { data: newUser } = await supabase
+      const { data: newUser } = await window.sb.
         .from("users")
         .insert({
           telegram_id: tgUser.id,
@@ -509,7 +534,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         .select()
         .single();
 
-      await supabase.from("balances").insert({
+      await window.sb.from("balances").insert({
         user_id: newUser.id,
         balance: 0
       });
@@ -523,7 +548,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /* ===== LOAD BALANCE ===== */
   async function loadBalance() {
-    const { data } = await supabase
+    const { data } = await window.sb.
       .from("balances")
       .select("balance")
       .eq("user_id", window.USER_ID)
@@ -585,17 +610,62 @@ popupClose.onclick = () => {
 };
 
 buyBtn.onclick = () => {
+  const supabase = window.sb; // берём глобальный клиент
+
+let buying = false;
+
+buyBtn.onclick = async () => {
+  if (buying) return;          // защита от двойного клика
+  buying = true;
+
   const gameId = gameIdInput.value.trim();
   if (!gameId) {
+    buying = false;
     alert("Введите игровой ID");
     return;
   }
 
-  alert(
-    `Покупка:\n${popupUc.innerText} UC\nЦена: ${popupPrice.innerText} VC\nID: ${gameId}`
-  );
+  const price = Number(popupPrice.innerText);
+  const uc = Number(popupUc.innerText);
 
-  popup.style.display = "none";
+  // включаем загрузку
+  const oldText = buyBtn.innerText;
+  buyBtn.classList.add("loading");
+  buyBtn.innerText = "Покупаю...";
+  buyBtn.disabled = true;
+
+  try {
+    const { data, error } = await supabase.rpc("buy_uc", {
+      p_user_id: window.USER_ID,
+      p_uc: uc,
+      p_price: price,
+      p_game_id: gameId
+    });
+
+    if (error) {
+      const msg = String(error.message || "");
+      if (msg.includes("insufficient_funds")) alert("Недостаточно VC");
+      else if (msg.includes("bad_game_id")) alert("ID слишком короткий");
+      else alert("Ошибка покупки");
+      console.log(error);
+      return;
+    }
+
+    // новый баланс возвращается функцией
+    const newBalance = data?.[0]?.new_balance;
+    if (newBalance !== undefined) {
+      document.getElementById("top-balance-value").innerText = newBalance;
+    }
+
+    popup.style.display = "none";
+    alert(`✅ Куплено: ${uc} UC\nСписано: ${price} VC`);
+
+  } finally {
+    buying = false;
+    buyBtn.classList.remove("loading");
+    buyBtn.disabled = false;
+    buyBtn.innerText = oldText;
+  }
 };
 </script>
   
