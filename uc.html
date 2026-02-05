@@ -473,10 +473,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   return;
 }
 
-      const newBalance = Array.isArray(data) ? data[0]?.new_balance : data?.new_balance;
-      if (newBalance !== undefined) {
-        document.getElementById("top-balance-value").innerText = newBalance;
-      }
+      await loadBalance(); // ✅ всегда обновляем баланс с базы
+const newBalance = document.getElementById("top-balance-value").innerText;
 
       popupOverlay.style.display = "none";
 
