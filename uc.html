@@ -192,6 +192,51 @@ html, body {
 /* tap highlight off */
 * { -webkit-tap-highlight-color: transparent; }
 .uc-btn, .buy-btn { outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+
+/* ✅ SUCCESS NOTIFY */
+.notify{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.notify-box{
+  width: 92%;
+  max-width: 420px;
+  padding: 22px 22px;
+  border-radius: 22px;
+  background: linear-gradient(180deg,#041b3d,#010b1f);
+  text-align: center;
+  box-shadow:
+    0 0 35px rgba(0,160,255,.9),
+    inset 0 0 18px rgba(0,160,255,.4);
+  animation: notifyIn .35s ease;
+}
+
+@keyframes notifyIn {
+  from { transform: scale(.9); opacity: 0 }
+  to   { transform: scale(1); opacity: 1 }
+}
+
+.notify-title{
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: #7dffb0;
+}
+
+.notify-text{
+  font-size: 16px;
+  font-weight: 700;
+  color: #e8f6ff;
+  line-height: 1.35;
+}  
+  
 </style>
 </head>
 
@@ -434,7 +479,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       popupOverlay.style.display = "none";
-      alert(`✅ Куплено: ${uc} UC\nСписано: ${price} VC`);
+
+/* ✅ показать уведомление */
+const notify = document.getElementById("notify");
+const notifyText = document.getElementById("notify-text");
+
+notifyText.innerHTML = `
+  Вы купили <b>${uc} UC</b><br>
+  Списано <b>${price} VC</b><br>
+  Баланс: <b>${newBalance} VC</b>
+`;
+
+notify.style.display = "flex";
+
+setTimeout(() => {
+  notify.style.display = "none";
+}, 2200);
 
     } finally {
       buying = false;
@@ -449,5 +509,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
+<!-- ✅ Уведомление об успехе -->
+<div class="notify" id="notify">
+  <div class="notify-box">
+    <div class="notify-title">✅ Покупка успешна</div>
+    <div class="notify-text" id="notify-text"></div>
+  </div>
+</div>
+  
 </body>
 </html>
