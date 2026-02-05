@@ -303,10 +303,19 @@ html, body {
   align-items: flex-start;
   padding: 14px 14px;
   border-radius: 18px;
-  background: linear-gradient(135deg, rgba(0,255,136,.22), rgba(0,120,60,.12));
-  box-shadow: 0 0 26px rgba(0,255,136,.35);
-  border: 1px solid rgba(0,255,136,.28);
-  backdrop-filter: blur(10px);
+
+  /* ✅ НЕпрозрачный зелёный фон */
+  background: linear-gradient(135deg, #00d46a, #00a84f);
+
+  /* ✅ более “плотная” рамка/тень */
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow:
+    0 14px 45px rgba(0, 255, 136, .25),
+    0 0 0 1px rgba(0,0,0,.25) inset;
+
+  /* ❌ убираем стекло/прозрачность */
+  backdrop-filter: none;
+
   animation: toastIn .35s ease;
 }
 @keyframes toastIn{
@@ -348,10 +357,13 @@ html, body {
   border: none;
   font-weight: 900;
   cursor: pointer;
-  background: rgba(255,255,255,.10);
+
+  /* ✅ непрозрачная кнопка */
+  background: rgba(0,0,0,.22);
   color: #eafff5;
-  border: 1px solid rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.22);
 }
+.toast-ok:active{ transform: scale(.98) }
 .toast-ok:active{ transform: scale(.98) }
 </style>
 </head>
