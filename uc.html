@@ -6,114 +6,55 @@
 <title>UC SHOP</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
-  height: 100%; /* важно для full-screen фона */
+  height: 100%;
   font-family: 'Montserrat', sans-serif;
   color: #fff;
 
-  /* кастомный фон */
-  background-image: url('https://i.postimg.cc/15xyK3Xr/Picsart-26-01-30-00-16-57-552.png'); /* вставь свою картинку */
-  background-size: cover;        /* картинка полностью закрывает фон */
-  background-position: center;   /* центрирование */
-  background-repeat: no-repeat;  /* не повторять */
-  background-attachment: fixed;  /* фон не прокручивается */
+  background-image: url('https://i.postimg.cc/15xyK3Xr/Picsart-26-01-30-00-16-57-552.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
-/* ===== КОНТЕЙНЕР ===== */
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px 16px;
-}
+.container { max-width: 1000px; margin: 0 auto; padding: 20px 16px; }
 
-/* ===== ВЕРХНЯЯ ПАНЕЛЬ ===== */
 .top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 30px;
-  flex-wrap: nowrap;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; margin-bottom: 30px; flex-wrap: nowrap;
 }
 
-/* ===== КНОПКА НАЗАД ===== */
 .back-btn {
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: 900;
-  border-radius: 14px;
-  background: linear-gradient(45deg,#007bff,#000);
-  border: 2px solid #4dc7ff;
-  color: #fff;
-  text-decoration: none;
-  white-space: nowrap;
+  padding: 12px 20px; font-size: 16px; font-weight: 900;
+  border-radius: 14px; background: linear-gradient(45deg,#007bff,#000);
+  border: 2px solid #4dc7ff; color: #fff; text-decoration: none; white-space: nowrap;
 }
 
-/* ===== БАЛАНС ===== */
 .balance-card {
-  display: flex;
-  align-items: center;
-  padding: 12px 20px;
+  display: flex; align-items: center; padding: 12px 20px;
   border-radius: 20px;
-  background: linear-gradient(
-    135deg,
-    rgba(0,136,255,0.25),
-    rgba(0,0,0,0.6)
-  );
+  background: linear-gradient(135deg, rgba(0,136,255,0.25), rgba(0,0,0,0.6));
   border: 1px solid rgba(0,136,255,0.4);
   backdrop-filter: blur(10px);
-  box-shadow:
-    0 0 20px rgba(0,136,255,.45),
-    inset 0 0 14px rgba(0,136,255,.25);
+  box-shadow: 0 0 20px rgba(0,136,255,.45), inset 0 0 14px rgba(0,136,255,.25);
   white-space: nowrap;
 }
 
-.balance-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: linear-gradient(135deg,#0080ff,#003c7a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.balance-label { font-size: 12px; color: #9fb6ff; font-weight: 600; }
+.balance-value { font-size: 24px; font-weight: 900; text-shadow: 0 0 12px rgba(0,136,255,.6); }
+.balance-value span { font-size: 15px; color: #ffffff; }
 
-.balance-icon img {
-  width: 28px;
-}
-
-.balance-label {
-  font-size: 12px;
-  color: #9fb6ff;
-  font-weight: 600;
-}
-
-.balance-value {
-  font-size: 24px;
-  font-weight: 900;
-  text-shadow: 0 0 12px rgba(0,136,255,.6);
-}
-
-.balance-value span {
-  font-size: 15px;
-  color: #ffffff;
-}
-
-/* ===== ЗАГОЛОВОК ===== */
 .page-title {
-  font-size: 34px;
-  font-weight: 900;
-  margin-bottom: 28px;
+  font-size: 34px; font-weight: 900; margin-bottom: 28px;
   text-shadow: 0 0 20px rgba(0,136,255,.6);
 }
 
-/* ===== GRID UC ===== */
 .uc-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -123,74 +64,19 @@ html, body {
   margin: 0 auto;
 }
 
-/* ===== КАРТОЧКИ ===== */
-.menu-item {
-  text-align: center;
-}
+.menu-item { text-align: center; }
 
 .uc-btn {
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 18px;
   background: url("https://i.postimg.cc/8CQWcjJF/Picsart-26-01-28-11-45-25-108.jpg") center / cover no-repeat;
-  box-shadow:
-    0 0 25px rgba(0,162,255,.45),
-    inset 0 0 14px rgba(0,162,255,.25);
+  box-shadow: 0 0 25px rgba(0,162,255,.45), inset 0 0 14px rgba(0,162,255,.25);
   cursor: pointer;
   transition: transform .18s ease, box-shadow .18s ease;
 }
+.uc-btn:active { transform: scale(.97); }
 
-.uc-btn:active {
-  transform: scale(.97);
-}
-
-.menu-label {
-  margin-top: 10px;
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  color: #cfeaff;
-}
-
-/* ===== МАЛЕНЬКИЕ ТЕЛЕФОНЫ ===== */
-@media (max-width: 420px) {
-  .container {
-    padding: 80px 12px;
-  }
-
-  .back-btn {
-    padding: 10px 16px;
-    font-size: 15px;
-  }
-
-  .balance-card {
-    padding: 10px 14px;
-  }
-
-  .balance-value {
-    font-size: 22px;
-  }
-
-  .menu-label {
-    font-size: 14px;
-  }
-
- .uc-grid {
-  column-gap: 30px;
-  row-gap: 60px;
-}
-}
-
-/* ===== iPad и планшеты ===== */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .top-bar {
-    max-width: 350px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-/* ===== ТЕКСТ ПОД КАРТОЧКОЙ (UC + ЦЕНА) ===== */
 .uc-info {
   margin-top: 0px;
   display: flex;
@@ -199,18 +85,22 @@ html, body {
   font-weight: 900;
   letter-spacing: 0.5px;
 }
+.uc-amount { font-size: 10px; color: #1E90FF; }
+.uc-price { font-size: 10px; color: #ffffff; } /* ✅ фикс цвета */
 
-.uc-amount {
-  font-size: 10px;
-  color: #1E90FF;
+@media (max-width: 420px) {
+  .container { padding: 80px 12px; }
+  .back-btn { padding: 10px 16px; font-size: 15px; }
+  .balance-card { padding: 10px 14px; }
+  .balance-value { font-size: 22px; }
+  .uc-grid { column-gap: 30px; row-gap: 60px; }
 }
 
-.uc-price {
-  font-size: 10px;
-  color: #fffff;
+@media (min-width: 768px) and (max-width: 1024px) {
+  .top-bar { max-width: 350px; margin-left: auto; margin-right: auto; }
 }
 
-/* ===== POPUP ===== */
+/* ===== POPUP OVERLAY ===== */
 .popup-overlay {
   position: fixed;
   inset: 0;
@@ -223,57 +113,25 @@ html, body {
 }
 
 @keyframes blueNeonPulse {
-  0% {
-    box-shadow:
-      0 0 18px rgba(0, 150, 255, 0.45),
-      0 0 40px rgba(0, 120, 255, 0.35);
-  }
-  50% {
-    box-shadow:
-      0 0 32px rgba(0, 180, 255, 0.9),
-      0 0 75px rgba(0, 140, 255, 0.6);
-  }
-  100% {
-    box-shadow:
-      0 0 18px rgba(0, 150, 255, 0.45),
-      0 0 40px rgba(0, 120, 255, 0.35);
-  }
+  0% { box-shadow: 0 0 18px rgba(0, 150, 255, 0.45), 0 0 40px rgba(0, 120, 255, 0.35); }
+  50% { box-shadow: 0 0 32px rgba(0, 180, 255, 0.9), 0 0 75px rgba(0, 140, 255, 0.6); }
+  100% { box-shadow: 0 0 18px rgba(0, 150, 255, 0.45), 0 0 40px rgba(0, 120, 255, 0.35); }
 }
 
 .popup {
+  position: relative;
   background: linear-gradient(180deg, #061a3a, #020b1d);
   border-radius: 22px;
   padding: 22px;
   animation: blueNeonPulse 1.8s ease-in-out infinite;
+  width: 92%;
+  max-width: 420px;
 }
 
-.popup {
-  position: relative; /* ← ВАЖНО */
-  background: linear-gradient(180deg, #061a3a, #020b1d);
-  border-radius: 22px;
-  padding: 22px;
-  animation: blueNeonPulse 1.8s ease-in-out infinite;
-}
-  
-.popup-title {
-  font-size: 22px;
-  font-weight: 900;
-  text-align: center;
-  margin-bottom: 18px;
-}
+.popup-title { font-size: 22px; font-weight: 900; text-align: center; margin-bottom: 18px; }
+.popup-info { display: flex; justify-content: space-between; margin-bottom: 16px; font-weight: 900; }
+.popup-price { color: #6dff9c; }
 
-.popup-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  font-weight: 900;
-}
-
-.popup-price {
-  color: #6dff9c;
-}
-
-/* INPUT */
 .popup-input {
   width: 100%;
   padding: 14px 16px;
@@ -286,7 +144,6 @@ html, body {
   outline: none;
 }
 
-/* BUY BUTTON */
 .buy-btn {
   width: 100%;
   padding: 14px;
@@ -297,16 +154,10 @@ html, body {
   cursor: pointer;
   color: #042b14;
   background: linear-gradient(135deg,#00ff88,#00c66a);
-  box-shadow:
-    0 0 20px rgba(0,255,136,.6),
-    inset 0 0 10px rgba(255,255,255,.3);
+  box-shadow: 0 0 20px rgba(0,255,136,.6), inset 0 0 10px rgba(255,255,255,.3);
 }
+.buy-btn:active { transform: scale(.97); }
 
-.buy-btn:active {
-  transform: scale(.97);
-}
-
-/* CLOSE */
 .popup-close {
   position: absolute;
   top: 12px;
@@ -314,25 +165,9 @@ html, body {
   font-size: 20px;
   cursor: pointer;
   opacity: .7;
-}  
-
-/* === УБИРАЕМ СИНИЙ MOBILE TAP EFFECT === */
-* {
-  -webkit-tap-highlight-color: transparent;
 }
 
-.block,
-.games-btn,
-.uc-btn,
-.mid-btn,
-.wallet-action,
-.bonus-card,
-.balance-card {
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}  
-
+/* ✅ Loading состояние кнопки */
 .buy-btn.loading {
   pointer-events: none;
   opacity: .85;
@@ -342,7 +177,6 @@ html, body {
   justify-content: center;
   gap: 10px;
 }
-
 .buy-btn.loading::after {
   content: "";
   width: 18px;
@@ -353,11 +187,11 @@ html, body {
   display: inline-block;
   animation: spin 1s linear infinite;
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-  
+/* tap highlight off */
+* { -webkit-tap-highlight-color: transparent; }
+.uc-btn, .buy-btn { outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
 </style>
 </head>
 
@@ -372,138 +206,111 @@ html, body {
       <div>
         <div class="balance-label">Текущий баланс</div>
         <div class="balance-value">
-  <span id="top-balance-value">0</span> <span>VC</span>
-</div>
+          <span id="top-balance-value">0</span> <span>VC</span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="page-title">UC SHOP</div>
 
-<div class="uc-grid">
+  <div class="uc-grid">
 
-<div class="menu-item">
-  <div class="uc-btn" data-uc="60" data-price="100"
-    style="background-image:url('https://i.postimg.cc/k5V6BkKS/Picsart-26-01-29-21-02-11-444.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">60 UC</div>
-    <div class="uc-price">100 VC</div>
+    <!-- Карточки -->
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="60" data-price="100" style="background-image:url('https://i.postimg.cc/k5V6BkKS/Picsart-26-01-29-21-02-11-444.png')"></div>
+      <div class="uc-info"><div class="uc-amount">60 UC</div><div class="uc-price">100 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="180" data-price="280" style="background-image:url('https://i.postimg.cc/CxhbLPcK/Picsart-26-01-29-20-32-23-792.png')"></div>
+      <div class="uc-info"><div class="uc-amount">180 UC</div><div class="uc-price">280 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="325" data-price="450" style="background-image:url('https://i.postimg.cc/90yyzv3t/Picsart-26-01-29-20-31-37-249.png')"></div>
+      <div class="uc-info"><div class="uc-amount">325 UC</div><div class="uc-price">450 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="660" data-price="850" style="background-image:url('https://i.postimg.cc/KzkPh1JN/Picsart-26-01-29-20-33-04-655.png')"></div>
+      <div class="uc-info"><div class="uc-amount">660 UC</div><div class="uc-price">850 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="720" data-price="920" style="background-image:url('https://i.postimg.cc/d3CjrhCZ/Picsart-26-01-29-20-34-02-726.png')"></div>
+      <div class="uc-info"><div class="uc-amount">720 UC</div><div class="uc-price">920 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="1800" data-price="2100" style="background-image:url('https://i.postimg.cc/nzCkVRcs/Picsart-26-01-29-20-51-49-065.png')"></div>
+      <div class="uc-info"><div class="uc-amount">1800 UC</div><div class="uc-price">2100 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="2125" data-price="2400" style="background-image:url('https://i.postimg.cc/mk1FJK2f/Picsart-26-01-29-20-53-14-450.png')"></div>
+      <div class="uc-info"><div class="uc-amount">2125 UC</div><div class="uc-price">2400 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="3850" data-price="4200" style="background-image:url('https://i.postimg.cc/JnnXcGfz/Picsart-26-01-29-20-53-49-183.png')"></div>
+      <div class="uc-info"><div class="uc-amount">3850 UC</div><div class="uc-price">4200 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="8100" data-price="8500" style="background-image:url('https://i.postimg.cc/13GD9x0x/Picsart-26-01-29-20-56-34-985.png')"></div>
+      <div class="uc-info"><div class="uc-amount">8100 UC</div><div class="uc-price">8500 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="16200" data-price="16800" style="background-image:url('https://i.postimg.cc/ydQFwFmV/Picsart-26-01-29-20-55-06-525.png')"></div>
+      <div class="uc-info"><div class="uc-amount">16200 UC</div><div class="uc-price">16800 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="24300" data-price="25000" style="background-image:url('https://i.postimg.cc/kgKvBRmH/Picsart-26-01-29-20-54-32-563.png')"></div>
+      <div class="uc-info"><div class="uc-amount">24300 UC</div><div class="uc-price">25000 VC</div></div>
+    </div>
+
+    <div class="menu-item">
+      <div class="uc-btn" data-uc="32400" data-price="33000" style="background-image:url('https://i.postimg.cc/sxL4Zp1V/Picsart-26-01-29-20-52-29-417.png')"></div>
+      <div class="uc-info"><div class="uc-amount">32400 UC</div><div class="uc-price">33000 VC</div></div>
+    </div>
+
+  </div><!-- ✅ /uc-grid -->
+
+</div><!-- ✅ /container -->
+
+<!-- Popup -->
+<div class="popup-overlay" id="popup">
+  <div class="popup">
+    <div class="popup-title">Покупка UC</div>
+
+    <div class="popup-info">
+      <div><span id="popup-uc">0</span> UC</div>
+      <div class="popup-price">Цена: <span id="popup-price">0</span> VC</div>
+    </div>
+
+    <input type="text" id="game-id" class="popup-input" placeholder="Введите игровой ID">
+
+    <button class="buy-btn" id="buy-btn">Купить</button>
+
+    <div class="popup-close" id="popup-close">✕</div>
   </div>
 </div>
 
-<div class="menu-item">
-  <div class="uc-btn" data-uc="180" data-price="280"
-    style="background-image:url('https://i.postimg.cc/CxhbLPcK/Picsart-26-01-29-20-32-23-792.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">180 UC</div>
-    <div class="uc-price">280 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="325" data-price="450"
-    style="background-image:url('https://i.postimg.cc/90yyzv3t/Picsart-26-01-29-20-31-37-249.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">325 UC</div>
-    <div class="uc-price">450 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="660" data-price="850"
-    style="background-image:url('https://i.postimg.cc/KzkPh1JN/Picsart-26-01-29-20-33-04-655.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">660 UC</div>
-    <div class="uc-price">850 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="720" data-price="920"
-    style="background-image:url('https://i.postimg.cc/d3CjrhCZ/Picsart-26-01-29-20-34-02-726.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">720 UC</div>
-    <div class="uc-price">920 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="1800" data-price="2100"
-    style="background-image:url('https://i.postimg.cc/nzCkVRcs/Picsart-26-01-29-20-51-49-065.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">1800 UC</div>
-    <div class="uc-price">2100 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="2125" data-price="2400"
-    style="background-image:url('https://i.postimg.cc/mk1FJK2f/Picsart-26-01-29-20-53-14-450.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">2125 UC</div>
-    <div class="uc-price">2400 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="3850" data-price="4200"
-    style="background-image:url('https://i.postimg.cc/JnnXcGfz/Picsart-26-01-29-20-53-49-183.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">3850 UC</div>
-    <div class="uc-price">4200 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="8100" data-price="8500"
-    style="background-image:url('https://i.postimg.cc/13GD9x0x/Picsart-26-01-29-20-56-34-985.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">8100 UC</div>
-    <div class="uc-price">8500 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="16200" data-price="16800"
-    style="background-image:url('https://i.postimg.cc/ydQFwFmV/Picsart-26-01-29-20-55-06-525.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">16200 UC</div>
-    <div class="uc-price">16800 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="24300" data-price="25000"
-    style="background-image:url('https://i.postimg.cc/kgKvBRmH/Picsart-26-01-29-20-54-32-563.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">24300 UC</div>
-    <div class="uc-price">25000 VC</div>
-  </div>
-</div>
-
-<div class="menu-item">
-  <div class="uc-btn" data-uc="32400" data-price="33000"
-    style="background-image:url('https://i.postimg.cc/sxL4Zp1V/Picsart-26-01-29-20-52-29-417.png')"></div>
-  <div class="uc-info">
-    <div class="uc-amount">32400 UC</div>
-    <div class="uc-price">33000 VC</div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
+  const SUPABASE_KEY = "ВАШ_ANON_KEY"; // 🔴 вставь сюда свой ключ (или оставь как было у тебя)
 
-  window.sb = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+  // 1) создаём клиент Supabase один раз
+  window.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  // 2) Telegram
   const tg = window.Telegram.WebApp;
   tg.expand();
 
@@ -511,10 +318,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("Открой через Telegram");
     return;
   }
-
   const tgUser = tg.initDataUnsafe.user;
 
-  /* ===== INIT USER ===== */
+  // 3) элементы
+  const popupOverlay = document.getElementById("popup");
+  const popupUc = document.getElementById("popup-uc");
+  const popupPrice = document.getElementById("popup-price");
+  const popupClose = document.getElementById("popup-close");
+  const buyBtn = document.getElementById("buy-btn");
+  const gameIdInput = document.getElementById("game-id");
+
+  let buying = false; // ✅ защита от двойного клика
+
+  // 4) initUser
   async function initUser() {
     let { data: user } = await window.sb
       .from("users")
@@ -534,19 +350,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         .select()
         .single();
 
-      await window.sb.from("balances").insert({
-        user_id: newUser.id,
-        balance: 0
-      });
-
+      await window.sb.from("balances").insert({ user_id: newUser.id, balance: 0 });
       user = newUser;
     }
 
     window.USER_ID = user.id;
-    loadBalance();
+    await loadBalance();
   }
 
-  /* ===== LOAD BALANCE ===== */
   async function loadBalance() {
     const { data } = await window.sb
       .from("balances")
@@ -558,115 +369,83 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("top-balance-value").innerText = balance;
   }
 
-  initUser();
-});
-</script>
-
-<div class="popup-overlay" id="popup">
-  <div class="popup">
-    <div class="popup-title">Покупка UC</div>
-
-    <div class="popup-info">
-      <div><span id="popup-uc">0</span> UC</div>
-      <div class="popup-price">
-        Цена: <span id="popup-price">0</span> VC
-      </div>
-    </div>
-
-    <input
-      type="text"
-      id="game-id"
-      class="popup-input"
-      placeholder="Введите игровой ID"
-    >
-
-    <button class="buy-btn" id="buy-btn">
-      Купить
-    </button>
-
-    <div class="popup-close" id="popup-close">✕</div>
-  </div>
-</div>
-
-<script>
-const popup = document.getElementById("popup");
-const popupUc = document.getElementById("popup-uc");
-const popupPrice = document.getElementById("popup-price");
-const popupClose = document.getElementById("popup-close");
-const buyBtn = document.getElementById("buy-btn");
-const gameIdInput = document.getElementById("game-id");
-
-let buying = false; // защита от двойного клика
-
-document.querySelectorAll(".uc-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    popupUc.innerText = btn.dataset.uc;
-    popupPrice.innerText = btn.dataset.price;
-    gameIdInput.value = "";
-    popup.style.display = "flex";
-  });
-});
-
-popupClose.onclick = () => {
-  popup.style.display = "none";
-};
-
-buyBtn.onclick = async () => {
-  if (buying) return;          // защита от двойного клика
-  buying = true;
-
-  const supabase = window.sb;  // глобальный клиент
-  const gameId = gameIdInput.value.trim();
-
-  if (!gameId) {
-    buying = false;
-    alert("Введите игровой ID");
-    return;
-  }
-
-  const price = Number(popupPrice.innerText);
-  const uc = Number(popupUc.innerText);
-
-  // включаем загрузку
-  const oldText = buyBtn.innerText;
-  buyBtn.classList.add("loading");
-  buyBtn.innerText = "Покупаю...";
-  buyBtn.disabled = true;
-
-  try {
-    const { data, error } = await supabase.rpc("buy_uc", {
-      p_user_id: window.USER_ID,
-      p_uc: uc,
-      p_price: price,
-      p_game_id: gameId
+  // 5) открытие попапа
+  document.querySelectorAll(".uc-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      popupUc.innerText = btn.dataset.uc;
+      popupPrice.innerText = btn.dataset.price;
+      gameIdInput.value = "";
+      popupOverlay.style.display = "flex";
     });
+  });
 
-    if (error) {
-      const msg = String(error.message || "");
-      if (msg.includes("insufficient_funds")) alert("Недостаточно VC");
-      else if (msg.includes("bad_game_id")) alert("ID слишком короткий");
-      else alert("Ошибка покупки");
-      console.log(error);
-      return;
+  // 6) закрытие попапа
+  popupClose.onclick = () => { popupOverlay.style.display = "none"; };
+
+  // 7) покупка
+  buyBtn.onclick = async () => {
+    if (buying) return;
+    buying = true;
+
+    const oldText = buyBtn.innerText;
+
+    // включаем loading сразу
+    buyBtn.classList.add("loading");
+    buyBtn.innerText = "Покупаю...";
+    buyBtn.disabled = true;
+
+    try {
+      // важная проверка: user ещё не прогрузился
+      if (!window.USER_ID) {
+        alert("Подождите секунду, загружаю профиль...");
+        return;
+      }
+
+      const gameId = gameIdInput.value.trim();
+      if (!gameId) {
+        alert("Введите игровой ID");
+        return;
+      }
+
+      const price = Number(popupPrice.innerText);
+      const uc = Number(popupUc.innerText);
+
+      const { data, error } = await window.sb.rpc("buy_uc", {
+        p_user_id: window.USER_ID,
+        p_uc: uc,
+        p_price: price,
+        p_game_id: gameId
+      });
+
+      if (error) {
+        const msg = String(error.message || "");
+        if (msg.includes("insufficient_funds")) alert("Недостаточно VC");
+        else if (msg.includes("bad_game_id")) alert("ID слишком короткий");
+        else alert("Ошибка покупки");
+        console.log(error);
+        return;
+      }
+
+      const newBalance = Array.isArray(data) ? data[0]?.new_balance : data?.new_balance;
+      if (newBalance !== undefined) {
+        document.getElementById("top-balance-value").innerText = newBalance;
+      }
+
+      popupOverlay.style.display = "none";
+      alert(`✅ Куплено: ${uc} UC\nСписано: ${price} VC`);
+
+    } finally {
+      buying = false;
+      buyBtn.classList.remove("loading");
+      buyBtn.disabled = false;
+      buyBtn.innerText = oldText;
     }
+  };
 
-    // функция вернёт новый баланс
-    const newBalance = Array.isArray(data) ? data[0]?.new_balance : data?.new_balance;
-    if (newBalance !== undefined) {
-      document.getElementById("top-balance-value").innerText = newBalance;
-    }
-
-    popup.style.display = "none";
-    alert(`✅ Куплено: ${uc} UC\nСписано: ${price} VC`);
-
-  } finally {
-    buying = false;
-    buyBtn.classList.remove("loading");
-    buyBtn.disabled = false;
-    buyBtn.innerText = oldText;
-  }
-};
+  // запуск
+  await initUser();
+});
 </script>
-  
+
 </body>
 </html>
