@@ -23,7 +23,7 @@ html, body {
   background-attachment: fixed;
 }
 
-.container { max-width: 1000px; margin: 0 auto; padding: 20px 16px; }
+.container { max-width: 1000px; margin: 0 auto; padding: 20px 16px 40px; }
 
 .top-bar {
   display: flex; justify-content: space-between; align-items: center;
@@ -86,10 +86,10 @@ html, body {
   letter-spacing: 0.5px;
 }
 .uc-amount { font-size: 10px; color: #1E90FF; }
-.uc-price { font-size: 10px; color: #ffffff; } /* ✅ фикс цвета */
+.uc-price { font-size: 10px; color: #ffffff; }
 
 @media (max-width: 420px) {
-  .container { padding: 80px 12px; }
+  .container { padding: 80px 12px 40px; }
   .back-btn { padding: 10px 16px; font-size: 15px; }
   .balance-card { padding: 10px 14px; }
   .balance-value { font-size: 22px; }
@@ -286,11 +286,10 @@ html, body {
   color: #042b14;
 }
 
-/* ✅ НОВОЕ: красивый зелёный toast (как депозиты/выводы) */
-/* ✅ НОВОЕ положение toast: ниже, но не в центре */
+/* ✅ TOAST (ниже, но не до центра) */
 .toast{
   position: fixed;
-  top: 120px;              /* ← вот это двигает ниже */
+  top: 120px;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 28px);
@@ -298,12 +297,8 @@ html, body {
   z-index: 4000;
   display: none;
 }
-
-/* на маленьких экранах чуть выше, чтобы не мешало */
 @media (max-width: 420px){
-  .toast{
-    top: 90px;
-  }
+  .toast{ top: 90px; }
 }
 .toast-box{
   display: flex;
@@ -311,19 +306,12 @@ html, body {
   align-items: flex-start;
   padding: 14px 14px;
   border-radius: 18px;
-
-  /* ✅ НЕпрозрачный зелёный фон */
   background: linear-gradient(135deg, #00d46a, #00a84f);
-
-  /* ✅ более “плотная” рамка/тень */
   border: 1px solid rgba(255,255,255,.18);
   box-shadow:
     0 14px 45px rgba(0, 255, 136, .25),
     0 0 0 1px rgba(0,0,0,.25) inset;
-
-  /* ❌ убираем стекло/прозрачность */
   backdrop-filter: none;
-
   animation: toastIn .35s ease;
 }
 @keyframes toastIn{
@@ -355,9 +343,7 @@ html, body {
   color: #eafff5;
   line-height: 1.3;
 }
-.toast-actions{
-  margin-top: 10px;
-}
+.toast-actions{ margin-top: 10px; }
 .toast-ok{
   width: 100%;
   padding: 10px;
@@ -365,14 +351,156 @@ html, body {
   border: none;
   font-weight: 900;
   cursor: pointer;
-
-  /* ✅ непрозрачная кнопка */
   background: rgba(0,0,0,.22);
   color: #eafff5;
   border: 1px solid rgba(255,255,255,.22);
 }
 .toast-ok:active{ transform: scale(.98) }
-.toast-ok:active{ transform: scale(.98) }
+
+/* ===========================
+   ✅ НОВОЕ: кнопка "История покупок"
+   =========================== */
+.bottom-actions{
+  max-width: 900px;
+  margin: 18px auto 0;
+  display: flex;
+  justify-content: center;
+}
+.history-btn{
+  width: 100%;
+  max-width: 520px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(77,199,255,.55);
+  background: linear-gradient(135deg, rgba(0,136,255,.22), rgba(0,0,0,.55));
+  box-shadow: 0 0 22px rgba(0,136,255,.45), inset 0 0 14px rgba(0,136,255,.22);
+  color: #fff;
+  font-weight: 900;
+  font-size: 15px;
+  cursor: pointer;
+}
+.history-btn:active{ transform: scale(.99) }
+
+/* ===========================
+   ✅ НОВОЕ: попап истории (неон-синий)
+   =========================== */
+.history-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+}
+.history-popup{
+  position: relative;
+  width: 94%;
+  max-width: 520px;
+  border-radius: 22px;
+  padding: 18px;
+  background: linear-gradient(180deg, #061a3a, #020b1d);
+  border: 1px solid rgba(77,199,255,.35);
+  box-shadow:
+    0 0 35px rgba(0,136,255,.65),
+    inset 0 0 18px rgba(0,136,255,.22);
+  animation: blueNeonPulse 1.8s ease-in-out infinite;
+}
+.history-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.history-title{
+  font-size: 20px;
+  font-weight: 900;
+  text-shadow: 0 0 18px rgba(0,136,255,.6);
+}
+.history-close{
+  font-size: 22px;
+  cursor: pointer;
+  opacity: .8;
+  user-select: none;
+}
+.history-subtitle{
+  font-size: 12px;
+  color: #9fb6ff;
+  margin-bottom: 12px;
+}
+
+.history-list{
+  max-height: 58vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+.history-empty{
+  text-align: center;
+  padding: 18px 10px;
+  color: #cde6ff;
+  opacity: .9;
+  font-weight: 700;
+}
+
+.hist-item{
+  border-radius: 18px;
+  padding: 12px 12px;
+  background: linear-gradient(135deg, rgba(0,136,255,.16), rgba(0,0,0,.55));
+  border: 1px solid rgba(0,136,255,.22);
+  box-shadow: inset 0 0 12px rgba(0,136,255,.12);
+  margin-bottom: 10px;
+}
+.hist-top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.hist-id{
+  font-weight: 900;
+  font-size: 12px;
+  color: #cfe9ff;
+}
+.hist-status{
+  font-weight: 900;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+}
+.st-success{ background: rgba(0,255,136,.18); color:#bfffe0; border-color: rgba(0,255,136,.35); }
+.st-pending{ background: rgba(0,136,255,.18); color:#cfe9ff; border-color: rgba(0,136,255,.35); }
+.st-declined{ background: rgba(255,60,60,.16); color:#ffd1d1; border-color: rgba(255,60,60,.35); }
+
+.hist-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
+.hist-row{
+  font-size: 12px;
+  color: #e8f6ff;
+  line-height: 1.3;
+}
+.hist-row b{ color: #fff; }
+
+.history-actions{
+  margin-top: 12px;
+}
+.history-ok{
+  width: 100%;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  color: #e8f6ff;
+  font-weight: 900;
+  cursor: pointer;
+}
+.history-ok:active{ transform: scale(.99) }
 </style>
 </head>
 
@@ -460,9 +588,14 @@ html, body {
 
   </div><!-- ✅ /uc-grid -->
 
+  <!-- ✅ НОВОЕ: кнопка история покупок -->
+  <div class="bottom-actions">
+    <button class="history-btn" id="history-btn">🧾 История покупок</button>
+  </div>
+
 </div><!-- ✅ /container -->
 
-<!-- Popup -->
+<!-- Popup покупка -->
 <div class="popup-overlay" id="popup">
   <div class="popup">
     <div class="popup-title">Покупка UC</div>
@@ -480,7 +613,7 @@ html, body {
   </div>
 </div>
 
-<!-- ✅ НОВОЕ: Подтверждение “точно ли ID” -->
+<!-- Подтверждение “точно ли ID” -->
 <div class="confirm-overlay" id="confirm">
   <div class="confirm-box">
     <div class="confirm-title">Проверка ID</div>
@@ -492,7 +625,7 @@ html, body {
   </div>
 </div>
 
-<!-- ✅ НОВОЕ: Зелёный toast-уведомление -->
+<!-- Зелёный toast -->
 <div class="toast" id="toast">
   <div class="toast-box">
     <div class="toast-icon">✓</div>
@@ -506,6 +639,25 @@ html, body {
   </div>
 </div>
 
+<!-- ✅ НОВОЕ: попап истории -->
+<div class="history-overlay" id="history-overlay">
+  <div class="history-popup">
+    <div class="history-head">
+      <div class="history-title">История покупок</div>
+      <div class="history-close" id="history-close">✕</div>
+    </div>
+    <div class="history-subtitle">Здесь отображаются ваши последние операции.</div>
+
+    <div class="history-list" id="history-list">
+      <div class="history-empty">Загружаю...</div>
+    </div>
+
+    <div class="history-actions">
+      <button class="history-ok" id="history-ok">ОК</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -514,10 +666,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const SUPABASE_URL = "https://ciqyzrgiuvxmhxgladxu.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpcXl6cmdpdXZ4bWh4Z2xhZHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTgzMDIsImV4cCI6MjA4MTAzNDMwMn0.21-OjkjEtppQ78o66lQJwa-1c1HSfbka2SD2C0lC1ro";
 
-  // 1) создаём клиент Supabase один раз
+  // ✅ ВАЖНО: имя таблицы истории (поменяй если другое)
+  const HISTORY_TABLE = "uc_orders";
+  // ✅ Поля таблицы (поменяй если у тебя другие названия колонок)
+  const HISTORY_SELECT = "id, created_at, game_id, price, uc, status";
+
   window.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // 2) Telegram
   const tg = window.Telegram.WebApp;
   tg.expand();
 
@@ -527,7 +682,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   const tgUser = tg.initDataUnsafe.user;
 
-  // 3) элементы
   const popupOverlay = document.getElementById("popup");
   const popupUc = document.getElementById("popup-uc");
   const popupPrice = document.getElementById("popup-price");
@@ -547,10 +701,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const toastSub = document.getElementById("toast-sub");
   const toastOk = document.getElementById("toast-ok");
 
-  let buying = false; // ✅ защита от двойного клика
-  let pendingPurchase = null; // сюда кладём данные, когда пользователь нажал "Купить"
+  // history
+  const historyBtn = document.getElementById("history-btn");
+  const historyOverlay = document.getElementById("history-overlay");
+  const historyClose = document.getElementById("history-close");
+  const historyOk = document.getElementById("history-ok");
+  const historyList = document.getElementById("history-list");
 
-  // 4) initUser
+  let buying = false;
+  let pendingPurchase = null;
+
   async function initUser() {
     let { data: user } = await window.sb
       .from("users")
@@ -589,7 +749,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("top-balance-value").innerText = balance;
   }
 
-  // ✅ функция: показать toast
+  // toast
   let toastTimer = null;
   function showToast(title, htmlText, ms = 6000) {
     toastTitle.innerText = title;
@@ -601,13 +761,103 @@ document.addEventListener("DOMContentLoaded", async () => {
       toast.style.display = "none";
     }, ms);
   }
-
   toastOk.onclick = () => {
     toast.style.display = "none";
     if (toastTimer) clearTimeout(toastTimer);
   };
 
-  // 5) открытие попапа
+  // ✅ helper: формат даты/времени
+  function formatDT(iso) {
+    try{
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2,"0");
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const yy = d.getFullYear();
+      const hh = String(d.getHours()).padStart(2,"0");
+      const mi = String(d.getMinutes()).padStart(2,"0");
+      return { date: `${dd}.${mm}.${yy}`, time: `${hh}:${mi}` };
+    }catch(e){
+      return { date: "-", time: "-" };
+    }
+  }
+
+  // ✅ helper: статус -> бейдж
+  function statusBadge(statusRaw) {
+    const s = String(statusRaw || "").toLowerCase().trim();
+
+    // варианты, чтобы “подхватило” почти любые значения
+    if (["success","succeeded","paid","done","ok","completed","успешно","успех"].includes(s)) {
+      return { text: "Успешно", cls: "st-success" };
+    }
+    if (["declined","rejected","canceled","cancelled","fail","failed","отклонено","отмена","ошибка"].includes(s)) {
+      return { text: "Отклонено", cls: "st-declined" };
+    }
+
+    // по умолчанию — в пути/ожидание
+    return { text: "В пути", cls: "st-pending" };
+  }
+
+  // ✅ загрузка истории
+  async function loadHistory() {
+    historyList.innerHTML = `<div class="history-empty">Загружаю...</div>`;
+
+    if (!window.USER_ID) {
+      historyList.innerHTML = `<div class="history-empty">Профиль ещё загружается...</div>`;
+      return;
+    }
+
+    const { data, error } = await window.sb
+      .from(HISTORY_TABLE)
+      .select(HISTORY_SELECT)
+      .eq("user_id", window.USER_ID)
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    if (error) {
+      historyList.innerHTML = `
+        <div class="history-empty">
+          Не удалось загрузить историю 😢<br><br>
+          <span style="opacity:.85; font-size:12px;">Проверь имя таблицы HISTORY_TABLE и поля HISTORY_SELECT.</span>
+        </div>
+      `;
+      console.log("history error:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      historyList.innerHTML = `<div class="history-empty">Пока покупок нет.</div>`;
+      return;
+    }
+
+    historyList.innerHTML = data.map(row => {
+      const id = row.id ?? "-";
+      const gameId = row.game_id ?? "-";
+      const price = row.price ?? "-";
+      const uc = row.uc ?? "-";
+      const { date, time } = formatDT(row.created_at);
+      const st = statusBadge(row.status);
+
+      return `
+        <div class="hist-item">
+          <div class="hist-top">
+            <div class="hist-id">Заявка: <b>${id}</b></div>
+            <div class="hist-status ${st.cls}">${st.text}</div>
+          </div>
+
+          <div class="hist-grid">
+            <div class="hist-row">ID: <b>${gameId}</b></div>
+            <div class="hist-row">Дата: <b>${date}</b></div>
+            <div class="hist-row">Пак: <b>${uc} UC</b></div>
+            <div class="hist-row">Время: <b>${time}</b></div>
+            <div class="hist-row">Сумма: <b>${price} VC</b></div>
+            <div class="hist-row">Статус: <b>${st.text}</b></div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // Открытие попапа покупки
   document.querySelectorAll(".uc-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       popupUc.innerText = btn.dataset.uc;
@@ -617,10 +867,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // 6) закрытие попапа
+  // закрытие попапа покупки
   popupClose.onclick = () => { popupOverlay.style.display = "none"; };
 
-  // ✅ НОВОЕ: при нажатии "Купить" — сначала подтверждение ID
+  // ✅ открыть историю
+  historyBtn.onclick = async () => {
+    historyOverlay.style.display = "flex";
+    await loadHistory();
+  };
+  historyClose.onclick = () => { historyOverlay.style.display = "none"; };
+  historyOk.onclick = () => { historyOverlay.style.display = "none"; };
+
+  // При нажатии "Купить" — сначала подтверждение ID
   buyBtn.onclick = () => {
     const gameId = gameIdInput.value.trim();
     if (!gameId) {
@@ -648,7 +906,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     pendingPurchase = null;
   };
 
-  // ✅ ПОКУПКА после подтверждения
+  // ПОКУПКА после подтверждения
   confirmOk.onclick = async () => {
     if (!pendingPurchase) {
       confirmOverlay.style.display = "none";
@@ -662,7 +920,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const oldText = buyBtn.innerText;
 
-    // включаем loading
     buyBtn.classList.add("loading");
     buyBtn.innerText = "Покупаю...";
     buyBtn.disabled = true;
@@ -691,13 +948,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // ✅ обновляем баланс сразу
       await loadBalance();
       const newBalance = document.getElementById("top-balance-value").innerText;
 
       popupOverlay.style.display = "none";
 
-      // ✅ Зелёное уведомление с галочкой
       showToast(
         "Покупка успешна ✅",
         `
@@ -725,7 +980,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
-<!-- ✅ Старое уведомление (оставил как в твоём коде, но сейчас не используется) -->
+<!-- Старое уведомление (оставил как в твоём коде, но сейчас не используется) -->
 <div class="notify" id="notify">
   <div class="notify-box">
     <div class="notify-title">✅ Покупка успешна</div>
