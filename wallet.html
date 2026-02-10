@@ -48,6 +48,27 @@ body{
 }
 .header h1{margin:0;font-size:20px;font-weight:900;}
 
+/* ✅ Кнопка "Назад на сайт" (в стиле хедера) */
+.back-site-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:none;
+  background:none;
+  color:#475569;
+  font-size:18px;
+  font-weight:900;
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:12px;
+}
+.back-site-btn:hover{
+  background:rgba(15,23,42,.06);
+}
+.back-site-btn:active{
+  transform:scale(.98);
+}
+
 /* Карточка баланса */
 .wallet-card{
   margin:16px;
@@ -203,7 +224,7 @@ body{
 }
 .withdraw-button:active{transform:scale(.97);}
 
-/* ✅ ВАЖНО: НИКАКОГО pointer-events:none у disabled (иначе клик "проваливается" вниз) */
+/* ✅ ВАЖНО: НИКАКОГО pointer-events:none у disabled */
 .withdraw-button:disabled,
 .pay:disabled{
   opacity:.6!important;
@@ -531,8 +552,10 @@ body{
 
 <div class="screen" id="mainScreen">
   <div class="header">
-    <span></span>
+    <!-- ✅ НОВОЕ: назад на index.html -->
+    <button class="back-site-btn" type="button" onclick="goToIndex()">← Назад</button>
     <h1>Кошелёк</h1>
+    <span></span>
   </div>
 
   <div class="wallet-card">
@@ -575,6 +598,7 @@ body{
   <div class="header">
     <button onclick="backToMain()">← Назад</button>
     <h1>Вывод средств</h1>
+    <span></span>
   </div>
 
   <div class="wallet-card">
@@ -738,6 +762,14 @@ function closeAllPopups(){
 function detectDevice(){
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   isAndroid = /android/i.test(userAgent);
+}
+
+/* ✅ НОВОЕ: переход на index.html */
+function goToIndex(){
+  closeAllPopups();
+  window.location.href = 'index.html';
+  // Если хочешь "назад как в браузере", можно так:
+  // if (history.length > 1) history.back(); else window.location.href = 'index.html';
 }
 
 /* -------------------- Toast -------------------- */
@@ -1123,7 +1155,7 @@ document.addEventListener('touchend', (event) => {
 
 document.addEventListener('gesturestart', (e) => e.preventDefault());
 
-// ✅ Когда пользователь впервые трогает сумму пополнения — считаем touched
+// ✅ Когда пользователь впервые трогает сумму пополнения — touched
 $('amountInput')?.addEventListener('input', () => { depositTouched = true; });
 $('withdrawAmount')?.addEventListener('input', () => { withdrawTouched = true; });
 </script>
