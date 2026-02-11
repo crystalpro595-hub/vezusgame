@@ -58,14 +58,22 @@
       align-items:center;
     }
 
-    /* ✅ Верхняя строка */
+    /* ✅ Верхняя строка: КАК БЫЛО (группа по центру) */
     .top-row{
       width:100%;
       max-width:520px;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap: 16px; /* ✅ было 10px — меню чуть дальше от баланса */
+      gap: 16px; /* расстояние до баланса */
+    }
+
+    /* ✅ Блок слева: бургер + профиль */
+    .left-buttons{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      transform: translateX(-10px); /* ✅ чуть левее */
     }
 
     /* ✅ Кнопка меню */
@@ -85,6 +93,7 @@
       -webkit-backdrop-filter: blur(12px);
       transition: transform .15s ease;
       flex: 0 0 auto;
+      padding:0;
     }
     .menu-btn:active{ transform: scale(.98); }
 
@@ -96,7 +105,40 @@
       display:block;
     }
 
-    /* ✅ Баланс */
+    /* ✅ Кнопка профиля (такая же, ничего не вылезает) */
+    .profile-btn{
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(46, 180, 255, .22);
+      cursor:pointer;
+      background: rgba(8, 12, 22, .72);
+      box-shadow:
+        0 12px 34px rgba(0,0,0,.55),
+        0 0 22px rgba(42,171,238,.14);
+      display:grid;
+      place-items:center;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform .15s ease;
+      padding:0;
+      overflow:hidden; /* ✅ чтобы точно ничего не торчало */
+    }
+    .profile-btn:active{ transform: scale(.98); }
+
+    .profile-svg{
+      width:20px;
+      height:20px;
+      display:block;
+      stroke: rgba(234,241,255,.92);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      margin:0;
+    }
+
+    /* ✅ Баланс: КАК БЫЛО */
     .balance-mini{
       width: min(210px, 70%);
       height: 38px;
@@ -214,7 +256,7 @@
       box-shadow: 0 0 12px rgba(42,171,238,.55);
     }
 
-    /* ✅ 3 кнопки */
+    /* ✅ 3 кнопки (квадратные) */
     .actions{
       width:100%;
       max-width:520px;
@@ -226,8 +268,8 @@
     .action-btn{
       position:relative;
       width:100%;
-      aspect-ratio: 1 / 1;      /* ✅ квадрат */
-      height:auto;              /* ✅ убрали фиксированную высоту */
+      aspect-ratio: 1 / 1;
+      height:auto;
       border:none;
       border-radius:18px;
       overflow:hidden;
@@ -376,8 +418,9 @@
     @media (max-width: 360px){
       .balance-mini{ width: min(196px, 68%); height: 36px; }
       .bal-amount{ height: 25px; font-size: 12px; }
-      .menu-btn{ width: 40px; height: 40px; border-radius: 13px; }
-      .top-row{ gap: 14px; } /* ✅ чуть меньше на маленьких экранах */
+      .menu-btn, .profile-btn{ width: 40px; height: 40px; border-radius: 13px; }
+      .left-buttons{ transform: translateX(-8px); }
+      .top-row{ gap: 14px; }
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -391,11 +434,20 @@
     <div class="content">
 
       <div class="top-row">
-        <button class="menu-btn" id="menuBtn" aria-label="Открыть меню">
-          <div class="burger" aria-hidden="true">
-            <span></span><span></span><span></span>
-          </div>
-        </button>
+        <div class="left-buttons">
+          <button class="menu-btn" id="menuBtn" aria-label="Открыть меню">
+            <div class="burger" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+          </button>
+
+          <button class="profile-btn" id="profileBtn" aria-label="Профиль" title="Профиль">
+            <svg class="profile-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 21a8 8 0 0 0-16 0"></path>
+              <circle cx="12" cy="8" r="4"></circle>
+            </svg>
+          </button>
+        </div>
 
         <div class="balance-mini" aria-label="Баланс">
           <span class="bal-title">Баланс</span>
@@ -460,10 +512,7 @@
           <div class="chev">›</div>
         </button>
 
-        <button class="sheet-item" data-action="profile">
-          <div class="left"><div class="ico">👤</div><div class="name">Профиль</div></div>
-          <div class="chev">›</div>
-        </button>
+        <!-- ✅ Профиль убран из меню -->
 
         <button class="sheet-item" data-action="history">
           <div class="left"><div class="ico">🕘</div><div class="name">История</div></div>
@@ -488,6 +537,12 @@
 
     document.getElementById('balanceChip').addEventListener('click', () => {
       window.location.href = 'wallet.html';
+    });
+
+    // ✅ Профиль (пока заглушка)
+    document.getElementById('profileBtn').addEventListener('click', () => {
+      alert('Профиль (позже сделаем переход)');
+      // window.location.href = 'profile.html';
     });
 
     const slides = document.getElementById('slides');
