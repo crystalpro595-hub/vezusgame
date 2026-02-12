@@ -58,23 +58,25 @@
       align-items:center;
     }
 
-    /* ✅ Верхняя строка */
+    /* ✅ Верхняя строка: КАК БЫЛО (группа по центру) */
     .top-row{
       width:100%;
       max-width:520px;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:16px;
+      gap: 16px; /* расстояние до баланса */
     }
 
+    /* ✅ Блок слева: бургер + профиль */
     .left-buttons{
       display:flex;
       align-items:center;
       gap:10px;
-      transform: translateX(-10px);
+      transform: translateX(-10px); /* ✅ чуть левее */
     }
 
+    /* ✅ Кнопка меню */
     .menu-btn{
       width: 42px;
       height: 42px;
@@ -90,6 +92,7 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       transition: transform .15s ease;
+      flex: 0 0 auto;
       padding:0;
     }
     .menu-btn:active{ transform: scale(.98); }
@@ -102,6 +105,7 @@
       display:block;
     }
 
+    /* ✅ Кнопка профиля */
     .profile-btn{
       width: 42px;
       height: 42px;
@@ -131,9 +135,10 @@
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
+      margin:0;
     }
 
-    /* ✅ Баланс (как было) */
+    /* ✅ Баланс: КАК БЫЛО */
     .balance-mini{
       width: min(210px, 70%);
       height: 38px;
@@ -195,6 +200,7 @@
       border-radius: 999px;
       cursor:pointer;
       padding: 0 10px;
+
       display:flex;
       align-items:center;
       justify-content:center;
@@ -211,14 +217,12 @@
     }
     .bal-amount:active{ transform: scale(.99); }
 
-    /* ✅ БАННЕРЫ — ВАРИАНТ B (3:1 + cover) */
+    /* ✅ Баннеры */
     .slider{ width:100%; max-width:520px; border-radius: var(--radius); }
 
     .slides{
-      display:flex;
-      gap:12px;
-      overflow-x:auto;
-      scroll-snap-type:x mandatory;
+      display:flex; gap:12px;
+      overflow-x:auto; scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width:none;
       padding-bottom:4px;
@@ -228,32 +232,15 @@
     .slide{
       scroll-snap-align:start;
       flex:0 0 100%;
+      height:170px;
       border-radius: var(--radius);
       position:relative;
       overflow:hidden;
       background:#000;
       box-shadow: 0 18px 55px rgba(0,0,0,.40);
     }
-
-    .slide::before{ content:""; display:block; padding-top: 33.3333%; }
-
-    .slide img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      object-position: center;
-      display:block;
-    }
-
-    .slide::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.38));
-      pointer-events:none;
-    }
+    .slide img{ width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.02); }
+    .slide::after{ content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.38)); pointer-events:none; }
 
     .dots{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
     .dot{
@@ -269,7 +256,7 @@
       box-shadow: 0 0 12px rgba(42,171,238,.55);
     }
 
-    /* ✅ 3 кнопки */
+    /* ✅ 3 кнопки (квадратные) */
     .actions{
       width:100%;
       max-width:520px;
@@ -470,12 +457,17 @@
         </div>
       </div>
 
-      <!-- ✅ Баннеры (3:1) -->
       <div class="slider" aria-label="Баннеры">
         <div class="slides" id="slides">
-          <div class="slide"><img src="YOUR_BANNER_1200x400.png" alt="Banner 1"></div>
-          <div class="slide"><img src="YOUR_BANNER_1200x400.png" alt="Banner 2"></div>
-          <div class="slide"><img src="YOUR_BANNER_1200x400.png" alt="Banner 3"></div>
+          <div class="slide">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Blackpink_PUBG_Mobile.png" alt="PUBG Mobile Banner 1">
+          </div>
+          <div class="slide">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/bd/BLACKPINK_PUBG_Mobile_Sept_2020_ad.png" alt="PUBG Mobile Banner 2">
+          </div>
+          <div class="slide">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/BLACKPINK-inspired_PUBG_Mobile_incentives.png" alt="PUBG Mobile Banner 3">
+          </div>
         </div>
 
         <div class="dots" id="dots" aria-label="Индикатор баннера">
@@ -538,106 +530,28 @@
     </div>
   </div>
 
-  <!-- Supabase JS (browser) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
-    // =========================
-    // ✅ SUPABASE CONFIG
-    // =========================
-    const SUPABASE_URL = "https://bidlyktnwnwvtfehnojw.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpZGx5a3Rud253dnRmZWhub2p3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4NDg3NTQsImV4cCI6MjA4NjQyNDc1NH0.pYnmlTpkj4n3WbaMeAy6hlgO1470pg0Wm4nOV1w9WIY"; // вставь свой anon key (он публичный)
+    document.getElementById('balanceValue').textContent = '0 VC';
 
-    // создаём клиент
-    const { createClient } = supabase;
-    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // Баланс по умолчанию
-    const balanceEl = document.getElementById('balanceValue');
-    balanceEl.textContent = '0 VC';
-
-    // Переход в кошелек
+    // ✅ Переход в кошелек (wallet.html) по клику на сумму
     document.getElementById('balanceChip').addEventListener('click', () => {
       window.location.href = 'wallet.html';
     });
 
-    // Профиль (пока заглушка)
+    // ✅ Профиль (пока заглушка)
     document.getElementById('profileBtn').addEventListener('click', () => {
       alert('Профиль (позже сделаем переход)');
+      // window.location.href = 'profile.html';
     });
 
-    // =========================
-    // ✅ TG AUTH -> EDGE FUNCTION
-    // =========================
-    async function tgAuthAndLoadProfile(){
-      const tg = window.Telegram?.WebApp;
-
-      // Если открыто НЕ внутри Telegram — initData не будет
-      if (!tg || !tg.initData) {
-        console.warn("Открой сайт внутри Telegram Mini App, чтобы была авторизация.");
-        return;
-      }
-
-      tg.ready();
-
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/tg-webapp-auth`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // ✅ без этого будет 401 и функция не запустится
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify({ initData: tg.initData })
-      });
-
-      const json = await res.json().catch(()=> ({}));
-      if (!res.ok) {
-        console.error("tg-webapp-auth error:", json);
-        alert("Ошибка авторизации TG: " + (json?.error || res.status));
-        return;
-      }
-
-      // сохраняем токен (для других страниц тоже)
-      localStorage.setItem("tg_access_token", json.access_token);
-      localStorage.setItem("tg_profile_id", json.profile?.id || "");
-
-      // показываем баланс
-      balanceEl.textContent = `${json.profile?.balance_vc ?? 0} VC`;
-
-      // Если хочешь делать запросы к базе С RLS от имени юзера:
-      window.sbAuthed = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        global: {
-          headers: { Authorization: `Bearer ${json.access_token}` }
-        },
-        auth: { persistSession: false }
-      });
-
-      console.log("TG auth OK:", json.profile);
-    }
-
-    // запускаем авторизацию при загрузке
-    window.addEventListener("load", tgAuthAndLoadProfile);
-
-    // =========================
-    // ✅ Баннеры: точки по scroll (учитываем gap)
-    // =========================
+    // Баннеры: точки по scroll
     const slides = document.getElementById('slides');
     const dots = Array.from(document.getElementById('dots').querySelectorAll('.dot'));
-
-    function getStep(){
-      const first = slides.querySelector('.slide');
-      if (!first) return slides.clientWidth || 1;
-      const w = first.getBoundingClientRect().width || 1;
-      const gap = parseFloat(getComputedStyle(slides).gap || '0') || 0;
-      return w + gap;
-    }
-
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
     function updateDotsByScroll(){
-      const step = getStep();
-      const idx = clamp(Math.round(slides.scrollLeft / step), 0, dots.length - 1);
+      const w = slides.clientWidth || 1;
+      const idx = clamp(Math.round(slides.scrollLeft / w), 0, dots.length - 1);
       dots.forEach((d,i)=>d.classList.toggle('active', i === idx));
     }
 
@@ -652,16 +566,14 @@
 
     dots.forEach((dot, i) => {
       dot.addEventListener('click', () => {
-        slides.scrollTo({ left: i * getStep(), behavior: 'smooth' });
+        slides.scrollTo({ left: i * slides.clientWidth, behavior: 'smooth' });
       });
     });
 
     window.addEventListener('load', updateDotsByScroll);
     window.addEventListener('resize', updateDotsByScroll);
 
-    // =========================
-    // ✅ Меню (bottom sheet)
-    // =========================
+    // Меню (bottom sheet)
     const sheet = document.getElementById('sheet');
     const overlay = document.getElementById('sheetOverlay');
     const menuBtn = document.getElementById('menuBtn');
@@ -692,7 +604,7 @@
     // 3 кнопки
     document.getElementById('btnGames').addEventListener('click', () => alert('Игры (позже сделаем переход)'));
 
-    // ✅ ПЕРЕХОД НА ucshop.html
+    // ✅ ВОТ ТУТ ПЕРЕХОД НА ucshop.html
     document.getElementById('btnShop').addEventListener('click', () => {
       window.location.href = 'ucshop.html';
     });
@@ -701,3 +613,4 @@
   </script>
 </body>
 </html>
+```0
